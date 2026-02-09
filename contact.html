@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | BookSwap Hub</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="about-contact.css">
+  <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+
+      <div class="nav-links">
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a href="sell.html">Sell Book</a>
+        <a href="about.html">About us</a>
+        <a class="active" href="#">Contact</a>
+      </div>
+
+      <div class="nav-auth">
+        <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+        <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
+            class="cart-label">CART</span><span id="cartCount" class="cart-count" aria-live="polite">0</span></button>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <h1>Contact Us </h1>
+    <p>We’re here to help you anytime</p>
+  </section>
+
+
+  <!-- CONTACT SECTION -->
+  <section class="contact-section">
+
+    <!-- FORM CARD -->
+    <div class="contact-card">
+
+      <h2>Send us a Message </h2>
+
+      <form class="contact-form">
+
+        <div class="input-box">
+          <label>Full Name</label>
+          <input type="text" placeholder="Enter your name" required>
+        </div>
+
+        <div class="input-box">
+          <label>Email</label>
+          <input type="email" placeholder="example@gmail.com" required>
+        </div>
+
+        <div class="input-box">
+          <label>Subject</label>
+          <input type="text" placeholder="Enter subject" required>
+        </div>
+
+        <div class="input-box">
+          <label>Message</label>
+          <textarea rows="5" placeholder="Type your message..."></textarea>
+        </div>
+
+        <button type="submit" class="btn primary">Send Message</button>
+
+      </form>
+    </div>
+
+
+    <!-- INFO CARD -->
+    <div class="contact-info">
+
+      <h2>📍 Reach Us</h2>
+
+      <p>📞 +91 99999 99999</p>
+      <p>📧 bookswaphub@gmail.com</p>
+      <p>📍 India</p>
+
+      <a href="https://maps.app.goo.gl/rRBjoBccaa6gknPv6" target="_blank" rel="noopener" class="location-map">
+        <div class="map-container">
+          <img src="media/Screenshot 2026-02-03 110108.png" alt="Our Location - Ahmedabad" class="contact-img">
+        </div>
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+
+      <div class="footer-box">
+        <h3>BookSwap Hub</h3>
+        <p>A trusted hub where books find new owners and readers find great deals.</p>
+      </div>
+
+      <div class="footer-box">
+        <h3>Quick Links</h3>
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a href="sell.html">Sell Book</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="footer-box">
+        <h3>Contact</h3>
+        <p>📞 +91 99999 99999</p>
+        <p>📧 bookswaphub@gmail.com</p>
+        <p>📍 India</p>
+      </div>
+    </div>
+
+    <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+  </footer>
+
+</body>
+
+</html>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+  <div class="cart-panel">
+    <header class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+    </header>
+    <div id="cartItems" class="cart-items">
+      <!-- cart items -->
+    </div>
+    <footer class="cart-footer">
+      <div class="cart-total">
+        <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+        <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+      </div>
+      <div class="cart-actions">
+        <button id="clearCart" class="clear-cart">Clear</button>
+        <button id="checkoutBtn" class="checkout">Checkout</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="cart-ui.js"></script>

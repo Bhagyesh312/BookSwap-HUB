@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Buy Books | BookSwap Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="buy.css">
+    <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+    <!-- NOTIFICATION -->
+    <div id="notification" class="notification"></div>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="buy.html" class="active">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About us</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="nav-auth">
+                <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
+                        class="cart-label">CART</span><span id="cartCount" class="cart-count"
+                        aria-live="polite">0</span></button>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- ================= HEADER ================= -->
+    <header class="buy-header">
+        <h1> Browse Books</h1>
+        <p>Find affordable new & used books instantly</p>
+    </header>
+
+
+    <!-- ================= SEARCH BAR ================= -->
+    <section class="search-bar">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search books, notes, authors..." title="Search books">
+            <button onclick="searchBooks()"> Search</button>
+        </div>
+    </section>
+
+
+    <!-- ================= MAIN LAYOUT ================= -->
+    <div class="buy-layout">
+
+        <!-- ===== BOOK TYPE TOGGLE ===== -->
+        <div class="book-type-toggle">
+            <button class="toggle-btn active" data-type="new">New Books</button>
+            <button class="toggle-btn" data-type="old">Old Books</button>
+        </div>
+
+        <!-- ===== FILTER SIDEBAR ===== -->
+        <aside class="filters">
+
+            <h3> Filters</h3>
+
+            <div class="filter-group">
+                <label>Category</label>
+                <select title="Select book category" id="categoryFilter" onchange="applyFilters()">
+                    <option value="">All Categories</option>
+                    <option value="Fiction">Fiction</option>
+                    <option value="Non-Fiction">Non-Fiction</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Price Range</label>
+                <select title="Select price range" id="priceFilter" onchange="applyFilters()">
+                    <option value="">All Prices</option>
+                    <option value="0-350">Below ₹350</option>
+                    <option value="350-550">₹350 – ₹550</option>
+                    <option value="550-800">₹550 – ₹800</option>
+                    <option value="800+">Above ₹800</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Sort By</label>
+                <select title="Select sort option" id="sortFilter" onchange="applyFilters()">
+                    <option value="popularity">Popularity</option>
+                    <option value="price-low">Price Low → High</option>
+                    <option value="price-high">Price High → Low</option>
+                    <option value="newest">Newest</option>
+                    <option value="rating">Top Rated</option>
+                </select>
+            </div>
+
+            <button class="reset-btn" onclick="resetFilters()">↻ Reset Filters</button>
+
+        </aside>
+
+
+        <!-- ===== BOOK GRID ===== -->
+        <section class="book-grid" id="bookGrid">
+
+            <!-- Books will be populated here -->
+
+        </section>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-box">
+                <h3>BookSwap Hub</h3>
+                <p>A trusted hub where books find new owners and readers find great deals.</p>
+            </div>
+
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📞 +91 99999 99999</p>
+                <p>📧 bookswaphub@gmail.com</p>
+                <p>📍 India</p>
+            </div>
+        </div>
+
+        <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+    </footer>
+
+    <!-- CART MODAL -->
+    <div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+        <div class="cart-panel">
+            <header class="cart-header">
+                <h3>Your Cart</h3>
+                <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+            </header>
+            <div id="cartItems" class="cart-items">
+                <!-- cart items -->
+            </div>
+            <footer class="cart-footer">
+                <div class="cart-total">
+                    <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+                    <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+                </div>
+                <div class="cart-actions">
+                    <button id="clearCart" class="clear-cart">Clear</button>
+                    <button id="checkoutBtn" class="checkout">Checkout</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- BOOK DETAILS MODAL -->
+    <div id="detailsModal" class="details-modal hidden" role="dialog" aria-modal="true" aria-label="Book details">
+        <div class="details-panel">
+            <button id="closeDetailsBtn" class="close-details-btn" aria-label="Close details">✕</button>
+            <div class="details-content">
+                <div class="details-image">
+                    <img id="detailsImage" src="" alt="Book cover">
+                </div>
+                <div class="details-info">
+                    <h2 id="detailsTitle"></h2>
+                    <p class="details-author" id="detailsAuthor"></p>
+                    <div class="details-rating">
+                        <span id="detailsRating"></span>
+                    </div>
+
+                    <div class="details-specs">
+                        <div class="spec-item">
+                            <span class="spec-label">Publisher</span>
+                            <span class="spec-value" id="detailsPublisher"></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Year</span>
+                            <span class="spec-value" id="detailsYear"></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Edition</span>
+                            <span class="spec-value" id="detailsEdition"></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Pages</span>
+                            <span class="spec-value" id="detailsPages"></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Language</span>
+                            <span class="spec-value" id="detailsLanguage"></span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-label">Binding</span>
+                            <span class="spec-value" id="detailsBinding"></span>
+                        </div>
+                    </div>
+
+                    <div class="details-synopsis">
+                        <h3>Synopsis</h3>
+                        <p id="detailsSynopsis"></p>
+                    </div>
+
+                    <div class="details-price">
+                        <span class="detail-price" id="detailsPriceValue"></span>
+                        <span class="detail-original" id="detailsOriginalValue"></span>
+                    </div>
+
+                    <button id="detailsAddToCart" class="details-add-btn">🛒 Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const allBooks = [
+                {
+                    id: 1,
+                    title: "The Great Gatsby",
+                    author: "F. Scott Fitzgerald",
+                    category: "Fiction",
+                    type: "new",
+                    price: 569,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 324,
+                    image: "https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg",
+                    publisher: "Charles Scribner's Sons",
+                    year: 1925,
+                    edition: "1st",
+                    pages: 218,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A tragic tale of Jay Gatsby's obsession with Daisy Buchanan, exploring wealth, illusion, and the American Dream."
+                },
+                {
+                    id: 2,
+                    title: "To Kill a Mockingbird",
+                    author: "Harper Lee",
+                    category: "Fiction",
+                    type: "new",
+                    price: 599,
+                    original: 749,
+                    rating: 4.8,
+                    reviews: 445,
+                    image: "https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg",
+                    publisher: "J.B. Lippincott & Co.",
+                    year: 1960,
+                    edition: "1st",
+                    pages: 281,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Scout Finch recounts her childhood in the racially divided American South as her father defends a Black man falsely accused of a crime."
+                },
+                {
+                    id: 3,
+                    title: "Pride and Prejudice",
+                    author: "Jane Austen",
+                    category: "Romance",
+                    type: "new",
+                    price: 479,
+                    original: 599,
+                    rating: 4.9,
+                    reviews: 567,
+                    image: "https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg",
+                    publisher: "T. Egerton",
+                    year: 1813,
+                    edition: "1st",
+                    pages: 432,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Elizabeth Bennet navigates love, class, and societal expectations while clashing with the proud Mr. Darcy."
+                },
+                {
+                    id: 4,
+                    title: "The Catcher in the Rye",
+                    author: "J.D. Salinger",
+                    category: "Fiction",
+                    type: "new",
+                    price: 559,
+                    original: 699,
+                    rating: 4.5,
+                    reviews: 278,
+                    image: "https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg",
+                    publisher: "Little, Brown and Company",
+                    year: 1951,
+                    edition: "1st",
+                    pages: 214,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Holden Caulfield wanders New York City after expulsion, questioning adulthood and authenticity."
+                },
+                {
+                    id: 5,
+                    title: "Educated",
+                    author: "Tara Westover",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 479,
+                    original: 599,
+                    rating: 4.6,
+                    reviews: 612,
+                    image: "https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg",
+                    publisher: "Random House",
+                    year: 2018,
+                    edition: "1st",
+                    pages: 334,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A woman raised in a survivalist family pursues education and self-discovery."
+                },
+                {
+                    id: 6,
+                    title: "Thinking, Fast and Slow",
+                    author: "Daniel Kahneman",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 809,
+                    original: 999,
+                    rating: 4.4,
+                    reviews: 456,
+                    image: "https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg",
+                    publisher: "Farrar, Straus & Giroux",
+                    year: 2011,
+                    edition: "1st",
+                    pages: 499,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Two systems of thinking that drive decisions."
+                },
+                {
+                    id: 7,
+                    title: "The Midnight Library",
+                    author: "Matt Haig",
+                    category: "Romance",
+                    type: "new",
+                    price: 519,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 389,
+                    image: "https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg",
+                    publisher: "Viking",
+                    year: 2020,
+                    edition: "1st",
+                    pages: 304,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A magical library lets Nora explore alternate versions of her life."
+                },
+                {
+                    id: 8,
+                    title: "Sapiens",
+                    author: "Yuval Noah Harari",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 879,
+                    original: 1099,
+                    rating: 4.8,
+                    reviews: 534,
+                    image: "https://covers.openlibrary.org/b/isbn/9780062316110-L.jpg",
+                    publisher: "Harper",
+                    year: 2011,
+                    edition: "1st",
+                    pages: 443,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "History of humankind from evolution to modern society."
+                },
+                {
+                    id: 9,
+                    title: "1984",
+                    author: "George Orwell",
+                    category: "Fiction",
+                    type: "new",
+                    price: 479,
+                    original: 599,
+                    rating: 4.6,
+                    reviews: 401,
+                    image: "https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg",
+                    publisher: "Secker & Warburg",
+                    year: 1949,
+                    edition: "1st",
+                    pages: 328,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Big Brother, surveillance, and totalitarian control."
+                },
+                {
+                    id: 10,
+                    title: "The Alchemist",
+                    author: "Paulo Coelho",
+                    category: "Other",
+                    type: "new",
+                    price: 449,
+                    original: 549,
+                    rating: 4.7,
+                    reviews: 698,
+                    image: "https://covers.openlibrary.org/b/isbn/9780062315007-L.jpg",
+                    publisher: "HarperOne",
+                    year: 1988,
+                    edition: "1st",
+                    pages: 208,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A shepherd follows his dreams in a spiritual journey."
+                },
+                {
+                    id: 11,
+                    title: "Atomic Habits",
+                    author: "James Clear",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 809,
+                    original: 999,
+                    rating: 4.9,
+                    reviews: 723,
+                    image: "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
+                    publisher: "Avery",
+                    year: 2018,
+                    edition: "1st",
+                    pages: 320,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Tiny habits lead to massive life improvements."
+                },
+                {
+                    id: 12,
+                    title: "Six of Crows",
+                    author: "Leigh Bardugo",
+                    category: "Romance",
+                    type: "new",
+                    price: 599,
+                    original: 749,
+                    rating: 4.8,
+                    reviews: 512,
+                    image: "https://covers.openlibrary.org/b/isbn/9781627792127-L.jpg",
+                    publisher: "Henry Holt & Co.",
+                    year: 2015,
+                    edition: "1st",
+                    pages: 465,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Six criminals attempt an impossible magical heist."
+                },
+                {
+                    id: 13,
+                    title: "The Silent Patient",
+                    author: "Alex Michaelides",
+                    category: "Fiction",
+                    type: "new",
+                    price: 479,
+                    original: 599,
+                    rating: 4.6,
+                    reviews: 298,
+                    image: "media/silent_patient.jpg",
+                    publisher: "Celadon Books",
+                    year: 2019,
+                    edition: "1st",
+                    pages: 336,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A therapist uncovers the truth behind a woman who shot her husband and never speaks again."
+                },
+                {
+                    id: 14,
+                    title: "It Ends with Us",
+                    author: "Colleen Hoover",
+                    category: "Romance",
+                    type: "new",
+                    price: 439,
+                    original: 549,
+                    rating: 4.7,
+                    reviews: 512,
+                    image: "https://covers.openlibrary.org/b/isbn/9781476753188-L.jpg",
+                    publisher: "Atria Books",
+                    year: 2016,
+                    edition: "1st",
+                    pages: 376,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A romance confronting domestic abuse and difficult life choices."
+                },
+                {
+                    id: 15,
+                    title: "Verity",
+                    author: "Colleen Hoover",
+                    category: "Fiction",
+                    type: "new",
+                    price: 479,
+                    original: 599,
+                    rating: 4.8,
+                    reviews: 634,
+                    image: "media/verity.jpg",
+                    publisher: "Grand Central Publishing",
+                    year: 2018,
+                    edition: "1st",
+                    pages: 336,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A writer discovers disturbing secrets while finishing another author's manuscript."
+                },
+                {
+                    id: 16,
+                    title: "Dune",
+                    author: "Frank Herbert",
+                    category: "Fiction",
+                    type: "new",
+                    price: 509,
+                    original: 649,
+                    rating: 4.8,
+                    reviews: 456,
+                    image: "https://covers.openlibrary.org/b/isbn/9780441172719-L.jpg",
+                    publisher: "Chilton Books",
+                    year: 1965,
+                    edition: "1st",
+                    pages: 412,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Epic desert-planet politics, prophecy, and survival."
+                },
+                {
+                    id: 17,
+                    title: "Project Hail Mary",
+                    author: "Andy Weir",
+                    category: "Fiction",
+                    type: "new",
+                    price: 509,
+                    original: 649,
+                    rating: 4.9,
+                    reviews: 523,
+                    image: "https://covers.openlibrary.org/b/isbn/9780593135204-L.jpg",
+                    publisher: "Ballantine Books",
+                    year: 2021,
+                    edition: "1st",
+                    pages: 496,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A lone astronaut must save humanity through science and ingenuity."
+                },
+                {
+                    id: 18,
+                    title: "Klara and the Sun",
+                    author: "Kazuo Ishiguro",
+                    category: "Fiction",
+                    type: "new",
+                    price: 439,
+                    original: 549,
+                    rating: 4.5,
+                    reviews: 267,
+                    image: "media/klara_and_the_sun.jpg",
+                    publisher: "Knopf",
+                    year: 2021,
+                    edition: "1st",
+                    pages: 320,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "An Artificial Friend observes human love and loneliness."
+                },
+                {
+                    id: 19,
+                    title: "Braiding Sweetgrass",
+                    author: "Robin Wall Kimmerer",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 519,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 489,
+                    image: "media/braiding.jpg",
+                    publisher: "Milkweed Editions",
+                    year: 2013,
+                    edition: "1st",
+                    pages: 390,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Indigenous wisdom and ecological science combined."
+                },
+                {
+                    id: 20,
+                    title: "The Body Keeps the Score",
+                    author: "Bessel van der Kolk",
+                    category: "Non-Fiction",
+                    type: "new",
+                    price: 559,
+                    original: 699,
+                    rating: 4.8,
+                    reviews: 634,
+                    image: "media/body_keeps_score.jpg",
+                    publisher: "Viking",
+                    year: 2014,
+                    edition: "1st",
+                    pages: 464,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "How trauma affects the brain and body, with healing approaches."
+                },
+                {
+                    id: 21,
+                    title: "The Great Gatsby",
+                    author: "F. Scott Fitzgerald",
+                    category: "Fiction",
+                    type: "old",
+                    price: 299,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 324,
+                    image: "https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg",
+                    publisher: "Charles Scribner's Sons",
+                    year: 1925,
+                    edition: "1st",
+                    pages: 218,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A tragic tale of Jay Gatsby's obsession with Daisy Buchanan, exploring wealth, illusion, and the American Dream."
+                },
+                {
+                    id: 22,
+                    title: "To Kill a Mockingbird",
+                    author: "Harper Lee",
+                    category: "Fiction",
+                    type: "old",
+                    price: 349,
+                    original: 749,
+                    rating: 4.8,
+                    reviews: 445,
+                    image: "https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg",
+                    publisher: "J.B. Lippincott & Co.",
+                    year: 1960,
+                    edition: "1st",
+                    pages: 281,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Scout Finch recounts her childhood in the racially divided American South as her father defends a Black man falsely accused of a crime."
+                },
+                {
+                    id: 23,
+                    title: "Pride and Prejudice",
+                    author: "Jane Austen",
+                    category: "Romance",
+                    type: "old",
+                    price: 279,
+                    original: 599,
+                    rating: 4.9,
+                    reviews: 567,
+                    image: "https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg",
+                    publisher: "T. Egerton",
+                    year: 1813,
+                    edition: "1st",
+                    pages: 432,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Elizabeth Bennet navigates love, class, and societal expectations while clashing with the proud Mr. Darcy."
+                },
+                {
+                    id: 24,
+                    title: "The Catcher in the Rye",
+                    author: "J.D. Salinger",
+                    category: "Fiction",
+                    type: "old",
+                    price: 319,
+                    original: 699,
+                    rating: 4.5,
+                    reviews: 278,
+                    image: "https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg",
+                    publisher: "Little, Brown and Company",
+                    year: 1951,
+                    edition: "1st",
+                    pages: 214,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Holden Caulfield wanders New York City after expulsion, questioning adulthood and authenticity."
+                },
+                {
+                    id: 25,
+                    title: "1984",
+                    author: "George Orwell",
+                    category: "Fiction",
+                    type: "old",
+                    price: 289,
+                    original: 599,
+                    rating: 4.6,
+                    reviews: 401,
+                    image: "https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg",
+                    publisher: "Secker & Warburg",
+                    year: 1949,
+                    edition: "1st",
+                    pages: 328,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Big Brother, surveillance, and totalitarian control."
+                },
+                {
+                    id: 26,
+                    title: "The Alchemist",
+                    author: "Paulo Coelho",
+                    category: "Other",
+                    type: "old",
+                    price: 249,
+                    original: 549,
+                    rating: 4.7,
+                    reviews: 698,
+                    image: "https://covers.openlibrary.org/b/isbn/9780062315007-L.jpg",
+                    publisher: "HarperOne",
+                    year: 1988,
+                    edition: "1st",
+                    pages: 208,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A shepherd follows his dreams in a spiritual journey."
+                },
+                {
+                    id: 27,
+                    title: "The Midnight Library",
+                    author: "Matt Haig",
+                    category: "Romance",
+                    type: "old",
+                    price: 299,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 389,
+                    image: "https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg",
+                    publisher: "Viking",
+                    year: 2020,
+                    edition: "1st",
+                    pages: 304,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A magical library lets Nora explore alternate versions of her life."
+                },
+                {
+                    id: 28,
+                    title: "Educated",
+                    author: "Tara Westover",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 399,
+                    original: 899,
+                    rating: 4.6,
+                    reviews: 612,
+                    image: "https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg",
+                    publisher: "Random House",
+                    year: 2018,
+                    edition: "1st",
+                    pages: 334,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "A woman raised in a survivalist family pursues education and self-discovery."
+                },
+                {
+                    id: 29,
+                    title: "Thinking, Fast and Slow",
+                    author: "Daniel Kahneman",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 449,
+                    original: 999,
+                    rating: 4.4,
+                    reviews: 456,
+                    image: "https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg",
+                    publisher: "Farrar, Straus & Giroux",
+                    year: 2011,
+                    edition: "1st",
+                    pages: 499,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Two systems of thinking that drive decisions."
+                },
+                {
+                    id: 30,
+                    title: "Sapiens",
+                    author: "Yuval Noah Harari",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 499,
+                    original: 1099,
+                    rating: 4.8,
+                    reviews: 534,
+                    image: "https://covers.openlibrary.org/b/isbn/9780062316110-L.jpg",
+                    publisher: "Harper",
+                    year: 2011,
+                    edition: "1st",
+                    pages: 443,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "History of humankind from evolution to modern society."
+                },
+                {
+                    id: 31,
+                    title: "Atomic Habits",
+                    author: "James Clear",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 449,
+                    original: 999,
+                    rating: 4.9,
+                    reviews: 723,
+                    image: "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
+                    publisher: "Avery",
+                    year: 2018,
+                    edition: "1st",
+                    pages: 320,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Tiny habits lead to massive life improvements."
+                },
+                {
+                    id: 32,
+                    title: "Six of Crows",
+                    author: "Leigh Bardugo",
+                    category: "Romance",
+                    type: "old",
+                    price: 349,
+                    original: 749,
+                    rating: 4.8,
+                    reviews: 512,
+                    image: "https://covers.openlibrary.org/b/isbn/9781627792127-L.jpg",
+                    publisher: "Henry Holt & Co.",
+                    year: 2015,
+                    edition: "1st",
+                    pages: 465,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Six criminals attempt an impossible magical heist."
+                },
+                {
+                    id: 33,
+                    title: "Rich Dad Poor Dad",
+                    author: "Robert Kiyosaki",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 279,
+                    original: 599,
+                    rating: 4.6,
+                    reviews: 512,
+                    image: "media/RCPD.jpg",
+                    publisher: "TechPress",
+                    year: 1997,
+                    edition: "1st",
+                    pages: 355,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Financial wisdom about building wealth and investing smartly."
+                },
+                {
+                    id: 34,
+                    title: "The Lean Startup",
+                    author: "Eric Ries",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 319,
+                    original: 699,
+                    rating: 4.5,
+                    reviews: 389,
+                    image: "https://covers.openlibrary.org/b/isbn/9780307887894-L.jpg",
+                    publisher: "Crown Business",
+                    year: 2011,
+                    edition: "1st",
+                    pages: 336,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Innovation management and business growth through lean methodology."
+                },
+                {
+                    id: 35,
+                    title: "Zero to One",
+                    author: "Peter Thiel",
+                    category: "Non-Fiction",
+                    type: "old",
+                    price: 289,
+                    original: 649,
+                    rating: 4.7,
+                    reviews: 445,
+                    image: "https://covers.openlibrary.org/b/isbn/9780804139298-L.jpg",
+                    publisher: "Crown Business",
+                    year: 2014,
+                    edition: "1st",
+                    pages: 368,
+                    language: "English",
+                    binding: "Hardcover/Paperback",
+                    synopsis: "Building startups and creating the future from nothing."
+                }
+            ];
+
+
+            const el = id => document.getElementById(id);
+            const grid = el('bookGrid');
+            const searchInput = el('searchInput');
+            const cat = el('categoryFilter');
+            const price = el('priceFilter');
+            const sort = el('sortFilter');
+            const resetBtn = document.querySelector('.reset-btn');
+            const searchBtn = document.querySelector('.search-container button');
+            const cartBtn = el('cartBtn');
+            const cartCount = el('cartCount');
+            const cartModal = el('cartModal');
+            const cartItemsEl = el('cartItems');
+            const cartTotalEl = el('cartTotal');
+            const closeCartBtn = el('closeCart');
+            const clearCartBtn = el('clearCart');
+            const checkoutBtn = el('checkoutBtn');
+
+            let selectedType = 'new';  // Track current book type selection
+
+            const checkPrice = (p, range) => {
+                if (!range) return true;
+                if (range.endsWith('+')) return p > Number(range.replace('+', ''));
+                const [min, max] = range.split('-').map(Number);
+                return p >= min && p <= max;
+            };
+
+            const render = b => {
+                const d = Math.round(((b.original - b.price) / b.original) * 100);
+                const img = b.image || '';
+                return `
+            <div class="book-card" data-id="${b.id}">
+                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}">` : '<div style="color:#aaa">No cover</div>'}
+                    <span class="discount-badge">-${d}%</span>
+                </div>
+                <h4>${b.title}</h4>
+                <p class="author">By ${b.author}</p>
+                <p class="rating">⭐ ${b.rating} (${b.reviews})</p>
+                <p class="price">₹${b.price} <span>₹${b.original}</span></p>
+                <div class="card-btns">
+                    <button class="buy" data-action="buy" data-title="${b.title}">Add to Cart</button>
+                    <button class="view-details" data-action="view-details" data-id="${b.id}" title="View book details">Info</button>
+                </div>
+            </div>`;
+            };
+
+            const display = items => grid.innerHTML = items.length ? items.map(render).join('') : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
+
+            const apply = () => {
+                const q = (searchInput.value || '').trim().toLowerCase();
+                let items = allBooks.filter(b =>
+                    b.type === selectedType &&
+                    (!q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.category.toLowerCase().includes(q)) &&
+                    (!cat.value || b.category === cat.value) && checkPrice(b.price, price.value)
+                );
+                if (sort.value === 'price-low') items.sort((a, b) => a.price - b.price);
+                else if (sort.value === 'price-high') items.sort((a, b) => b.price - a.price);
+                else if (sort.value === 'rating') items.sort((a, b) => b.rating - b.rating ? b.rating - a.rating : b.reviews - a.reviews);
+                else if (sort.value === 'newest') items = items.slice().reverse();
+                display(items);
+            };
+
+            const reset = () => { cat.value = ''; price.value = ''; sort.value = 'popularity'; searchInput.value = ''; apply(); };
+
+            // debounce helper
+            const debounce = (fn, wait = 250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), wait); } };
+
+            // cart persistence and helpers
+            const getCart = () => JSON.parse(localStorage.getItem('cart') || '[]');
+            const saveCart = c => localStorage.setItem('cart', JSON.stringify(c));
+            const updateCount = () => {
+                const c = getCart();
+                const count = c.reduce((s, i) => s + i.qty, 0);
+                cartCount.textContent = count;
+            };
+
+            const showNotification = (message) => {
+                const notifEl = document.getElementById('notification');
+                if (!notifEl) return;
+                notifEl.textContent = message;
+                notifEl.classList.add('show');
+                setTimeout(() => {
+                    notifEl.classList.remove('show');
+                }, 3000);
+            };
+
+            const addToCart = id => {
+                const bid = Number(id);
+                const b = allBooks.find(x => x.id === bid);
+                if (!b) return;
+                const c = getCart();
+                const existing = c.find(x => x.id === bid);
+                if (existing) existing.qty += 1;
+                else c.push({ id: b.id, title: b.title, price: b.price, original: b.original || b.price, image: b.image || '', qty: 1 });
+                saveCart(c);
+                updateCount();
+                // visual bump on counter
+                try {
+                    cartCount.classList.remove('bump');
+                    void cartCount.offsetWidth;
+                    cartCount.classList.add('bump');
+                } catch (e) { }
+                renderCart();
+                showNotification(`✓ "${b.title}" added to cart!`);
+            };
+
+            const removeFromCart = id => {
+                const c = getCart().filter(x => x.id !== Number(id));
+                saveCart(c);
+                updateCount();
+                renderCart();
+            };
+
+            const clearCart = () => { localStorage.removeItem('cart'); updateCount(); renderCart(); };
+
+            const formatIN = n => (Number(n) || 0).toLocaleString('en-IN');
+
+            const renderCart = () => {
+                const c = getCart();
+                if (!c.length) { cartItemsEl.innerHTML = '<div class="empty">Your cart is empty.</div>'; cartTotalEl.textContent = '0'; const savedEl = document.getElementById('cartSavedAmount'); if (savedEl) savedEl.textContent = '0'; return; }
+                let total = 0;
+                let originalTotal = 0;
+                cartItemsEl.innerHTML = c.map(item => {
+                    const linePrice = item.price * item.qty;
+                    const lineOriginal = (item.original || item.price) * item.qty;
+                    total += linePrice;
+                    originalTotal += lineOriginal;
+                    return `
+                <div class="cart-row" data-id="${item.id}">
+                    <div class="ci-left">
+                        <img src="${item.image || 'https://via.placeholder.com/80x100?text=No+Cover'}" alt="${item.title}">
+                    </div>
+                    <div class="ci-body">
+                        <div class="ci-title">${item.title}</div>
+                        <div class="ci-qty">Qty: ${item.qty}</div>
+                        <div class="ci-price">₹${formatIN(linePrice)} <span class="cancelled">₹${formatIN(lineOriginal)}</span></div>
+                    </div>
+                    <div class="ci-actions">
+                        <button class="remove-item" data-id="${item.id}">Remove</button>
+                    </div>
+                </div>`;
+                }).join('');
+                cartTotalEl.textContent = formatIN(total);
+                const savedEl = document.getElementById('cartSavedAmount'); if (savedEl) savedEl.textContent = formatIN(Math.max(0, originalTotal - total));
+            };
+
+            // event delegation for grid buttons: add to cart
+            grid.addEventListener('click', e => {
+                const btn = e.target.closest('button[data-action]');
+                if (!btn) return;
+                const action = btn.getAttribute('data-action');
+                const card = btn.closest('.book-card');
+                const id = card && card.dataset.id;
+                if (action === 'buy') {
+                    addToCart(id);
+                } else if (action === 'view-details') {
+                    const book = allBooks.find(b => b.id === Number(id));
+                    if (book) openDetailsModal(book);
+                }
+            });
+
+            // open/close cart modal
+            const openCart = () => { cartModal.classList.remove('hidden'); renderCart(); };
+            const closeCart = () => cartModal.classList.add('hidden');
+
+            // Details modal
+            const detailsModal = el('detailsModal');
+            const closeDetailsBtn = el('closeDetailsBtn');
+            const detailsAddToCart = el('detailsAddToCart');
+            let currentDetailBookId = null;
+
+            const openDetailsModal = (book) => {
+                currentDetailBookId = book.id;
+                el('detailsImage').src = book.image || 'https://via.placeholder.com/200x300?text=No+Cover';
+                el('detailsTitle').textContent = book.title;
+                el('detailsAuthor').textContent = `By ${book.author}`;
+                el('detailsRating').innerHTML = `⭐ ${book.rating} (${book.reviews} reviews)`;
+                el('detailsPublisher').textContent = book.publisher || 'N/A';
+                el('detailsYear').textContent = book.year || 'N/A';
+                el('detailsEdition').textContent = book.edition || 'N/A';
+                el('detailsPages').textContent = book.pages || 'N/A';
+                el('detailsLanguage').textContent = book.language || 'N/A';
+                el('detailsBinding').textContent = book.binding || 'N/A';
+                el('detailsSynopsis').textContent = book.synopsis || 'No synopsis available';
+                el('detailsPriceValue').textContent = `₹${book.price}`;
+                el('detailsOriginalValue').textContent = `₹${book.original}`;
+                detailsModal.classList.remove('hidden');
+            };
+
+            const closeDetailsModal = () => {
+                detailsModal.classList.add('hidden');
+                currentDetailBookId = null;
+            };
+
+            closeDetailsBtn.addEventListener('click', closeDetailsModal);
+            detailsModal.addEventListener('click', e => { if (e.target === detailsModal) closeDetailsModal(); });
+            detailsAddToCart.addEventListener('click', () => {
+                if (currentDetailBookId !== null) {
+                    addToCart(currentDetailBookId);
+                    closeDetailsModal();
+                }
+            });
+
+            cartBtn.addEventListener('click', openCart);
+            closeCartBtn.addEventListener('click', closeCart);
+            cartModal.addEventListener('click', e => { if (e.target === cartModal) closeCart(); });
+            clearCartBtn.addEventListener('click', () => { clearCart(); });
+            checkoutBtn.addEventListener('click', () => {
+                const c = getCart();
+                if (!c.length) return alert('Cart is empty');
+                alert('Proceeding to checkout — items: ' + c.length);
+            });
+
+            // event delegation inside cart for remove
+            cartItemsEl.addEventListener('click', e => {
+                const rem = e.target.closest('button.remove-item');
+                if (!rem) return;
+                const id = rem.dataset.id;
+                removeFromCart(id);
+            });
+
+            // wire controls
+            [cat, price, sort].forEach(elm => elm.addEventListener('change', apply));
+            resetBtn.addEventListener('click', reset);
+            searchBtn.addEventListener('click', apply);
+            searchInput.addEventListener('input', debounce(apply, 300));
+            searchInput.addEventListener('keypress', e => { if (e.key === 'Enter') apply(); });
+
+            // toggle book type
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedType = btn.getAttribute('data-type');
+                    apply();
+                });
+            });
+
+            // init
+            apply();
+            updateCount();
+
+            // Check for viewBookId from home page
+            const viewId = localStorage.getItem('viewBookId');
+            if (viewId) {
+                const bookToView = allBooks.find(b => b.id === Number(viewId));
+                if (bookToView) {
+                    openDetailsModal(bookToView);
+                }
+                localStorage.removeItem('viewBookId');
+            }
+        });
+    </script>
+
+</body>
+
+</html>

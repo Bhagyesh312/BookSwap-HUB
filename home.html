@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookSwap Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+
+        <!-- LEFT CORNER IMAGE -->
+        <img src="media/Saraswatiji.png" alt="Left Image" class="corner-img left-corner">
+
+        <div class="title-text">
+            <h1>BookSwap Hub</h1>
+            <h1 class="sub-title">Buy • Sell • Exchange</h1>
+            <p class="tagline">smart way for people to buy & sell books easily</p>
+        </div>
+
+        <!-- RIGHT CORNER IMAGE -->
+        <img src="media/Laxmiji.png" alt="Right Image" class="corner-img right-corner">
+
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-container">
+
+            <!--  CENTER LINKS -->
+            <div class="nav-links">
+                <a href="home.html" class="active">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About us</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <!--  EXTREME RIGHT BUTTONS -->
+            <div class="nav-auth">
+                <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
+                        class="cart-label">CART</span><span id="cartCount" class="cart-count"
+                        aria-live="polite">0</span></button>
+            </div>
+
+        </div>
+    </nav>
+
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-text">
+            <h2>Where Books Find New Owners </h2>
+            <p>Buy affordable books, sell your extras, and exchange easily with BookSwap Hub.</p>
+
+            <div class="hero-buttons">
+                <a href="buy.html" class="btn primary">📖 Buy Books</a>
+                <a href="sell.html" class="btn outline">💰 Sell Books</a>
+            </div>
+
+            <p class="trust-text"> Trusted by people for affordable learning!</p>
+        </div>
+
+        <div class="hero-image">
+            <video autoplay muted loop playsinline>
+                <source src="media/mixkit-library-shelf-full-of-books-50729-full-hd.mp4" type="video/mp4">
+            </video>
+        </div>
+
+    </section>
+
+    <!-- FEATURES -->
+    <section class="content">
+        <div class="box">
+            <div class="icon">📖</div>
+            <h3>New Books</h3>
+            <p>Get brand new books at exciting discounts.</p>
+            <a href="buy.html" class="card-link">Explore →</a>
+        </div>
+
+        <div class="box">
+            <div class="icon">📗</div>
+            <h3>Used Books</h3>
+            <p>Quality second-hand books verified by us.</p>
+            <a href="buy.html" class="card-link">Check Now →</a></a>
+        </div>
+
+        <div class="box">
+            <div class="icon">📤</div>
+            <h3>Sell Books</h3>
+            <p>Upload details & video to receive a fair price.</p>
+            <a href="sell.html" class="card-link">Start Selling →</a>
+        </div>
+    </section>
+
+    <!-- QUIZ BANNER -->
+    <section class="quiz-banner"
+        style="text-align:center; padding: 60px 20px; background: #fffaf0; margin: 40px 0; border: 2px solid rgba(212, 165, 116, 0.2); border-radius: 20px;">
+        <h2 style="font-size: 2rem; color: #3e2723; margin-bottom: 10px;">Don't know what to read next?</h2>
+        <p style="margin-bottom: 25px; font-size: 1.1rem; color: #555;">Take our 1-minute quiz to find your perfect book
+            match!</p>
+        <a href="quiz.html" class="btn primary" style="padding: 12px 30px; font-size: 1.1rem;">🔥 Start Matchmaker</a>
+    </section>
+
+    <!-- FEATURED BOOKS -->
+    <section class="featured">
+        <h2>Top 4 Picks</h2>
+        <p class="featured-sub">Popular picks that people love!</p>
+
+        <div class="featured-grid" id="topPicksGrid">
+            <!-- Top 4 picks will be loaded here -->
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-box">
+                <h3>BookSwap Hub</h3>
+                <p>A trusted hub where books find new owners and readers find great deals.</p>
+            </div>
+
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📞 +91 99999 99999</p>
+                <p>📧 bookswaphub@gmail.com</p>
+                <p>📍 India</p>
+            </div>
+        </div>
+
+        <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+    </footer>
+
+    <!-- CART MODAL -->
+    <div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+        <div class="cart-panel">
+            <header class="cart-header">
+                <h3>Your Cart</h3>
+                <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+            </header>
+            <div id="cartItems" class="cart-items">
+                <!-- cart items -->
+            </div>
+            <footer class="cart-footer">
+                <div class="cart-total">
+                    <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+                    <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+                </div>
+                <div class="cart-actions">
+                    <button id="clearCart" class="clear-cart">Clear</button>
+                    <button id="checkoutBtn" class="checkout">Checkout</button>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="cart-ui.js"></script>
+
+    <script>
+        // Top 4 Picks - same book data as in buy.html
+        const topBooks = [
+            { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 569, original: 649, rating: 4.7, reviews: 324, image: 'https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg' },
+            { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 599, original: 749, rating: 4.8, reviews: 445, image: 'https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg' },
+            { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', price: 479, original: 599, rating: 4.9, reviews: 567, image: 'https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg' },
+            { id: 4, title: 'The Catcher in the Rye', author: 'J.D. Salinger', price: 559, original: 699, rating: 4.5, reviews: 278, image: 'https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('topPicksGrid');
+            if (!grid) return;
+
+            grid.innerHTML = topBooks.map(book => {
+                const discount = Math.round(((book.original - book.price) / book.original) * 100);
+                return `
+                    <div class="book-card" style="cursor: pointer;" onclick="viewBookDetails(${book.id})">
+                        <img src="${book.image}" alt="${book.title}">
+                        <h3>${book.title}</h3>
+                        <p class="price">₹${book.price}</p>
+                        <button class="buy-btn" onclick="event.stopPropagation(); goToBuy(${book.id})">Buy Now</button>
+                    </div>
+                `;
+            }).join('');
+        });
+
+        function viewBookDetails(bookId) {
+            localStorage.setItem('viewBookId', bookId);
+            window.location.href = 'buy.html';
+        }
+
+        function goToBuy(bookId) {
+            localStorage.setItem('viewBookId', bookId);
+            window.location.href = 'buy.html';
+        }
+    </script>
+
+</body>
+
+</html>

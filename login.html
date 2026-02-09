@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookSwap Hub | Login / Register</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+
+  <div class="page">
+    <div class="right-form">
+
+      <!--  SINGLE TOGGLE BUTTON -->
+      <div class="switch-one">
+        <button type="button" class="toggle-btn" id="toggleAuth">
+          Login / Register
+        </button>
+      </div>
+
+      <!--  FLIP CARD -->
+      <div class="card" id="flipCard">
+        <div class="card-inner">
+
+          <!--  LOGIN SIDE -->
+          <div class="card-face front">
+            <h2>Welcome Back </h2>
+            <p>Login to continue your book journey.</p>
+
+            <form>
+              <div class="input-box">
+                <label>Email</label>
+                <input type="email" placeholder="example@gmail.com" required>
+              </div>
+
+              <div class="input-box">
+                <label>Password</label>
+                <input type="password" placeholder="Enter password" required>
+              </div>
+
+              <div class="extras">
+                <label class="remember">
+                  <input type="checkbox">
+                  <span>Remember me</span>
+                </label>
+
+                <a href="#">Forgot password?</a>
+              </div>
+
+              <button class="btn" type="submit">Login</button>
+
+              <p class="toggle-text">Don't have an account? <a href="#" class="toggle-link" onclick="document.getElementById('flipCard').classList.add('flipped'); return false;">Register</a></p>
+            </form>
+          </div>
+
+          <!--  REGISTER SIDE -->
+          <div class="card-face back">
+            <h2>Create Account </h2>
+            <p>Join BookSwap Hub in few seconds.</p>
+
+            <form>
+              <div class="input-box">
+                <label>Full Name</label>
+                <input type="text" placeholder="Your full name" required>
+              </div>
+
+              <div class="input-box">
+                <label>Email</label>
+                <input type="email" placeholder="example@gmail.com" required>
+              </div>
+
+              <div class="input-box">
+                <label>Phone Number</label>
+                <input type="tel" placeholder="9876543210" pattern="[0-9]{10}" required>
+              </div>
+
+              <div class="input-box">
+                <label>Create Password</label>
+                <input type="password" placeholder="Minimum 6 characters" minlength="6" required>
+              </div>
+
+              <button class="btn" type="submit">Register</button>
+
+              <p class="toggle-text">Already have an account? <a href="#" class="toggle-link" onclick="document.getElementById('flipCard').classList.remove('flipped'); return false;">Login</a></p>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!--  SCRIPT -->
+  <script>
+    const flipCard = document.getElementById("flipCard");
+    const toggleAuth = document.getElementById("toggleAuth");
+
+    toggleAuth.addEventListener("click", () => {
+      flipCard.classList.toggle("flipped");
+    });
+
+    window.addEventListener("load", () => {
+      if (window.location.hash === "#register") {
+        flipCard.classList.add("flipped");
+      } else {
+        flipCard.classList.remove("flipped");
+      }
+    });
+  </script>
+
+</body>
+</html>

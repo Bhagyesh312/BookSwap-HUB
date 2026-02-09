@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sell a Book | BookSwap Hub</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="sell.css" />
+  <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+
+      <div class="nav-links">
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a class="active" href="#">Sell Book</a>
+        <a href="about.html">About us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="nav-auth">
+        <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+        <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
+            class="cart-label">CART</span><span id="cartCount" class="cart-count" aria-live="polite">0</span></button>
+      </div>
+
+    </div>
+  </nav>
+
+  <div class="sell-page">
+
+    <div class="sell-card">
+      <h1> Sell Your Book</h1>
+      <p class="sub">Fill the details below to list your book on BookSwap Hub.</p>
+
+      <form class="sell-form">
+
+        <div class="field">
+          <label>Book Name</label>
+          <input type="text" placeholder="Eg: Engineering Mathematics" required>
+        </div>
+
+        <div class="field">
+          <label>Author Name</label>
+          <input type="text" placeholder="Eg: B.S. Grewal" required>
+        </div>
+
+
+        <div class="field">
+          <label>Book Condition</label>
+          <select title="Select book condition" required>
+            <option value="">Select Condition</option>
+            <option>New</option>
+            <option>Like New</option>
+            <option>Good</option>
+            <option>Fair</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Edition</label>
+          <input type="text" placeholder="Eg: 3rd Edition">
+        </div>
+
+        <div class="field">
+          <label>Language</label>
+          <select title="Select language" required>
+            <option value="">Select Language</option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Gujarati</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>MRP (₹)</label>
+          <input type="number" placeholder="Eg: 499" required>
+        </div>
+
+        <div class="field">
+          <label>Selling Price (₹)</label>
+          <input type="number" placeholder="Eg: 250" required>
+        </div>
+
+        <div class="field">
+          <label>Quantity</label>
+          <input type="number" placeholder="Eg: 1" required>
+        </div>
+
+        <div class="field">
+          <label>Pickup / Delivery</label>
+          <select title="Select pickup or delivery option" required>
+            <option value="">Select Option</option>
+            <option>Pickup Only</option>
+            <option>Delivery Only</option>
+            <option>Both Available</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Seller Name</label>
+          <input type="text" placeholder="Eg: Bhagyesh Shah" required>
+        </div>
+
+        <div class="field">
+          <label>Seller Contact</label>
+          <input type="tel" placeholder="Eg: 9876543210" pattern="[0-9]{10}" required>
+        </div>
+
+        <div class="field">
+          <label>City / Location</label>
+          <input type="text" placeholder="Eg: Ahmedabad" required>
+        </div>
+
+        <div class="field">
+          <label>Payment Mode</label>
+          <select title="Select payment mode" required>
+            <option value="">Select Payment Option</option>
+            <option>Cash</option>
+            <option>UPI</option>
+            <option>Cash + UPI</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <label>Description</label>
+          <textarea rows="4" placeholder="Write details like notes, highlights, any damage, etc." required></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="book-images">Upload Book Images</label>
+          <input id="book-images" type="file" accept="image/*" multiple required>
+        </div>
+
+        <div class="field full">
+          <label for="book-video">Upload Book Video (Optional)</label>
+          <input id="book-video" type="file" accept="video/*">
+        </div>
+
+        <div class="check-area full">
+          <label class="check">
+            <input type="checkbox" required>
+            <span>I confirm that the details are correct and book belongs to me.</span>
+          </label>
+        </div>
+
+        <button class="submit-btn" type="submit"> Submit Book Listing</button>
+
+        <a href="home.html" class="back-btn">⬅ Back to Home</a>
+
+      </form>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+
+      <div class="footer-box">
+        <h3>BookSwap Hub</h3>
+        <p>A trusted hub where books find new owners and readers find great deals.</p>
+      </div>
+
+      <div class="footer-box">
+        <h3>Quick Links</h3>
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a href="sell.html">Sell Book</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="footer-box">
+        <h3>Contact</h3>
+        <p>📞 +91 99999 99999</p>
+        <p>📧 bookswaphub@gmail.com</p>
+        <p>📍 India</p>
+      </div>
+    </div>
+
+    <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+  </footer>
+
+</body>
+
+</html>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+  <div class="cart-panel">
+    <header class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+    </header>
+    <div id="cartItems" class="cart-items">
+      <!-- cart items -->
+    </div>
+    <footer class="cart-footer">
+      <div class="cart-total">
+        <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+        <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+      </div>
+      <div class="cart-actions">
+        <button id="clearCart" class="clear-cart">Clear</button>
+        <button id="checkoutBtn" class="checkout">Checkout</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="cart-ui.js"></script>

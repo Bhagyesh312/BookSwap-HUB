@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Matchmaker | Find Your Next Read</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="quiz.css">
+    <link rel="stylesheet" href="home.css"> <!-- for nav/footer -->
+</head>
+
+<body>
+
+    <!-- NAV (Simplified) -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="quiz-container">
+
+        <header class="quiz-header">
+            <h1>Book Matchmaker</h1>
+            <p>Answer 5 simple questions to find your perfect book match!</p>
+        </header>
+
+        <div class="progress-wrapper">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- QUESTIONS AREA -->
+        <div id="questionContainer" class="quiz-card">
+            <h2 id="questionText">Question goes here...</h2>
+            <div class="options-grid" id="optionsContainer">
+                <!-- Options injected via JS -->
+            </div>
+        </div>
+
+        <!-- RESULT AREA (Hidden initially) -->
+        <div id="resultContainer" class="quiz-card hidden" style="display: none;">
+            <h2>🎉 We Found Your Match!</h2>
+            <p class="result-msg">Based on your mood and preferences:</p>
+
+            <div class="result-book-card">
+                <img id="resultImage" src="" alt="Book Cover">
+                <div class="book-info">
+                    <h3 id="resultTitle">Book Title</h3>
+                    <p class="author" id="resultAuthor">Author Name</p>
+                    <p class="desc" id="resultDesc">Short description explaining why this book matches.</p>
+                    <button class="action-btn" onclick="goToBook()">View Details & Buy</button>
+                    <br><br>
+                    <a href="quiz.html" style="font-size: 0.9rem; color: #888;">Retake Quiz</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+
+            <div class="footer-box">
+                <h3>BookSwap Hub</h3>
+                <p>A trusted hub where books find new owners and readers find great deals.</p>
+            </div>
+
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📞 +91 99999 99999</p>
+                <p>📧 bookswaphub@gmail.com</p>
+                <p>📍 India</p>
+            </div>
+        </div>
+
+        <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+    </footer>
+
+    <script src="quiz.js"></script>
+</body>
+
+</html>

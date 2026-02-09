@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us | BookSwap Hub</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="about-contact.css">
+  <link rel="stylesheet" href="cart.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+
+      <div class="nav-links">
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a href="sell.html">Sell Book</a>
+        <a class="active" href="#">About us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="nav-auth">
+        <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+        <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
+            class="cart-label">CART</span><span id="cartCount" class="cart-count" aria-live="polite">0</span></button>
+      </div>
+
+    </div>
+  </nav>
+
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <h1>About BookSwap Hub </h1>
+    <p>Making education affordable through smart book sharing.</p>
+  </section>
+
+
+  <!-- ABOUT SECTION -->
+  <section class="about-section">
+
+    <!-- Mission -->
+    <div class="about-row">
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80"
+          alt="Our Mission">
+      </div>
+
+      <div class="about-card">
+        <h2>🎯 Our Mission</h2>
+        <p>
+          BookSwap Hub aims to help people buy, sell, and exchange books at affordable prices.
+          We believe knowledge should be accessible to everyone without high costs.
+        </p>
+      </div>
+    </div>
+
+
+    <!-- Offer -->
+    <div class="about-row reverse">
+
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=900&q=80"
+          alt="What We Offer">
+      </div>
+
+      <div class="about-card">
+        <h2>🚀 What We Offer</h2>
+        <ul>
+          <li>Buy new & used books at low prices</li>
+          <li>Sell your old semester books easily</li>
+          <li>Exchange notes with classmates</li>
+          <li>Verified & trusted listings</li>
+          <li>People friendly interface</li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- Community -->
+    <div class="about-row">
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=900&q=80"
+          alt="Our Community">
+      </div>
+
+      <div class="about-card">
+        <h2>👨‍🎓 Our Community</h2>
+        <p>
+          Thousands of people use BookSwap Hub to reduce costs and share knowledge.
+          Together we create a smarter, greener, and affordable learning ecosystem.
+        </p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+
+      <div class="footer-box">
+        <h3>BookSwap Hub</h3>
+        <p>A trusted hub where books find new owners and readers find great deals.</p>
+      </div>
+
+      <div class="footer-box">
+        <h3>Quick Links</h3>
+        <a href="home.html">Home</a>
+        <a href="buy.html">Buy Book</a>
+        <a href="sell.html">Sell Book</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+      </div>
+
+      <div class="footer-box">
+        <h3>Contact</h3>
+        <p>📞 +91 99999 99999</p>
+        <p>📧 bookswaphub@gmail.com</p>
+        <p>📍 India</p>
+      </div>
+    </div>
+
+    <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+  </footer>
+
+</body>
+
+</html>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+  <div class="cart-panel">
+    <header class="cart-header">
+      <h3>Your Cart</h3>
+      <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+    </header>
+    <div id="cartItems" class="cart-items">
+      <!-- cart items -->
+    </div>
+    <footer class="cart-footer">
+      <div class="cart-total">
+        <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+        <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+      </div>
+      <div class="cart-actions">
+        <button id="clearCart" class="clear-cart">Clear</button>
+        <button id="checkoutBtn" class="checkout">Checkout</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script src="cart-ui.js"></script>
