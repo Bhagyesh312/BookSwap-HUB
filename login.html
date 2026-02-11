@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,8 +9,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="login.css" />
 </head>
+
 <body>
 
+  <!-- ================= AUTH PAGE CONTENT ================= -->
   <div class="page">
     <div class="right-form">
 
@@ -20,11 +23,11 @@
         </button>
       </div>
 
-      <!--  FLIP CARD -->
+      <!-- ================= FLIP CARD (Login/Register) ================= -->
       <div class="card" id="flipCard">
         <div class="card-inner">
 
-          <!--  LOGIN SIDE -->
+          <!-- FRONT SIDE: LOGIN -->
           <div class="card-face front">
             <h2>Welcome Back </h2>
             <p>Login to continue your book journey.</p>
@@ -51,11 +54,12 @@
 
               <button class="btn" type="submit">Login</button>
 
-              <p class="toggle-text">Don't have an account? <a href="#" class="toggle-link" onclick="document.getElementById('flipCard').classList.add('flipped'); return false;">Register</a></p>
+              <p class="toggle-text">Don't have an account? <a href="#" class="toggle-link"
+                  onclick="document.getElementById('flipCard').classList.add('flipped'); return false;">Register</a></p>
             </form>
           </div>
 
-          <!--  REGISTER SIDE -->
+          <!-- BACK SIDE: REGISTER -->
           <div class="card-face back">
             <h2>Create Account </h2>
             <p>Join BookSwap Hub in few seconds.</p>
@@ -83,7 +87,8 @@
 
               <button class="btn" type="submit">Register</button>
 
-              <p class="toggle-text">Already have an account? <a href="#" class="toggle-link" onclick="document.getElementById('flipCard').classList.remove('flipped'); return false;">Login</a></p>
+              <p class="toggle-text">Already have an account? <a href="#" class="toggle-link"
+                  onclick="document.getElementById('flipCard').classList.remove('flipped'); return false;">Login</a></p>
             </form>
           </div>
 
@@ -93,7 +98,7 @@
     </div>
   </div>
 
-  <!--  SCRIPT -->
+  <!-- ================= AUTH LOGIC (Flip Card) ================= -->
   <script>
     const flipCard = document.getElementById("flipCard");
     const toggleAuth = document.getElementById("toggleAuth");
@@ -102,6 +107,7 @@
       flipCard.classList.toggle("flipped");
     });
 
+    // Check URL hash to auto-show register side if needed
     window.addEventListener("load", () => {
       if (window.location.hash === "#register") {
         flipCard.classList.add("flipped");
@@ -112,4 +118,5 @@
   </script>
 
 </body>
+
 </html>

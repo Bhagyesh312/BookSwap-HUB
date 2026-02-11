@@ -1,4 +1,4 @@
-/* quiz.css - Styles for Book Matchmaker */
+/* ================= RESET & CORE STYLES ================= */
 @import url('home.css');
 /* Inherit main styles */
 
@@ -25,6 +25,7 @@ body {
 }
 
 /* Quiz Container */
+/* ================= QUIZ CONTAINER ================= */
 .quiz-container {
     flex: 1;
     max-width: 800px;
@@ -33,7 +34,7 @@ body {
     text-align: center;
 }
 
-/* Progress Bar */
+/* ================= PROGRESS BAR ================= */
 .progress-wrapper {
     background: var(--accent);
     height: 8px;
@@ -53,7 +54,7 @@ body {
     transition: width 0.4s ease;
 }
 
-/* Question Card */
+/* ================= QUESTION CARD ================= */
 .quiz-card {
     background: var(--quiz-card);
     padding: 40px;
@@ -62,13 +63,17 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
+.quiz-card.hidden {
+    display: none;
+}
+
 .quiz-card h2 {
     font-size: 1.8rem;
     color: var(--text);
     margin-bottom: 30px;
 }
 
-/* Options Grid */
+/* ================= OPTIONS GRID ================= */
 .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -99,7 +104,7 @@ body {
     border-color: var(--primary);
 }
 
-/* Result Section */
+/* ================= RESULT SECTION ================= */
 .result-section {
     display: flex;
     flex-direction: column;
@@ -144,10 +149,18 @@ body {
 }
 
 .book-info .desc {
-    font-size: 0.9rem;
-    color: #777;
     margin-bottom: 15px;
     line-height: 1.4;
+}
+
+.retake-link {
+    font-size: 0.9rem;
+    color: #888;
+    text-decoration: none;
+}
+
+.retake-link:hover {
+    color: var(--primary);
 }
 
 .action-btn {
@@ -191,7 +204,7 @@ body {
     }
 }
 
-/* Responsive */
+/* ================= RESPONSIVE QUERIES ================= */
 @media (max-width: 600px) {
     .result-book-card {
         flex-direction: column;

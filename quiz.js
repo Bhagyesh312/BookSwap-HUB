@@ -1,6 +1,7 @@
 // quiz.js - Logic for Book Matchmaker
 
-// Full Book Database (Synced with buy.html) - Added 'year' for Era logic
+// --- Book Database ---
+// Synced with buy.html - Includes 'year' for era-based recommendation logic
 const allBooks = [
     { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', category: 'Fiction', type: 'new', pages: 218, price: 569, year: 1925, image: 'https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg', desc: "A tragic tale of Jay Gatsby's obsession with Daisy Buchanan, exploring wealth, illusion, and the American Dream." },
     { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', category: 'Fiction', type: 'new', pages: 281, price: 599, year: 1960, image: 'https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg', desc: "Scout Finch recounts her childhood in the racially divided American South as her father defends a Black man falsely accused of a crime." },
@@ -40,6 +41,10 @@ const allBooks = [
     { id: 35, title: 'Zero to One', author: 'Peter Thiel', category: 'Non-Fiction', type: 'old', pages: 368, price: 289, year: 2014, image: 'https://covers.openlibrary.org/b/isbn/9780804139298-L.jpg', desc: "Notes on startups, or how to build the future." }
 ];
 
+/**
+ * Quiz Questions Configuration
+ * Defines options and the preference keys they map to in userPreferences
+ */
 const questions = [
     {
         id: 1,
@@ -88,15 +93,20 @@ const questions = [
     }
 ];
 
-let currentStep = 0;
-let userPreferences = { category: '', type: '', budget: '', era: '', length: '' };
+// --- Quiz State ---
+let currentStep = 0; // Current question index
+let userPreferences = { category: '', type: '', budget: '', era: '', length: '' }; // Collected user choices
 
+// --- DOM Elements ---
 const questionEl = document.getElementById('questionText');
 const optionsEl = document.getElementById('optionsContainer');
 const progressBar = document.getElementById('progressBar');
 const questionContainer = document.getElementById('questionContainer');
 const resultContainer = document.getElementById('resultContainer');
 
+/**
+ * Loads and renders the current question and its options
+ */
 function loadQuestion() {
     const q = questions[currentStep];
     questionEl.textContent = q.text;
@@ -132,12 +142,12 @@ function handleAnswer(choice) {
     }
 }
 
+/**
+ * Core Algorithm: Matching Logic (Progressive Filtering)
+ * Filters the book database based on user preferences.
+ * Uses a fallback mechanism to ensure a result is always found.
+ */
 function showResult() {
-    progressBar.style.width = '100%';
-    questionContainer.style.display = 'none';
-    resultContainer.style.display = 'block';
-
-    // MATCHING LOGIC (Progressive Filtering)
 
     // 1. Category (Strict)
     let matches = allBooks.filter(b => b.category === userPreferences.category);

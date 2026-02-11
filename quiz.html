@@ -12,7 +12,7 @@
 
 <body>
 
-    <!-- NAV (Simplified) -->
+    <!-- ================= NAVIGATION BAR ================= -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-links">
@@ -23,6 +23,7 @@
         </div>
     </nav>
 
+    <!-- ================= QUIZ CONTAINER ================= -->
     <div class="quiz-container">
 
         <header class="quiz-header">
@@ -34,7 +35,7 @@
             <div class="progress-bar" id="progressBar"></div>
         </div>
 
-        <!-- QUESTIONS AREA -->
+        <!-- ================= QUESTIONS SECTION ================= -->
         <div id="questionContainer" class="quiz-card">
             <h2 id="questionText">Question goes here...</h2>
             <div class="options-grid" id="optionsContainer">
@@ -42,8 +43,8 @@
             </div>
         </div>
 
-        <!-- RESULT AREA (Hidden initially) -->
-        <div id="resultContainer" class="quiz-card hidden" style="display: none;">
+        <!-- ================= RESULT SECTION ================= -->
+        <div id="resultContainer" class="quiz-card hidden">
             <h2>🎉 We Found Your Match!</h2>
             <p class="result-msg">Based on your mood and preferences:</p>
 
@@ -55,13 +56,14 @@
                     <p class="desc" id="resultDesc">Short description explaining why this book matches.</p>
                     <button class="action-btn" onclick="goToBook()">View Details & Buy</button>
                     <br><br>
-                    <a href="quiz.html" style="font-size: 0.9rem; color: #888;">Retake Quiz</a>
+                    <a href="quiz.html" class="retake-link">Retake Quiz</a>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- ================= FOOTER SECTION ================= -->
     <footer class="footer">
         <div class="footer-container">
 
