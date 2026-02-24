@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="home.css">
   <link rel="stylesheet" href="about-contact.css">
   <link rel="stylesheet" href="cart.css">
+  <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -38,7 +39,7 @@
 
 
   <!-- HERO -->
-  <section class="page-hero">
+  <section class="page-hero" data-animate="fade-down">
     <h1>Contact Us </h1>
     <p>We’re here to help you anytime</p>
   </section>
@@ -48,7 +49,7 @@
   <section class="contact-section">
 
     <!-- FORM CARD -->
-    <div class="contact-card">
+    <div class="contact-card" data-animate="fade-left">
 
       <h2>Send us a Message </h2>
 
@@ -81,7 +82,7 @@
 
 
     <!-- INFO CARD -->
-    <div class="contact-info">
+    <div class="contact-info" data-animate="fade-right" data-delay="200">
 
       <h2>📍 Reach Us</h2>
 
@@ -157,3 +158,4 @@
 </div>
 
 <script src="cart-ui.js"></script>
+<script src="animations.js"></script>

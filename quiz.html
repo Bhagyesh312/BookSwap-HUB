@@ -7,7 +7,8 @@
     <title>Book Matchmaker | Find Your Next Read</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="quiz.css">
-    <link rel="stylesheet" href="home.css"> <!-- for nav/footer -->
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -26,7 +27,7 @@
     <!-- ================= QUIZ CONTAINER ================= -->
     <div class="quiz-container">
 
-        <header class="quiz-header">
+        <header class="quiz-header" data-animate="fade-down">
             <h1>Book Matchmaker</h1>
             <p>Answer 5 simple questions to find your perfect book match!</p>
         </header>
@@ -36,7 +37,7 @@
         </div>
 
         <!-- ================= QUESTIONS SECTION ================= -->
-        <div id="questionContainer" class="quiz-card">
+        <div id="questionContainer" class="quiz-card" data-animate="fade-up">
             <h2 id="questionText">Question goes here...</h2>
             <div class="options-grid" id="optionsContainer">
                 <!-- Options injected via JS -->
@@ -93,6 +94,7 @@
     </footer>
 
     <script src="quiz.js"></script>
+    <script src="animations.js"></script>
 </body>
 
 </html>

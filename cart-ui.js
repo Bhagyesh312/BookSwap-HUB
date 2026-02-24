@@ -4,33 +4,49 @@
  * Handles cart persistence, rendering, and basic modal operations.
  */
 (function () {
+  const API_BASE = 'http://localhost:5000';
+
   // --- Utility Helpers ---
   const el = id => document.getElementById(id);
 
-  /**
-   * Retrieves cart array from LocalStorage
-   * @returns {Array} List of cart items
-   */
-  const getCart = () => {
+  const normalizeCartItems = items => (items || []).map(item => ({
+    id: Number(item.id ?? item.bookId),
+    qty: Number(item.qty ?? item.quantity ?? 1),
+    title: item.title || 'Untitled',
+    price: Number(item.price || 0),
+    original: Number(item.original ?? item.price ?? 0),
+    image: item.image || ''
+  }));
+
+  const getCartFromApi = async () => {
+    const res = await fetch(`${API_BASE}/api/cart`);
+    if (!res.ok) throw new Error('Failed to fetch cart');
+    const data = await res.json();
+    return normalizeCartItems(data.items);
+  };
+
+  const getCartFromStorage = () => {
     try {
-      return JSON.parse(localStorage.getItem('cart') || '[]');
+      return normalizeCartItems(JSON.parse(localStorage.getItem('cart') || '[]'));
     } catch (e) {
-      console.error("Cart retrieval failed:", e);
+      console.error('Cart retrieval failed:', e);
       return [];
     }
   };
 
-  /**
-   * Saves cart array to LocalStorage
-   * @param {Array} c - Cart items
-   */
-  const saveCart = c => localStorage.setItem('cart', JSON.stringify(c));
+  const getCart = async () => {
+    try {
+      return await getCartFromApi();
+    } catch (_e) {
+      return getCartFromStorage();
+    }
+  };
 
   /**
    * Updates the cart bubble count displayed in the navbar
    */
-  const updateCount = () => {
-    const c = getCart();
+  const updateCount = async () => {
+    const c = await getCart();
     const count = c.reduce((s, i) => s + i.qty, 0);
     const cc = el('cartCount');
     if (cc) cc.textContent = count;
@@ -46,8 +62,8 @@
   /**
    * Renders items into the cart modal and calculates totals
    */
-  const renderCart = () => {
-    const cart = getCart();
+  const renderCart = async () => {
+    const cart = await getCart();
     const itemsEl = el('cartItems');
     const totalEl = el('cartTotal');
     const savedEl = el('cartSavedAmount');
@@ -93,11 +109,11 @@
   /**
    * Opens the cart modal and triggers a re-render
    */
-  const openCart = () => {
+  const openCart = async () => {
     const modal = el('cartModal');
     if (modal) {
       modal.classList.remove('hidden');
-      renderCart();
+      await renderCart();
     }
   };
 
@@ -113,20 +129,30 @@
    * Removes a specific item from the cart
    * @param {number|string} id - Book ID
    */
-  const removeFromCart = id => {
-    const c = getCart().filter(x => x.id !== Number(id));
-    saveCart(c);
-    updateCount();
-    renderCart();
+  const removeFromCart = async id => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('API remove failed');
+    } catch (_e) {
+      const c = getCartFromStorage().filter(x => x.id !== Number(id));
+      localStorage.setItem('cart', JSON.stringify(c));
+    }
+    await updateCount();
+    await renderCart();
   };
 
   /**
    * Clears all items from the cart
    */
-  const clearCart = () => {
-    localStorage.removeItem('cart');
-    updateCount();
-    renderCart();
+  const clearCart = async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cart`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('API clear failed');
+    } catch (_e) {
+      localStorage.removeItem('cart');
+    }
+    await updateCount();
+    await renderCart();
   };
 
   // --- Initialization ---
@@ -147,18 +173,18 @@
     if (clearBtn) clearBtn.addEventListener('click', clearCart);
 
     if (checkout) {
-      checkout.addEventListener('click', () => {
-        const c = getCart();
+      checkout.addEventListener('click', async () => {
+        const c = await getCart();
         if (!c.length) return alert('Cart is empty');
         alert('Proceeding to checkout — items: ' + c.length);
       });
     }
 
     if (itemsEl) {
-      itemsEl.addEventListener('click', e => {
+      itemsEl.addEventListener('click', async e => {
         const rem = e.target.closest('button.remove-item');
         if (!rem) return;
-        removeFromCart(rem.dataset.id);
+        await removeFromCart(rem.dataset.id);
       });
     }
 

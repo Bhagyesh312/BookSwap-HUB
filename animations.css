@@ -1,0 +1,741 @@
+/* =====================================================
+   BOOKSWAP HUB — SHARED SCROLL ANIMATIONS
+   Attach to every page via <link> in <head>
+   ===================================================== */
+
+/* ── Scroll-reveal base states ───────────────────────── */
+[data-animate] {
+    opacity: 0;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-property: opacity, transform, filter;
+    will-change: opacity, transform;
+}
+
+/* fade-up  (default) */
+[data-animate="fade-up"] {
+    transform: translateY(40px);
+    transition-duration: 0.75s;
+}
+
+/* fade-down */
+[data-animate="fade-down"] {
+    transform: translateY(-40px);
+    transition-duration: 0.75s;
+}
+
+/* fade-left */
+[data-animate="fade-left"] {
+    transform: translateX(-50px);
+    transition-duration: 0.75s;
+}
+
+/* fade-right */
+[data-animate="fade-right"] {
+    transform: translateX(50px);
+    transition-duration: 0.75s;
+}
+
+/* zoom-in */
+[data-animate="zoom-in"] {
+    transform: scale(0.85);
+    transition-duration: 0.7s;
+}
+
+/* flip-up (subtle 3-D card reveal) */
+[data-animate="flip-up"] {
+    transform: perspective(600px) rotateX(18deg) translateY(30px);
+    transition-duration: 0.8s;
+}
+
+/* When the element is visible */
+[data-animate].animated {
+    opacity: 1;
+    transform: none;
+    filter: none;
+}
+
+/* ── Stagger delays for sibling groups ──────────────── */
+[data-delay="100"] {
+    transition-delay: 0.10s;
+}
+
+[data-delay="150"] {
+    transition-delay: 0.15s;
+}
+
+[data-delay="200"] {
+    transition-delay: 0.20s;
+}
+
+[data-delay="300"] {
+    transition-delay: 0.30s;
+}
+
+[data-delay="400"] {
+    transition-delay: 0.40s;
+}
+
+[data-delay="500"] {
+    transition-delay: 0.50s;
+}
+
+[data-delay="600"] {
+    transition-delay: 0.60s;
+}
+
+[data-delay="700"] {
+    transition-delay: 0.70s;
+}
+
+/* ── Smooth scroll for the whole page ───────────────── */
+html {
+    scroll-behavior: smooth;
+}
+
+/* ── Page entrance fade ─────────────────────────────── */
+body {
+    animation: pageEnter 0.5s ease both;
+}
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* ── Floating corner images (home hero) ─────────────── */
+@keyframes floatCorner {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(-2deg);
+    }
+
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.corner-img {
+    animation: floatCorner 4s ease-in-out infinite;
+}
+
+.corner-img.no-float {
+    animation: none;
+}
+
+/* ── Hero text gradient shimmer ─────────────────────── */
+@keyframes textShimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* ── Pulse glow for primary CTA buttons ─────────────── */
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 10px 45px rgba(212, 165, 116, 0.65);
+    }
+}
+
+.btn.primary,
+.nav-login,
+.nav-register,
+.submit-btn,
+.action-btn,
+.details-add-btn,
+.checkout {
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+/* ── Navbar entrance ────────────────────────────────── */
+.navbar {
+    animation: navSlideDown 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes navSlideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* ── Section heading underline reveal ───────────────── */
+.featured h2,
+.quiz-banner h2,
+.about-card h2,
+.contact-info h2,
+.buy-header h1,
+.page-hero h1,
+.sell-card h1 {
+    position: relative;
+    display: inline-block;
+}
+
+.featured h2::after,
+.quiz-banner h2::after,
+.about-card h2::after,
+.buy-header h1::after,
+.page-hero h1::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #d4a574, #cd7f32, #d4a574);
+    transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+}
+
+.featured h2.animated::after,
+.quiz-banner h2.animated::after,
+.about-card h2.animated::after,
+.buy-header h1.animated::after,
+.page-hero h1.animated::after {
+    width: 70%;
+}
+
+/* ── Hover glow lift for cards ──────────────────────── */
+.box,
+.book-card,
+.about-card,
+.sell-card,
+.result-book-card,
+.quiz-card {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+/* ── Animated glow pulse for quiz-banner ──────────── */
+@keyframes bannerGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 18px rgba(212, 165, 116, 0.2), 0 0 0 2px rgba(212, 165, 116, 0.2);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(212, 165, 116, 0.5), 0 0 0 2px rgba(205, 127, 50, 0.45);
+    }
+}
+
+.quiz-banner {
+    animation: bannerGlow 3s ease-in-out infinite;
+}
+
+/* ── Scroll-to-top button ───────────────────────────── */
+#scrollTopBtn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #d4a574, #cd7f32);
+    color: #3e2723;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    z-index: 999;
+    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    pointer-events: none;
+}
+
+#scrollTopBtn.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+#scrollTopBtn:hover {
+    transform: translateY(-4px) scale(1.1);
+    box-shadow: 0 14px 35px rgba(212, 165, 116, 0.6);
+}
+
+/* ── Ripple effect on buttons ───────────────────────── */
+.ripple-host {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-host .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background: rgba(255, 255, 255, 0.5);
+    animation: rippleAnim 0.55s linear;
+    pointer-events: none;
+}
+
+@keyframes rippleAnim {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ── Progress bar glow ──────────────────────────────── */
+.progress-bar {
+    background: linear-gradient(90deg, #d4a574, #cd7f32, #d4a574) !important;
+    background-size: 200% 100% !important;
+    animation: shimmerBar 2s linear infinite !important;
+}
+
+@keyframes shimmerBar {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* ── Staggered book-card grid animation ─────────────── */
+.book-card:nth-child(1) {
+    transition-delay: 0.05s;
+}
+
+.book-card:nth-child(2) {
+    transition-delay: 0.10s;
+}
+
+.book-card:nth-child(3) {
+    transition-delay: 0.15s;
+}
+
+.book-card:nth-child(4) {
+    transition-delay: 0.20s;
+}
+
+.book-card:nth-child(5) {
+    transition-delay: 0.25s;
+}
+
+.book-card:nth-child(6) {
+    transition-delay: 0.30s;
+}
+
+.book-card:nth-child(7) {
+    transition-delay: 0.35s;
+}
+
+.book-card:nth-child(8) {
+    transition-delay: 0.40s;
+}
+
+/* ── Input focus sparkle ────────────────────────────── */
+input:focus,
+textarea:focus,
+select:focus {
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* ── Particle background for login page ─────────────── */
+@keyframes particleDrift {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: translateY(-20px) translateX(10px) scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.5;
+    }
+}
+
+/* ── Footer link hover slide ─────────────────────────── */
+.footer-box a {
+    transition: padding-left 0.3s ease, color 0.3s ease !important;
+}
+
+/* ── Image parallax tilt on hover (book cards) ──────── */
+.card-image {
+    overflow: hidden;
+}
+
+.card-image img {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+.book-card:hover .card-image img {
+    transform: scale(1.08) !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   SELL PAGE  —  Slot-drop stagger entrance
+   ═══════════════════════════════════════════════════════ */
+
+/* Card slides up from below with a blur wipe */
+@keyframes sellCardIn {
+    0% {
+        opacity: 0;
+        transform: translateY(60px) scale(0.96);
+        filter: blur(6px);
+    }
+
+    60% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    80% {
+        transform: translateY(-6px) scale(1.01);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+    }
+}
+
+.sell-card-entrance {
+    animation: sellCardIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Every field drops in one-by-one like slot-machine reels */
+@keyframes fieldDrop {
+    0% {
+        opacity: 0;
+        transform: translateY(-28px) scaleY(0.6);
+    }
+
+    60% {
+        opacity: 1;
+        transform: translateY(4px) scaleY(1.03);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scaleY(1);
+    }
+}
+
+.sell-form .field {
+    opacity: 0;
+    animation: fieldDrop 0.45s cubic-bezier(0.34, 1.1, 0.64, 1) forwards;
+    transform-origin: top center;
+}
+
+/* Stagger each field by 60 ms */
+.sell-form .field:nth-child(1) {
+    animation-delay: 0.55s;
+}
+
+.sell-form .field:nth-child(2) {
+    animation-delay: 0.62s;
+}
+
+.sell-form .field:nth-child(3) {
+    animation-delay: 0.69s;
+}
+
+.sell-form .field:nth-child(4) {
+    animation-delay: 0.76s;
+}
+
+.sell-form .field:nth-child(5) {
+    animation-delay: 0.83s;
+}
+
+.sell-form .field:nth-child(6) {
+    animation-delay: 0.90s;
+}
+
+.sell-form .field:nth-child(7) {
+    animation-delay: 0.97s;
+}
+
+.sell-form .field:nth-child(8) {
+    animation-delay: 1.04s;
+}
+
+.sell-form .field:nth-child(9) {
+    animation-delay: 1.11s;
+}
+
+.sell-form .field:nth-child(10) {
+    animation-delay: 1.18s;
+}
+
+.sell-form .field:nth-child(11) {
+    animation-delay: 1.25s;
+}
+
+.sell-form .field:nth-child(12) {
+    animation-delay: 1.32s;
+}
+
+.sell-form .field:nth-child(13) {
+    animation-delay: 1.39s;
+}
+
+.sell-form .check-area {
+    animation-delay: 1.46s;
+}
+
+.sell-form .submit-btn,
+.sell-form .back-btn {
+    animation-delay: 1.53s;
+}
+
+/* also animate the check-area & buttons */
+.sell-form .check-area,
+.sell-form .submit-btn,
+.sell-form .back-btn {
+    opacity: 0;
+    animation: fieldDrop 0.45s cubic-bezier(0.34, 1.1, 0.64, 1) forwards;
+    transform-origin: top center;
+}
+
+/* Gold left-border accent pulse on focused field */
+.sell-form .field:focus-within {
+    position: relative;
+}
+
+.sell-form .field:focus-within::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #d4a574, #cd7f32);
+    animation: accentPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes accentPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scaleY(0.7);
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   ABOUT PAGE  —  Cinematic split reveal
+   ═══════════════════════════════════════════════════════ */
+
+/* Hero: text characters fall in from above with a typewriter-like cascade */
+@keyframes heroTitleIn {
+    0% {
+        opacity: 0;
+        transform: scale(1.18) translateY(-20px);
+        letter-spacing: 8px;
+        filter: blur(4px);
+    }
+
+    70% {
+        opacity: 1;
+        filter: blur(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        letter-spacing: inherit;
+    }
+}
+
+@keyframes heroPIn {
+    0% {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.about-hero-reveal h1 {
+    animation: heroTitleIn 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.about-hero-reveal p {
+    animation: heroPIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+
+/* Image: blur-to-clear scale-in from the side */
+@keyframes imgRevealFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-60px) scale(0.9);
+        filter: blur(10px) grayscale(60%);
+    }
+
+    70% {
+        filter: blur(0) grayscale(0%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        filter: blur(0) grayscale(0%);
+    }
+}
+
+@keyframes imgRevealFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(60px) scale(0.9);
+        filter: blur(10px) grayscale(60%);
+    }
+
+    70% {
+        filter: blur(0) grayscale(0%);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        filter: blur(0) grayscale(0%);
+    }
+}
+
+/* Card: 3-D book-opening flip + slide */
+@keyframes cardBookOpen {
+    0% {
+        opacity: 0;
+        transform: perspective(900px) rotateY(-55deg) translateX(40px);
+    }
+
+    60% {
+        opacity: 1;
+        transform: perspective(900px) rotateY(4deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: perspective(900px) rotateY(0deg) translateX(0);
+    }
+}
+
+@keyframes cardBookOpenRight {
+    0% {
+        opacity: 0;
+        transform: perspective(900px) rotateY(55deg) translateX(-40px);
+    }
+
+    60% {
+        opacity: 1;
+        transform: perspective(900px) rotateY(-4deg);
+    }
+
+    100% {
+        opacity: 1;
+        transform: perspective(900px) rotateY(0deg) translateX(0);
+    }
+}
+
+/* Base hidden states (instant — before IntersectionObserver fires) */
+.about-img-reveal img {
+    opacity: 0;
+    will-change: transform, opacity, filter;
+}
+
+.about-card-reveal {
+    opacity: 0;
+    will-change: transform, opacity;
+}
+
+/* Applied by JS Observer */
+.about-reveal-left.in-view .about-img-reveal img {
+    animation: imgRevealFromLeft 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.about-reveal-right.in-view .about-img-reveal img {
+    animation: imgRevealFromRight 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.about-reveal-left.in-view .about-card-reveal {
+    animation: cardBookOpen 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+.about-reveal-right.in-view .about-card-reveal {
+    animation: cardBookOpenRight 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both;
+}
+
+/* Once in-view, make them fully visible (end state safety) */
+.about-reveal-left.in-view .about-img-reveal img,
+.about-reveal-right.in-view .about-img-reveal img,
+.in-view .about-card-reveal {
+    opacity: 1;
+}
+
+/* Hover shimmer on about-card */
+.about-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.about-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -70%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(105deg,
+            transparent 40%,
+            rgba(212, 165, 116, 0.15) 50%,
+            transparent 60%);
+    transform: skewX(-15deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.about-card:hover::after {
+    left: 130%;
+}
+
+/* Image shine sweep on hover */
+.about-img img {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+}
+
+.about-img:hover img {
+    transform: scale(1.04);
+    box-shadow: 0 24px 55px rgba(139, 69, 19, 0.3);
+}

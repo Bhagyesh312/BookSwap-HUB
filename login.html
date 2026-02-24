@@ -8,6 +8,7 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="login.css" />
+  <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -24,7 +25,7 @@
       </div>
 
       <!-- ================= FLIP CARD (Login/Register) ================= -->
-      <div class="card" id="flipCard">
+      <div class="card" id="flipCard" data-animate="zoom-in">
         <div class="card-inner">
 
           <!-- FRONT SIDE: LOGIN -->
@@ -107,7 +108,6 @@
       flipCard.classList.toggle("flipped");
     });
 
-    // Check URL hash to auto-show register side if needed
     window.addEventListener("load", () => {
       if (window.location.hash === "#register") {
         flipCard.classList.add("flipped");
@@ -117,6 +117,7 @@
     });
   </script>
 
+  <script src="animations.js"></script>
 </body>
 
 </html>

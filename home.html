@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="animations.css">
 </head>
 
 <body>
@@ -17,7 +18,7 @@
     <header class="header">
 
         <!-- LEFT CORNER IMAGE -->
-        <img src="media/Saraswatiji.png" alt="Left Image" class="corner-img left-corner">
+        <img src="media/Saraswatiji.png" alt="Left Image" class="corner-img left-corner no-float">
 
         <div class="title-text">
             <h1>BookSwap Hub</h1>
@@ -26,7 +27,7 @@
         </div>
 
         <!-- RIGHT CORNER IMAGE -->
-        <img src="media/Laxmiji.png" alt="Right Image" class="corner-img right-corner">
+        <img src="media/Laxmiji.png" alt="Right Image" class="corner-img right-corner no-float">
 
     </header>
 
@@ -57,7 +58,7 @@
 
     <!-- ================= HERO SECTION ================= -->
     <section class="hero">
-        <div class="hero-text">
+        <div class="hero-text" data-animate="fade-left">
             <h2>Where Books Find New Owners </h2>
             <p>Buy affordable books, sell your extras, and exchange easily with BookSwap Hub.</p>
 
@@ -69,7 +70,7 @@
             <p class="trust-text"> Trusted by people for affordable learning!</p>
         </div>
 
-        <div class="hero-image">
+        <div class="hero-image" data-animate="fade-right" data-delay="200">
             <video autoplay muted loop playsinline>
                 <source src="media/mixkit-library-shelf-full-of-books-50729-full-hd.mp4" type="video/mp4">
             </video>
@@ -79,21 +80,21 @@
 
     <!-- ================= FEATURES / SERVICES ================= -->
     <section class="content">
-        <div class="box">
+        <div class="box" data-animate="flip-up" data-delay="100">
             <div class="icon">📖</div>
             <h3>New Books</h3>
             <p>Get brand new books at exciting discounts.</p>
             <a href="buy.html" class="card-link">Explore →</a>
         </div>
 
-        <div class="box">
+        <div class="box" data-animate="flip-up" data-delay="300">
             <div class="icon">📗</div>
             <h3>Used Books</h3>
             <p>Quality second-hand books verified by us.</p>
             <a href="buy.html" class="card-link">Check Now →</a></a>
         </div>
 
-        <div class="box">
+        <div class="box" data-animate="flip-up" data-delay="500">
             <div class="icon">📤</div>
             <h3>Sell Books</h3>
             <p>Upload details & video to receive a fair price.</p>
@@ -102,7 +103,7 @@
     </section>
 
     <!-- ================= QUIZ BANNER ================= -->
-    <section class="quiz-banner">
+    <section class="quiz-banner" data-animate="zoom-in">
         <h2>Don't know what to read next?</h2>
         <p>Take our 1-minute quiz to find your perfect book match!</p>
         <a href="quiz.html" class="btn primary quiz-btn">🔥 Start Matchmaker</a>
@@ -110,8 +111,8 @@
 
     <!-- ================= FEATURED BOOKS ================= -->
     <section class="featured">
-        <h2>Top 4 Picks</h2>
-        <p class="featured-sub">Popular picks that people love!</p>
+        <h2 data-animate="fade-up">Top 4 Picks</h2>
+        <p class="featured-sub" data-animate="fade-up" data-delay="150">Popular picks that people love!</p>
 
         <div class="featured-grid" id="topPicksGrid">
             <!-- Top 4 picks will be loaded here -->
@@ -171,23 +172,38 @@
     </div>
 
     <script src="cart-ui.js"></script>
+    <script src="animations.js"></script>
 
     <script>
-        // Initialize Top 4 Picks data - matches catalog IDs in buy.html
-        const topBooks = [
+        const API_BASE = 'http://localhost:5000';
+
+        // Fallback Top 4 Picks data
+        const fallbackTopBooks = [
             { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', price: 569, original: 649, image: 'https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg' },
             { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', price: 599, original: 749, image: 'https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg' },
             { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', price: 479, original: 599, image: 'https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg' },
             { id: 4, title: 'The Catcher in the Rye', author: 'J.D. Salinger', price: 559, original: 699, image: 'https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg' }
         ];
 
+        async function getTopBooks() {
+            try {
+                const res = await fetch(`${API_BASE}/api/books`);
+                if (!res.ok) throw new Error('Failed to load books');
+                const data = await res.json();
+                return (data.items || []).slice(0, 4);
+            } catch (_error) {
+                return fallbackTopBooks;
+            }
+        }
+
         // Render featured books on page load
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const grid = document.getElementById('topPicksGrid');
             if (!grid) return;
 
+            const topBooks = await getTopBooks();
+
             grid.innerHTML = topBooks.map(book => {
-                const discount = Math.round(((book.original - book.price) / book.original) * 100);
                 return `
                     <div class="book-card" style="cursor: pointer;" onclick="viewBookDetails(${book.id})">
                         <img src="${book.image}" alt="${book.title}">

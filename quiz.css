@@ -176,7 +176,6 @@ body {
 
 .action-btn:hover {
     opacity: 0.9;
-    /* Opacity change is fine, or should I remove it? "change color". I'll keep opacity as it's not a color hue shift. */
 }
 
 /* Animations */

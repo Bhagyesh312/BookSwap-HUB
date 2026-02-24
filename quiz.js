@@ -203,6 +203,10 @@ function showResult() {
 
     if (!finalBook) return alert("No book found! Try again.");
 
+    // Show Result Container
+    questionContainer.classList.add('hidden');
+    resultContainer.classList.remove('hidden');
+
     // Populate UI
     document.getElementById('resultTitle').textContent = finalBook.title;
     document.getElementById('resultAuthor').textContent = finalBook.author;

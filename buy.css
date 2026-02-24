@@ -82,7 +82,6 @@ body {
 .search-bar button:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 28px rgba(212, 165, 116, 0.45);
-    /* background: #e8c4a0; removed hover color change */
 }
 
 
@@ -134,7 +133,6 @@ body {
 .toggle-btn:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(212, 165, 116, 0.2);
-    /* color/border change removed? No, just keep them same as base or minimal? User said 'color'. Base is white/brown. Hover was gold. I will revert to base colors on hover or just simple transform. */
     color: #3e2723;
     border-color: rgba(139, 69, 19, 0.25);
 }
@@ -383,7 +381,6 @@ body {
 }
 
 .cart:hover {
-    /* background: #e0bfb8; removed */
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(205, 127, 50, 0.4);
 }
@@ -396,7 +393,6 @@ body {
 
 .buy:hover {
     transform: translateY(-2px);
-    /* background: #e8c4a0; removed */
     box-shadow: 0 8px 20px rgba(212, 165, 116, 0.4);
 }
 
@@ -420,7 +416,6 @@ body {
 .view-details:hover {
     transform: translateY(-2px) scale(1.1);
     box-shadow: 0 8px 22px rgba(212, 165, 116, 0.45);
-    /* background: #e8c4a0; removed */
 }
 
 .view-details:active {
@@ -569,9 +564,6 @@ body {
         height: 150px;
     }
 }
-
-
-/* Cart styles moved to cart.css - single source for cart UI across site */
 
 /* ================= BOOK DETAILS MODAL ================= */
 .details-modal {
