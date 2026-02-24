@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | BookSwap Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="checkout.css">
+    <link rel="stylesheet" href="animations.css">
+</head>
+
+<body>
+
+    <!-- NOTIFICATION -->
+    <div id="notification" class="notification"></div>
+
+    <!-- ================= NAVBAR ================= -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About us</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="nav-auth">
+                <span id="userGreeting" class="user-greeting">Welcome!</span>
+                
+                <!-- Login Button (shown when not logged in) -->
+                <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
+                
+                <!-- User Profile (shown when logged in) -->
+                <div id="userProfile" class="user-profile hidden">
+                    <button id="profileToggle" class="profile-btn" aria-label="User menu">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name"></span>
+                    </button>
+                    <div id="profileMenu" class="profile-menu hidden">
+                        <a href="profile.html" class="profile-menu-item">Profile Settings</a>
+                        <a href="orders.html" class="profile-menu-item">My Orders</a>
+                        <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ================= HEADER ================= -->
+    <header class="checkout-header" data-animate="fade-down">
+        <h1>Complete Your Order</h1>
+        <p>Secure checkout with order confirmation</p>
+    </header>
+
+    <!-- ================= CHECKOUT CONTAINER ================= -->
+    <div class="checkout-container">
+
+        <!-- LEFT COLUMN: Order Form -->
+        <div class="checkout-form-section">
+
+            <!-- SHIPPING ADDRESS -->
+            <div class="form-card" data-animate="fade-right" data-delay="100">
+                <div class="card-header">
+                    <h2>📍 Shipping Address</h2>
+                </div>
+                <form id="shippingForm" class="form-grid">
+                    <input type="text" placeholder="Full Name" id="fullName" required>
+                    <input type="email" placeholder="Email Address" id="email" required>
+                    <input type="tel" placeholder="Phone Number" id="phone" required>
+                    <textarea placeholder="Street Address" id="address" rows="2" required></textarea>
+                    <div class="form-row">
+                        <input type="text" placeholder="City" id="city" required>
+                        <input type="text" placeholder="State/Province" id="state" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" placeholder="ZIP Code" id="zip" required>
+                        <input type="text" placeholder="Country" id="country" value="India" required>
+                    </div>
+                </form>
+            </div>
+
+            <!-- PAYMENT METHOD -->
+            <div class="form-card" data-animate="fade-right" data-delay="200">
+                <div class="card-header">
+                    <h2>💳 Payment Method</h2>
+                </div>
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="cod" checked>
+                        <div class="option-content">
+                            <span class="option-title">Cash on Delivery</span>
+                            <span class="option-subtitle">Pay when you receive your order</span>
+                        </div>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="upi">
+                        <div class="option-content">
+                            <span class="option-title">📱 UPI Payment</span>
+                            <span class="option-subtitle">Fast and secure digital payment</span>
+                        </div>
+                    </label>
+                    <label class="payment-option">
+                        <input type="radio" name="paymentMethod" value="card">
+                        <div class="option-content">
+                            <span class="option-title">🏦 Credit/Debit Card</span>
+                            <span class="option-subtitle">Visa, Mastercard, American Express</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- ADDITIONAL NOTES -->
+            <div class="form-card" data-animate="fade-right" data-delay="300">
+                <div class="card-header">
+                    <h2>📝 Additional Notes (Optional)</h2>
+                </div>
+                <textarea id="notes" placeholder="Any special instructions for delivery..." rows="3" class="full-width"></textarea>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: Order Summary -->
+        <div class="order-summary-section">
+
+            <!-- ORDER SUMMARY CARD -->
+            <div class="summary-card" data-animate="fade-left" data-delay="100">
+                <div class="card-header">
+                    <h2>Order Summary</h2>
+                </div>
+
+                <!-- ITEMS LIST -->
+                <div class="summary-items">
+                    <div id="summaryItemsContainer">
+                        <p style="text-align: center; color: #999;">Loading cart...</p>
+                    </div>
+                </div>
+
+                <!-- DIVIDER -->
+                <div class="summary-divider"></div>
+
+                <!-- PRICE BREAKDOWN -->
+                <div class="summary-breakdown">
+                    <div class="breakdown-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotalPrice">₹0</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>Shipping:</span>
+                        <span id="shippingPrice" class="free">FREE</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span>You Save:</span>
+                        <span id="savingPrice" class="saving">₹0</span>
+                    </div>
+                </div>
+
+                <!-- DIVIDER -->
+                <div class="summary-divider"></div>
+
+                <!-- TOTAL -->
+                <div class="total-row">
+                    <span>Total Amount:</span>
+                    <span id="totalPrice" class="total-amount">₹0</span>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="action-buttons">
+                    <button id="placeOrderBtn" class="btn btn-primary btn-large">
+                        🛒 Place Order
+                    </button>
+                    <button onclick="window.location.href='buy.html'" class="btn btn-secondary">
+                        ← Continue Shopping
+                    </button>
+                </div>
+
+                <!-- SECURITY BADGE -->
+                <div class="security-badge">
+                    <span>Secure Checkout</span>
+                    <span>All transactions are encrypted</span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>BookSwap Hub</h3>
+                <p>A trusted hub where books find new owners and readers find great deals.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="home.html">Home</a>
+                <a href="buy.html">Buy Book</a>
+                <a href="sell.html">Sell Book</a>
+                <a href="about.html">About</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact</h3>
+                <p>📞 +91 99999 99999</p>
+                <p>📧 bookswaphub@gmail.com</p>
+                <p>📍 India</p>
+            </div>
+        </div>
+        <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
+    </footer>
+
+    <!-- ================= CHECKOUT LOGIC ================= -->
+    <script>
+        // ===== CONFIGURATION & STATE =====
+        const API_BASE = 'http://localhost:5000';
+        const notifEl = document.getElementById('notification');
+
+        /**
+         * Show temporary notification to user
+         * @param {string} message - Message to display
+         * @param {string} type - 'success', 'error', or 'info'
+         */
+        const showNotification = (message, type = 'info') => {
+            notifEl.textContent = message;
+            notifEl.className = `notification show ${type}`;
+            setTimeout(() => notifEl.classList.remove('show'), 4000);
+        };
+
+        /**
+         * Format number as Indian currency
+         * @param {number} n - Number to format
+         * @returns {string} Formatted currency string
+         */
+        const formatIN = n => (Number(n) || 0).toLocaleString('en-IN');
+
+        /**
+         * Get JWT auth header if user is logged in
+         * @returns {Object} Authorization header object or empty
+         */
+        const getAuthHeader = () => {
+            const token = localStorage.getItem('authToken');
+            return token ? { 'Authorization': `Bearer ${token}` } : {};
+        };
+
+        /**
+         * Check if user is logged in and redirect if not
+         */
+        const checkAuth = () => {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('authUser');
+            if (!token || !user) {
+                showNotification('Please log in to checkout', 'error');
+                setTimeout(() => window.location.href = 'login.html', 1500);
+                return false;
+            }
+            // Update user greeting in navbar
+            try {
+                const userData = JSON.parse(user);
+                document.getElementById('userGreeting').textContent = `Welcome, ${userData.name}!`;
+                document.getElementById('navAuthBtn').innerHTML = userData.name;
+                document.getElementById('navAuthBtn').href = 'profile.html';
+            } catch (e) { }
+            return true;
+        };
+
+        /**
+         * Fetch and display cart items in order summary
+         */
+        const loadOrderSummary = async () => {
+            try {
+                const headers = getAuthHeader();
+                const res = await fetch(`${API_BASE}/api/cart`, { headers });
+                if (!res.ok) throw new Error('Failed to load cart');
+
+                const data = await res.json();
+                const items = data.items || [];
+
+                if (!items.length) {
+                    showNotification('Your cart is empty', 'error');
+                    setTimeout(() => window.location.href = 'buy.html', 1500);
+                    return;
+                }
+
+                // Render items
+                let subtotal = 0;
+                let originalTotal = 0;
+                const itemsHTML = items.map(item => {
+                    const linePrice = item.price * item.quantity;
+                    const lineOriginal = (item.original || item.price) * item.quantity;
+                    subtotal += linePrice;
+                    originalTotal += lineOriginal;
+                    return `
+                        <div class="summary-item">
+                            <div class="item-image">
+                                <img src="${item.image || 'https://via.placeholder.com/60x80'}" alt="${item.title}">
+                            </div>
+                            <div class="item-details">
+                                <div class="item-title">${item.title}</div>
+                                <div class="item-qty">Qty: ${item.quantity}</div>
+                            </div>
+                            <div class="item-price">₹${formatIN(linePrice)}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                document.getElementById('summaryItemsContainer').innerHTML = itemsHTML;
+                document.getElementById('subtotalPrice').textContent = '₹' + formatIN(subtotal);
+                document.getElementById('totalPrice').textContent = '₹' + formatIN(subtotal);
+                document.getElementById('savingPrice').textContent = '₹' + formatIN(Math.max(0, originalTotal - subtotal));
+
+            } catch (error) {
+                console.error('Error loading cart:', error);
+                showNotification('Error loading cart', 'error');
+            }
+        };
+
+        /**
+         * Validate checkout form
+         * @returns {boolean} True if form is valid
+         */
+        const validateForm = () => {
+            const required = ['fullName', 'email', 'phone', 'address', 'city', 'state', 'zip', 'country'];
+            for (let field of required) {
+                const value = document.getElementById(field).value.trim();
+                if (!value) {
+                    showNotification(`${field} is required`, 'error');
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        /**
+         * Place order and create it in database
+         */
+        const placeOrder = async () => {
+            if (!validateForm()) return;
+
+            const btn = document.getElementById('placeOrderBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeader()
+                };
+
+                const orderData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    state: document.getElementById('state').value.trim(),
+                    zip: document.getElementById('zip').value.trim(),
+                    country: document.getElementById('country').value.trim(),
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                    notes: document.getElementById('notes').value.trim()
+                };
+
+                const res = await fetch(`${API_BASE}/api/orders`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(orderData)
+                });
+
+                if (!res.ok) {
+                    const error = await res.json();
+                    throw new Error(error.error || 'Order creation failed');
+                }
+
+                const result = await res.json();
+                showNotification('Order placed successfully!', 'success');
+                
+                // Redirect to order confirmation
+                setTimeout(() => {
+                    window.location.href = `orders.html?orderId=${result.orderId}`;
+                }, 1500);
+
+            } catch (error) {
+                console.error('Error placing order:', error);
+                showNotification(error.message || 'Failed to place order', 'error');
+                btn.disabled = false;
+                btn.textContent = '🛒 Place Order';
+            }
+        };
+
+        // ===== EVENT LISTENERS =====
+        document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Auth UI is initialized by auth-ui.js
+            document.body.classList.add('js-enhanced');
+            if (checkAuth()) {
+                await loadOrderSummary();
+            }
+        });
+
+    </script>
+
+    <script src="auth-ui.js"></script>
+    <script src="animations.js"></script>
+
+</body>
+
+</html>

@@ -31,7 +31,22 @@
             </div>
 
             <div class="nav-auth">
-                <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+                <!-- Login Button (shown when not logged in) -->
+                <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
+                
+                <!-- User Profile (shown when logged in) -->
+                <div id="userProfile" class="user-profile hidden">
+                    <button id="profileToggle" class="profile-btn" aria-label="User menu">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name"></span>
+                    </button>
+                    <div id="profileMenu" class="profile-menu hidden">
+                        <a href="profile.html" class="profile-menu-item">Profile Settings</a>
+                        <a href="orders.html" class="profile-menu-item">My Orders</a>
+                        <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+                    </div>
+                </div>
+
                 <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
                         class="cart-label">CART</span><span id="cartCount" class="cart-count"
                         aria-live="polite">0</span></button>
@@ -66,21 +81,21 @@
             <button class="toggle-btn" data-type="old">Old Books</button>
         </div>
 
+        <div class="section-subnav" aria-label="Book sections">
+            <button class="section-btn" data-section="education">Education</button>
+            <button class="section-btn" data-section="romance">Romance</button>
+            <button class="section-btn" data-section="thriller">Thriller</button>
+            <button class="section-btn" data-section="fantasy">Fantasy</button>
+            <button class="section-btn" data-section="science-fiction">Science Fiction</button>
+            <button class="section-btn" data-section="self-help">Self Help</button>
+            <button class="section-btn" data-section="business">Business</button>
+            <button class="section-btn" data-section="classics">Classics</button>
+        </div>
+
         <!-- ===== FILTER SIDEBAR ===== -->
         <aside class="filters">
 
             <h3> Filters</h3>
-
-            <div class="filter-group">
-                <label>Category</label>
-                <select title="Select book category" id="categoryFilter" onchange="applyFilters()">
-                    <option value="">All Categories</option>
-                    <option value="Fiction">Fiction</option>
-                    <option value="Non-Fiction">Non-Fiction</option>
-                    <option value="Romance">Romance</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
 
             <div class="filter-group">
                 <label>Price Range</label>
@@ -227,34 +242,100 @@
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
+        // Main application initialization when DOM is fully loaded
         document.addEventListener('DOMContentLoaded', async () => {
+            // Auth UI is initialized by auth-ui.js
+            
+            // API endpoint configuration
             const API_BASE = 'http://localhost:5000';
+            
+            // Enable enhanced features (CSS will respond to this class)
+            document.body.classList.add('js-enhanced');
 
+            // DOM utility function for cleaner element selection
             const el = id => document.getElementById(id);
-            const grid = el('bookGrid');
-            const searchInput = el('searchInput');
-            const cat = el('categoryFilter');
-            const price = el('priceFilter');
-            const sort = el('sortFilter');
-            const resetBtn = document.querySelector('.reset-btn');
-            const searchBtn = document.querySelector('.search-container button');
-            const cartBtn = el('cartBtn');
-            const cartCount = el('cartCount');
-            const cartModal = el('cartModal');
-            const cartItemsEl = el('cartItems');
-            const cartTotalEl = el('cartTotal');
-            const closeCartBtn = el('closeCart');
-            const clearCartBtn = el('clearCart');
-            const checkoutBtn = el('checkoutBtn');
-
+            
+            // ===== DOM ELEMENT REFERENCES =====
+            const grid = el('bookGrid');                    // Main book display grid
+            const searchInput = el('searchInput');          // Book search input field
+            const price = el('priceFilter');                // Price range filter dropdown
+            const sort = el('sortFilter');                  // Sort order dropdown
+            const resetBtn = document.querySelector('.reset-btn');  // Reset filters button
+            const searchBtn = document.querySelector('.search-container button');  // Search button
+            
+            // Cart UI elements
+            const cartBtn = el('cartBtn');                  // Cart toggle button
+            const cartCount = el('cartCount');              // Cart item count badge
+            const cartModal = el('cartModal');              // Cart modal container
+            const cartItemsEl = el('cartItems');            // Cart items list container
+            const cartTotalEl = el('cartTotal');            // Total price display
+            const closeCartBtn = el('closeCart');           // Close cart button
+            const clearCartBtn = el('clearCart');           // Clear cart button
+            const checkoutBtn = el('checkoutBtn');          // Checkout button
+            
+            // Book details modal elements
             const detailsModal = el('detailsModal');
             const closeDetailsBtn = el('closeDetailsBtn');
             const detailsAddToCart = el('detailsAddToCart');
 
-            let selectedType = 'new';
-            let allBooks = [];
-            let currentDetailBookId = null;
+            // ===== APPLICATION STATE =====
+            let selectedType = 'new';          // Currently selected book type: 'new' or 'old'
+            let selectedSection = 'all';       // Currently selected book section/category
+            let allBooks = [];                 // All available books loaded from API
+            let currentDetailBookId = null;    // ID of book currently shown in details modal
+            let cardRevealObserver = null;     // IntersectionObserver for scroll animations
 
+            // ===== SCROLL ANIMATION SETUP =====
+            /**
+             * Setup scroll animations for static elements (toggle, nav, filters)
+             * Adds fade-in and blur effects as elements enter the viewport
+             */
+            const setupStaticScrollReveal = () => {
+                const nodes = document.querySelectorAll('.book-type-toggle, .section-subnav, .filters');
+                if (!nodes.length) return;
+
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+                nodes.forEach(node => {
+                    node.classList.add('scroll-fx');
+                    observer.observe(node);
+                });
+            };
+
+            const setupCardScrollReveal = () => {
+                const cards = grid.querySelectorAll('.book-card');
+                if (!cards.length) return;
+
+                if (cardRevealObserver) {
+                    cardRevealObserver.disconnect();
+                }
+
+                cardRevealObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            cardRevealObserver.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.16, rootMargin: '0px 0px -10% 0px' });
+
+                cards.forEach(card => cardRevealObserver.observe(card));
+            };
+
+            // ===== FILTER UTILITIES =====
+            /**
+             * Check if book price falls within selected price range
+             * @param {number} p - Book price
+             * @param {string} range - Price range (e.g., "350-550", "800+")
+             * @returns {boolean} True if price is in range
+             */
             const checkPrice = (p, range) => {
                 if (!range) return true;
                 if (range.endsWith('+')) return p > Number(range.replace('+', ''));
@@ -272,6 +353,12 @@
                 setTimeout(() => notifEl.classList.remove('show'), 3000);
             };
 
+            // ===== DATA NORMALIZATION =====
+            /**
+             * Normalize book data from API to consistent format
+             * @param {Object} book - Raw book object from API
+             * @returns {Object} Normalized book object
+             */
             const normalizeBook = (book) => ({
                 id: Number(book.id),
                 title: book.title || 'Untitled',
@@ -298,12 +385,17 @@
                 original: Number(item.original ?? item.price ?? 0),
                 image: item.image || ''
             }));
-
-            const render = b => {
+            // ===== BOOK CATEGORIZATION =====
+            /**
+             * Classify book into a section based on title, category, and author keywords
+             * Uses specific keyword matching for precise categorization
+             * @param {Object} book - Book object to categorize
+             * @returns {string} Section name (romance, fantasy, business, etc.)
+             */            const render = (b, index = 0) => {
                 const d = b.original > 0 ? Math.round(((b.original - b.price) / b.original) * 100) : 0;
                 const img = b.image || '';
                 return `
-            <div class="book-card" data-id="${b.id}">
+            <div class="book-card" data-id="${b.id}" style="--stagger:${index % 12}">
                 <div class="card-image">${img ? `<img src="${img}" alt="${b.title}">` : '<div style="color:#aaa">No cover</div>'}
                     <span class="discount-badge">-${d}%</span>
                 </div>
@@ -317,18 +409,81 @@
             </div>`;
             };
 
-            const display = items => {
-                grid.innerHTML = items.length
-                    ? items.map(render).join('')
-                    : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
+            const getSection = (book) => {
+                const title = (book.title || '').toLowerCase();
+                const category = (book.category || '').toLowerCase();
+                const author = (book.author || '').toLowerCase();
+
+                if (category === 'romance') return 'romance';
+
+                const fantasyKeywords = [
+                    'harry potter', 'lord of the rings', 'hobbit', 'mistborn', 'way of kings',
+                    'game of thrones', 'name of the wind', 'fantasy'
+                ];
+                if (fantasyKeywords.some(k => title.includes(k))) return 'fantasy';
+
+                const sciFiKeywords = [
+                    'dune', 'foundation', 'martian', 'hail mary', 'station eleven',
+                    'klara and the sun', 'science fiction', 'sci-fi'
+                ];
+                if (sciFiKeywords.some(k => title.includes(k))) return 'science-fiction';
+
+                const selfHelpKeywords = [
+                    'atomic habits', 'ikigai', 'subtle art', 'can\'t hurt me', 'man\'s search for meaning',
+                    'four agreements', '7 habits', 'grit', 'deep work', 'power of habit'
+                ];
+                if (selfHelpKeywords.some(k => title.includes(k))) return 'self-help';
+
+                const businessKeywords = [
+                    'rich dad poor dad', 'psychology of money', 'lean startup', 'zero to one',
+                    'start with why', 'outliers', 'blink', 'tipping point', 'phoenix project',
+                    'hooked', 'pragmatic programmer', 'clean code', 'refactoring', 'code complete'
+                ];
+                if (businessKeywords.some(k => title.includes(k))) return 'business';
+
+                if (category === 'non-fiction') return 'education';
+
+                const classicTitles = [
+                    'the great gatsby', 'to kill a mockingbird', 'pride and prejudice', 'the catcher in the rye',
+                    '1984', 'the alchemist', 'rebecca'
+                ];
+                if (classicTitles.some(k => title.includes(k))) return 'classics';
+                if (['jane austen', 'f. scott fitzgerald', 'harper lee', 'george orwell'].some(k => author.includes(k))) return 'classics';
+
+                const thrillerKeywords = [
+                    'mystery', 'dragon', 'silent', 'gone', 'code', 'crime',
+                    'thief', 'night', 'shining', 'tattoo', 'patient', 'thriller'
+                ];
+                if (thrillerKeywords.some(k => title.includes(k))) return 'thriller';
+
+                if (category === 'fiction') return 'classics';
+
+                return 'education';
             };
 
+            /**
+             * Display filtered books in the grid
+             * Renders book cards with animation setup
+             * @param {Array} items - Books to display
+             */
+            const display = items => {
+                grid.innerHTML = items.length
+                    ? items.map((book, idx) => render(book, idx)).join('')
+                    : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
+
+                requestAnimationFrame(setupCardScrollReveal);
+            };
+
+            /**
+             * Apply all active filters and sort, then display results
+             * Handles: type, section, search query, price range, and sort order
+             */
             const apply = () => {
                 const q = (searchInput.value || '').trim().toLowerCase();
                 let items = allBooks.filter(b =>
                     b.type === selectedType &&
+                    (selectedSection === 'all' || getSection(b) === selectedSection) &&
                     (!q || b.title.toLowerCase().includes(q) || b.author.toLowerCase().includes(q) || b.category.toLowerCase().includes(q)) &&
-                    (!cat.value || b.category === cat.value) &&
                     checkPrice(b.price, price.value)
                 );
 
@@ -339,14 +494,24 @@
                 display(items);
             };
 
+            /**
+             * Reset all filters to default state and re-apply
+             */
             const reset = () => {
-                cat.value = '';
                 price.value = '';
                 sort.value = 'popularity';
                 searchInput.value = '';
+                selectedSection = 'all';
+                document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
                 apply();
             };
 
+            /**
+             * Debounce function to limit rapid function calls (useful for search)
+             * @param {Function} fn - Function to debounce
+             * @param {number} wait - Milliseconds to wait before executing
+             * @returns {Function} Debounced function
+             */
             const debounce = (fn, wait = 250) => {
                 let t;
                 return (...a) => {
@@ -357,9 +522,26 @@
 
             const getCartFromStorage = () => normalizeCartItems(JSON.parse(localStorage.getItem('cart') || '[]'));
 
+            // ===== AUTHENTICATION & CART API =====
+            /**
+             * Get JWT authentication header if user is logged in
+             * Extracts token from localStorage and returns Authorization header object
+             * @returns {Object} Header object with Authorization bearer token, or empty object for guests
+             */
+            const getAuthHeader = () => {
+                const token = localStorage.getItem('authToken');
+                return token ? { 'Authorization': `Bearer ${token}` } : {};
+            };
+
+            /**
+             * Fetch user's cart from server (authenticated) or fallback to localStorage (guest)
+             * Server-side cart is scoped to logged-in user via user_id
+             * @returns {Promise<Array>} Array of normalized cart items
+             */
             const getCart = async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/api/cart`);
+                    const headers = { ...getAuthHeader() };
+                    const res = await fetch(`${API_BASE}/api/cart`, { headers });
                     if (!res.ok) throw new Error('Failed cart fetch');
                     const data = await res.json();
                     return normalizeCartItems(data.items || []);
@@ -374,15 +556,21 @@
                 cartCount.textContent = count;
             };
 
+            /**
+             * Add item to cart (requires authentication)
+             * Saves to server database if logged in, falls back to localStorage if not
+             * @param {number} id - Book ID to add
+             */
             const addToCart = async id => {
                 const bid = Number(id);
                 const b = allBooks.find(x => x.id === bid);
                 if (!b) return;
 
                 try {
+                    const headers = { 'Content-Type': 'application/json', ...getAuthHeader() };
                     const res = await fetch(`${API_BASE}/api/cart`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers,
                         body: JSON.stringify({
                             bookId: b.id,
                             quantity: 1,
@@ -411,9 +599,15 @@
                 showNotification(`✓ "${b.title}" added to cart!`);
             };
 
+            /**
+             * Remove specific item from cart
+             * Sends DELETE request to server (authenticated) or removes from localStorage
+             * @param {number} id - Book ID to remove
+             */
             const removeFromCart = async id => {
                 try {
-                    const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, { method: 'DELETE' });
+                    const headers = getAuthHeader();
+                    const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, { method: 'DELETE', headers });
                     if (!res.ok) throw new Error('Failed to remove item');
                 } catch (_error) {
                     const c = getCartFromStorage().filter(x => x.id !== Number(id));
@@ -424,9 +618,11 @@
                 await renderCart();
             };
 
+            // Clear entire cart (authenticated or guest)
             const clearCart = async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/api/cart`, { method: 'DELETE' });
+                    const headers = getAuthHeader();
+                    const res = await fetch(`${API_BASE}/api/cart`, { method: 'DELETE', headers });
                     if (!res.ok) throw new Error('Failed to clear cart');
                 } catch (_error) {
                     localStorage.removeItem('cart');
@@ -436,6 +632,10 @@
                 await renderCart();
             };
 
+            /**
+             * Render cart items and update total price display
+             * Fetches current cart and displays each item with price, quantity, and remove button
+             */
             const renderCart = async () => {
                 const c = await getCart();
                 if (!c.length) {
@@ -474,6 +674,7 @@
                 if (savedEl) savedEl.textContent = formatIN(Math.max(0, originalTotal - total));
             };
 
+            // Modal control functions
             const openCart = async () => {
                 cartModal.classList.remove('hidden');
                 await renderCart();
@@ -481,6 +682,11 @@
 
             const closeCart = () => cartModal.classList.add('hidden');
 
+            /**
+             * Open book details modal with full information
+             * Populates all fields from book object and shows modal
+             * @param {Object} book - Book object to display
+             */
             const openDetailsModal = (book) => {
                 currentDetailBookId = book.id;
                 el('detailsImage').src = book.image || 'https://via.placeholder.com/200x300?text=No+Cover';
@@ -516,6 +722,8 @@
                 apply();
             };
 
+            // ===== EVENT LISTENERS =====
+            // Main grid: Handle add-to-cart and view-details button clicks
             grid.addEventListener('click', async e => {
                 const btn = e.target.closest('button[data-action]');
                 if (!btn) return;
@@ -546,8 +754,21 @@
             clearCartBtn.addEventListener('click', async () => { await clearCart(); });
             checkoutBtn.addEventListener('click', async () => {
                 const c = await getCart();
-                if (!c.length) return alert('Cart is empty');
-                alert('Proceeding to checkout — items: ' + c.length);
+                if (!c.length) {
+                    showNotification('❌ Cart is empty. Add some books first!');
+                    return;
+                }
+                
+                // Check if user is logged in
+                const token = localStorage.getItem('authToken');
+                if (!token) {
+                    showNotification('⛔ Please log in to checkout');
+                    setTimeout(() => window.location.href = 'login.html', 1200);
+                    return;
+                }
+                
+                // Proceed to checkout
+                window.location.href = 'checkout.html';
             });
 
             cartItemsEl.addEventListener('click', async e => {
@@ -556,7 +777,7 @@
                 await removeFromCart(rem.dataset.id);
             });
 
-            [cat, price, sort].forEach(elm => elm.addEventListener('change', apply));
+            [price, sort].forEach(elm => elm.addEventListener('change', apply));
             resetBtn.addEventListener('click', reset);
             searchBtn.addEventListener('click', apply);
             searchInput.addEventListener('input', debounce(apply, 300));
@@ -571,9 +792,20 @@
                 });
             });
 
+            document.querySelectorAll('.section-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    selectedSection = btn.getAttribute('data-section') || 'all';
+                    apply();
+                });
+            });
+
             window.searchBooks = apply;
             window.applyFilters = apply;
             window.resetFilters = reset;
+
+            setupStaticScrollReveal();
 
             await loadBooks();
             await updateCount();
@@ -587,6 +819,7 @@
         });
     </script>
 
+    <script src="auth-ui.js"></script>
     <script src="animations.js"></script>
 
 </body>

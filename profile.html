@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - BookSwap Hub</title>
+    <link rel="stylesheet" href="animations.css?v=2">
+    <link rel="stylesheet" href="profile.css?v=3">
+</head>
+<body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="home.html" class="logo">BookSwap Hub</a>
+            </div>
+            <div class="nav-right nav-menu" id="navMenu">
+                <a href="buy.html" class="nav-link">Books</a>
+                <a href="orders.html" class="nav-link">Orders</a>
+                <a href="profile.html" class="nav-link nav-icon active">Account</a>
+                <a href="#" class="nav-link" id="logoutBtn">Sign Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PROFILE HEADER -->
+    <div class="profile-header">
+        <h1>My Account</h1>
+        <p id="userGreeting">Welcome to your profile</p>
+    </div>
+
+    <!-- PROFILE CONTAINER -->
+    <div class="profile-container">
+        <!-- PROFILE SIDEBAR -->
+        <aside class="profile-sidebar">
+            <div class="profile-avatar">
+                <div class="avatar-circle"></div>
+                <div class="avatar-label">My Account</div>
+            </div>
+            <div class="profile-name" id="profileName">Loading...</div>
+            <div class="profile-email" id="profileEmail">Email</div>
+            <div class="account-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Member Since</span>
+                    <span class="meta-value" id="memberSince">—</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Last Login</span>
+                    <span class="meta-value" id="lastLogin">—</span>
+                </div>
+            </div>
+            <button class="btn btn-danger" id="logoutSidebarBtn">Sign Out</button>
+        </aside>
+
+        <!-- PROFILE MAIN CONTENT -->
+        <main class="profile-main">
+            <!-- TABS NAV -->
+            <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="edit-profile">Edit Profile</button>
+                <button class="tab-btn" data-tab="change-password">Change Password</button>
+                <button class="tab-btn" data-tab="settings">Settings</button>
+            </div>
+
+            <!-- EDIT PROFILE TAB -->
+            <div class="tab-content active" id="edit-profile">
+                <div class="tab-header">
+                    <h2>Edit Profile</h2>
+                    <p>Update your personal information</p>
+                </div>
+
+                <form class="profile-form" id="editProfileForm">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="fullName" 
+                            name="fullName" 
+                            placeholder="Enter your full name"
+                            required
+                        >
+                        <span class="form-error" data-error="fullName"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder="your@email.com"
+                            required
+                        >
+                        <span class="form-error" data-error="email"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            placeholder="+91 XXXXX XXXXX"
+                        >
+                        <span class="form-help">Optional - Used for order updates</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea 
+                            id="address" 
+                            name="address" 
+                            placeholder="Enter your address"
+                            rows="3"
+                        ></textarea>
+                        <span class="form-help">Optional - Your default shipping address</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input 
+                                type="text" 
+                                id="city" 
+                                name="city" 
+                                placeholder="City"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input 
+                                type="text" 
+                                id="state" 
+                                name="state" 
+                                placeholder="State"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zip">ZIP Code</label>
+                            <input 
+                                type="text" 
+                                id="zip" 
+                                name="zip" 
+                                placeholder="PIN Code"
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="country">Country</label>
+                            <input 
+                                type="text" 
+                                id="country" 
+                                name="country" 
+                                placeholder="Country"
+                                value="India"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            Save Changes
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            Reset Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- CHANGE PASSWORD TAB -->
+            <div class="tab-content" id="change-password">
+                <div class="tab-header">
+                    <h2>Change Password</h2>
+                    <p>Secure your account with a strong password</p>
+                </div>
+
+                <form class="profile-form" id="changePasswordForm">
+                    <div class="security-info">
+                        <div class="info-icon">Lock</div>
+                        <div class="info-text">
+                            <strong>Password Requirements:</strong>
+                            <ul>
+                                <li>Minimum 6 characters long</li>
+                                <li>Mix of uppercase and lowercase letters recommended</li>
+                                <li>Include numbers and special characters for better security</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input 
+                            type="password" 
+                            id="currentPassword" 
+                            name="currentPassword" 
+                            placeholder="Enter your current password"
+                            required
+                        >
+                        <span class="form-error" data-error="currentPassword"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input 
+                            type="password" 
+                            id="newPassword" 
+                            name="newPassword" 
+                            placeholder="Enter new password"
+                            required
+                        >
+                        <div class="password-strength" id="passwordStrength">
+                            <div class="strength-bar"></div>
+                        </div>
+                        <span class="form-help" id="passwordStrengthText">Strength: Weak</span>
+                        <span class="form-error" data-error="newPassword"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            placeholder="Re-enter new password"
+                            required
+                        >
+                        <span class="form-error" data-error="confirmPassword"></span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            Update Password
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            Clear Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- SETTINGS TAB -->
+            <div class="tab-content" id="settings">
+                <div class="tab-header">
+                    <h2>Account Settings</h2>
+                    <p>Manage your account preferences</p>
+                </div>
+
+                <div class="settings-group">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Email Notifications</h3>
+                            <p>Receive updates about your orders and new books</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNotifications" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Order Alerts</h3>
+                            <p>Get notified when your orders are shipped</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="orderAlerts" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Marketing Emails</h3>
+                            <p>Receive special offers and promotions</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="marketingEmails">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Dark Mode</h3>
+                            <p>Switch to dark theme (coming soon)</p>
+                        </div>
+                        <label class="toggle-switch disabled">
+                            <input type="checkbox" disabled>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="settings-divider"></div>
+
+                <div class="dangerous-zone">
+                    <h3>Danger Zone</h3>
+                    <div class="danger-action">
+                        <div class="danger-info">
+                            <h4>Delete Account</h4>
+                            <p>Permanently delete your account and all associated data</p>
+                        </div>
+                        <button class="btn btn-danger-outline" id="deleteAccountBtn">
+                            Delete Account
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-save">
+                    <button class="btn btn-primary" id="saveSettingsBtn">
+                        ✅ Save Settings
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- NOTIFICATION CONTAINER -->
+    <div class="notification" id="notification"></div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div class="modal hidden" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Account</h2>
+                <button class="close-btn" id="closeDeleteModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="warning-text">This action cannot be undone. All your data including:</p>
+                <ul class="warning-list">
+                    <li>Profile information</li>
+                    <li>Order history</li>
+                    <li>Saved addresses</li>
+                    <li>Cart items</li>
+                </ul>
+                <p class="warning-text">will be permanently deleted.</p>
+                <p class="warning-text">Type your email to confirm:</p>
+                <input 
+                    type="email" 
+                    id="confirmEmail" 
+                    placeholder="Enter your email"
+                    class="modal-input"
+                >
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete Permanently</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== UTILITY FUNCTIONS =====
+
+        /**
+         * Get authorization header with JWT token
+         * @returns {Object} Authorization header object
+         */
+        function getAuthHeader() {
+            const token = localStorage.getItem('authToken');
+            return token ? { 'Authorization': `Bearer ${token}` } : {};
+        }
+
+        /**
+         * Show notification toast
+         * @param {string} message - Notification message
+         * @param {string} type - 'success', 'error', or 'info'
+         */
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification show ${type}`;
+            setTimeout(() => notification.classList.remove('show'), 3000);
+        }
+
+        /**
+         * Check if user is authenticated
+         * @returns {boolean} Authentication status
+         */
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) {
+                showNotification('Please log in to access your profile');
+                setTimeout(() => window.location.href = 'login.html', 1200);
+                return false;
+            }
+            return true;
+        }
+
+        /**
+         * Format date to readable format
+         * @param {string} dateStr - ISO date string
+         * @returns {string} Formatted date
+         */
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return new Intl.DateTimeFormat('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+
+        /**
+         * Validate email format
+         * @param {string} email - Email to validate
+         * @returns {boolean} Validation result
+         */
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        /**
+         * Calculate password strength
+         * @param {string} password - Password to check
+         * @returns {Object} Strength object with level and color
+         */
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+            if (!password) return { level: 'Weak', color: '#e74c3c', percent: 0 };
+
+            if (password.length >= 6) strength++;
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            const levels = [
+                { level: 'Weak', color: '#e74c3c', percent: 20 },
+                { level: 'Fair', color: '#f39c12', percent: 40 },
+                { level: 'Good', color: '#27ae60', percent: 60 },
+                { level: 'Strong', color: '#16a085', percent: 80 },
+                { level: 'Very Strong', color: '#2980b9', percent: 100 }
+            ];
+
+            return levels[Math.min(strength - 1, levels.length - 1)] || levels[0];
+        }
+
+        // ===== LOAD PROFILE DATA =====
+
+        /**
+         * Load user profile from localStorage
+         */
+        function loadProfile() {
+            const user = JSON.parse(localStorage.getItem('authUser'));
+            if (!user) {
+                checkAuth();
+                return;
+            }
+
+            // Update header greeting
+            document.getElementById('userGreeting').textContent = `Welcome back, ${user.name}!`;
+
+            // Update sidebar
+            document.getElementById('profileName').textContent = user.name;
+            document.getElementById('profileEmail').textContent = user.email;
+            document.getElementById('memberSince').textContent = formatDate(user.createdAt);
+            document.getElementById('lastLogin').textContent = formatDate(user.lastLogin);
+
+            // Fill edit profile form
+            document.getElementById('fullName').value = user.name || '';
+            document.getElementById('email').value = user.email || '';
+            document.getElementById('phone').value = user.phone || '';
+            document.getElementById('address').value = user.address || '';
+            document.getElementById('city').value = user.city || '';
+            document.getElementById('state').value = user.state || '';
+            document.getElementById('zip').value = user.zip || '';
+            document.getElementById('country').value = user.country || 'India';
+        }
+
+        // ===== TAB SWITCHING =====
+
+        /**
+         * Initialize tab functionality
+         */
+        function initTabs() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to clicked
+                    btn.classList.add('active');
+                    const tabId = btn.dataset.tab;
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // ===== EDIT PROFILE FORM =====
+
+        /**
+         * Handle edit profile form submission
+         */
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                name: document.getElementById('fullName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                city: document.getElementById('city').value.trim(),
+                state: document.getElementById('state').value.trim(),
+                zip: document.getElementById('zip').value.trim(),
+                country: document.getElementById('country').value.trim()
+            };
+
+            // Validation
+            if (!formData.name) {
+                showNotification('Full name is required');
+                return;
+            }
+
+            if (!validateEmail(formData.email)) {
+                showNotification('Please enter a valid email');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showNotification(`${data.message || 'Failed to update profile'}`, 'error');
+                    return;
+                }
+
+                // Update localStorage with new data
+                const updatedUser = { ...JSON.parse(localStorage.getItem('authUser')), ...data.user };
+                localStorage.setItem('authUser', JSON.stringify(updatedUser));
+
+                showNotification('Profile updated successfully!', 'success');
+                loadProfile();
+            } catch (error) {
+                console.error('Profile update error:', error);
+                showNotification('Network error. Please try again.', 'error');
+            }
+        });
+
+        // ===== CHANGE PASSWORD FORM =====
+
+        /**
+         * Update password strength indicator in real-time
+         */
+        document.getElementById('newPassword').addEventListener('input', (e) => {
+            const strength = calculatePasswordStrength(e.target.value);
+            const bar = document.querySelector('.strength-bar');
+            const text = document.getElementById('passwordStrengthText');
+
+            bar.style.width = strength.percent + '%';
+            bar.style.background = strength.color;
+            text.textContent = `Strength: ${strength.level}`;
+            text.style.color = strength.color;
+        });
+
+        /**
+         * Handle change password form submission
+         */
+        document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (newPassword.length < 6) {
+                showNotification('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            if (currentPassword === newPassword) {
+                showNotification('New password must be different from current password', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/change-password', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    showNotification(`${data.message || 'Failed to change password'}`, 'error');
+                    return;
+                }
+
+                showNotification('Password changed successfully!', 'success');
+                document.getElementById('changePasswordForm').reset();
+                document.querySelector('.strength-bar').style.width = '0%';
+            } catch (error) {
+                console.error('Password change error:', error);
+                showNotification('❌ Network error. Please try again.', 'error');
+            }
+        });
+
+        // ===== SETTINGS =====
+
+        /**
+         * Handle save settings
+         */
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+            const settings = {
+                emailNotifications: document.getElementById('emailNotifications').checked,
+                orderAlerts: document.getElementById('orderAlerts').checked,
+                marketingEmails: document.getElementById('marketingEmails').checked
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/settings', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...getAuthHeader()
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (!response.ok) {
+                    showNotification('❌ Failed to save settings', 'error');
+                    return;
+                }
+
+                showNotification('✅ Settings saved successfully!', 'success');
+            } catch (error) {
+                console.error('Settings save error:', error);
+                showNotification('❌ Network error. Please try again.', 'error');
+            }
+        });
+
+        // ===== DELETE ACCOUNT =====
+
+        const deleteBtn = document.getElementById('deleteAccountBtn');
+        const deleteModal = document.getElementById('deleteModal');
+        const closeDeleteModal = document.getElementById('closeDeleteModal');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        deleteBtn.addEventListener('click', () => {
+            deleteModal.classList.remove('hidden');
+        });
+
+        closeDeleteModal.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteModal.classList.add('hidden');
+        });
+
+        /**
+         * Handle account deletion
+         */
+        confirmDeleteBtn.addEventListener('click', async () => {
+            const confirmEmail = document.getElementById('confirmEmail').value.trim();
+
+            if (!confirmEmail) {
+                showNotification('Please enter your email to confirm', 'error');
+                return;
+            }
+
+            const userEmail = JSON.parse(localStorage.getItem('authUser')).email;
+            if (confirmEmail !== userEmail) {
+                showNotification('Email does not match', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/delete-account', {
+                    method: 'DELETE',
+                    headers: getAuthHeader()
+                });
+
+                if (!response.ok) {
+                    showNotification('Failed to delete account', 'error');
+                    return;
+                }
+
+                showNotification('Account deleted. Redirecting...', 'success');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
+                setTimeout(() => window.location.href = 'home.html', 1500);
+            } catch (error) {
+                console.error('Account deletion error:', error);
+                showNotification('❌ Network error. Please try again.', 'error');
+            }
+        });
+
+        // ===== LOGOUT =====
+
+        /**
+         * Handle logout action
+         */
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authUser');
+            showNotification('Logged out successfully!', 'success');
+            setTimeout(() => window.location.href = 'home.html', 1000);
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            logout();
+        });
+
+        document.getElementById('logoutSidebarBtn').addEventListener('click', logout);
+
+        // ===== INITIALIZATION =====
+
+        /**
+         * Initialize profile page on load
+         */
+        function initProfile() {
+            if (checkAuth()) {
+                loadProfile();
+                initTabs();
+            }
+        }
+
+        window.addEventListener('load', initProfile);
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@
     <title>BookSwap Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="home.css?v=2">
     <link rel="stylesheet" href="cart.css">
     <link rel="stylesheet" href="animations.css">
 </head>
@@ -46,7 +46,22 @@
 
             <!--  EXTREME RIGHT BUTTONS -->
             <div class="nav-auth">
-                <a href="login.html" class="nav-btn nav-login">Login/Register</a>
+                <!-- Login Button (shown when not logged in) -->
+                <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
+                
+                <!-- User Profile (shown when logged in) -->
+                <div id="userProfile" class="user-profile hidden">
+                    <button id="profileToggle" class="profile-btn" aria-label="User menu">
+                        <span class="profile-avatar">👤</span>
+                        <span class="profile-name"></span>
+                    </button>
+                    <div id="profileMenu" class="profile-menu hidden">
+                        <a href="profile.html" class="profile-menu-item">Profile</a>
+                        <a href="orders.html" class="profile-menu-item">My Orders</a>
+                        <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+                    </div>
+                </div>
+
                 <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
                         class="cart-label">CART</span><span id="cartCount" class="cart-count"
                         aria-live="polite">0</span></button>
@@ -171,6 +186,7 @@
         </div>
     </div>
 
+    <script src="auth-ui.js"></script>
     <script src="cart-ui.js"></script>
     <script src="animations.js"></script>
 
@@ -198,6 +214,8 @@
 
         // Render featured books on page load
         document.addEventListener('DOMContentLoaded', async () => {
+            // Auth UI is initialized by auth-ui.js
+
             const grid = document.getElementById('topPicksGrid');
             if (!grid) return;
 

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth UI Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-left: 4px solid #d4a574;
+            border-radius: 5px;
+        }
+        .test-section h2 {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 20px;
+            background: #d4a574;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #b8874f;
+        }
+        .status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 BookSwap Hub - Auth UI Test Utils</h1>
+
+        <!-- Test 1: Check localStorage -->
+        <div class="test-section">
+            <h2>1️⃣ Check Current localStorage</h2>
+            <button onclick="checkLocalStorage()">Check localStorage</button>
+            <textarea id="storageOutput" readonly></textarea>
+        </div>
+
+        <!-- Test 2: Simulate Login -->
+        <div class="test-section">
+            <h2>2️⃣ Simulate Login (Store Test Data)</h2>
+            <input type="text" id="testName" placeholder="User Name" value="Test User">
+            <input type="text" id="testEmail" placeholder="Email (will use as userId)" value="test@example.com">
+            <button onclick="simulateLogin()">Simulate Login</button>
+            <div id="loginStatus"></div>
+        </div>
+
+        <!-- Test 3: Check Auth UI -->
+        <div class="test-section">
+            <h2>3️⃣ Test Auth UI Initialization</h2>
+            <button onclick="testAuthUI()">Test initAuthUI()</button>
+            <div id="authStatus"></div>
+        </div>
+
+        <!-- Test 4: Clear localStorage -->
+        <div class="test-section">
+            <h2>4️⃣ Clear localStorage</h2>
+            <button onclick="clearStorage()">Clear All Data</button>
+            <button onclick="clearToken()">Clear Token Only</button>
+            <div id="clearStatus"></div>
+        </div>
+
+        <!-- Test 5: Open Home Page -->
+        <div class="test-section">
+            <h2>5️⃣ Test on Home Page</h2>
+            <button onclick="window.location.href='home.html'">Go to Home Page</button>
+            <p style="margin-top: 10px; color: #666;">After clicking, you should see the profile menu instead of login button.</p>
+        </div>
+    </div>
+
+    <script>
+        function checkLocalStorage() {
+            const output = document.getElementById('storageOutput');
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+            const userId = localStorage.getItem('userId');
+            
+            output.value = `token: ${token ? token.substring(0, 50) + '...' : 'NOT SET'}
+userName: ${userName || 'NOT SET'}
+userId: ${userId || 'NOT SET'}`;
+            
+            console.log('localStorage values:', { token, userName, userId });
+        }
+
+        function simulateLogin() {
+            const name = document.getElementById('testName').value.trim();
+            const email = document.getElementById('testEmail').value.trim();
+            const statusDiv = document.getElementById('loginStatus');
+            
+            if (!name || !email) {
+                statusDiv.innerHTML = '<div class="status error">❌ Please fill in all fields</div>';
+                return;
+            }
+
+            // Simulate login by storing data
+            const mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' + Math.random().toString(36).slice(2) + '.test';
+            const mockId = Math.floor(Math.random() * 1000);
+
+            localStorage.setItem('token', mockToken);
+            localStorage.setItem('userName', name);
+            localStorage.setItem('userId', mockId);
+
+            statusDiv.innerHTML = `<div class="status success">✓ Simulated login successful!<br>
+Name: ${name}<br>
+Email: ${email}<br>
+Use localStorage now set. Refresh the page or go to home.html to see changes.</div>`;
+            
+            console.log('Simulated login:', { token: mockToken, userName: name, userId: mockId });
+        }
+
+        function testAuthUI() {
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+            const statusDiv = document.getElementById('authStatus');
+            
+            if (!token || !userName) {
+                statusDiv.innerHTML = '<div class="status error">❌ No token or userName in localStorage. Use "Simulate Login" first.</div>';
+                return;
+            }
+
+            // Test if auth-ui.js is working
+            if (typeof initAuthUI === 'function') {
+                initAuthUI();
+                statusDiv.innerHTML = '<div class="status success">✓ initAuthUI() executed successfully</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ initAuthUI is not defined. Is auth-ui.js loaded?</div>';
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userId');
+            document.getElementById('clearStatus').innerHTML = '<div class="status success">✓ All data cleared</div>';
+            console.log('localStorage cleared');
+        }
+
+        function clearToken() {
+            localStorage.removeItem('token');
+            document.getElementById('clearStatus').innerHTML = '<div class="status success">✓ Token cleared only</div>';
+            console.log('Token cleared');
+        }
+
+        // Auto-check on load
+        window.addEventListener('load', function() {
+            checkLocalStorage();
+        });
+    </script>
+</body>
+</html>

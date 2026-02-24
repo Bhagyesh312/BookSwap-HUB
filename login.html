@@ -33,15 +33,15 @@
             <h2>Welcome Back </h2>
             <p>Login to continue your book journey.</p>
 
-            <form>
+            <form id="loginForm">
               <div class="input-box">
                 <label>Email</label>
-                <input type="email" placeholder="example@gmail.com" required>
+                <input id="loginEmail" type="email" placeholder="example@gmail.com" required>
               </div>
 
               <div class="input-box">
                 <label>Password</label>
-                <input type="password" placeholder="Enter password" required>
+                <input id="loginPassword" type="password" placeholder="Enter password" required>
               </div>
 
               <div class="extras">
@@ -53,7 +53,9 @@
                 <a href="#">Forgot password?</a>
               </div>
 
-              <button class="btn" type="submit">Login</button>
+                <button class="btn" id="loginBtn" type="submit">Login</button>
+
+                <p id="loginMessage" class="auth-message" aria-live="polite"></p>
 
               <p class="toggle-text">Don't have an account? <a href="#" class="toggle-link"
                   onclick="document.getElementById('flipCard').classList.add('flipped'); return false;">Register</a></p>
@@ -65,28 +67,30 @@
             <h2>Create Account </h2>
             <p>Join BookSwap Hub in few seconds.</p>
 
-            <form>
+            <form id="registerForm">
               <div class="input-box">
                 <label>Full Name</label>
-                <input type="text" placeholder="Your full name" required>
+                <input id="registerName" type="text" placeholder="Your full name" required>
               </div>
 
               <div class="input-box">
                 <label>Email</label>
-                <input type="email" placeholder="example@gmail.com" required>
+                <input id="registerEmail" type="email" placeholder="example@gmail.com" required>
               </div>
 
               <div class="input-box">
                 <label>Phone Number</label>
-                <input type="tel" placeholder="9876543210" pattern="[0-9]{10}" required>
+                <input id="registerPhone" type="tel" placeholder="9876543210" pattern="[0-9]{10}" required>
               </div>
 
               <div class="input-box">
                 <label>Create Password</label>
-                <input type="password" placeholder="Minimum 6 characters" minlength="6" required>
+                <input id="registerPassword" type="password" placeholder="Minimum 6 characters" minlength="6" required>
               </div>
 
-              <button class="btn" type="submit">Register</button>
+              <button class="btn" id="registerBtn" type="submit">Register</button>
+
+              <p id="registerMessage" class="auth-message" aria-live="polite"></p>
 
               <p class="toggle-text">Already have an account? <a href="#" class="toggle-link"
                   onclick="document.getElementById('flipCard').classList.remove('flipped'); return false;">Login</a></p>
@@ -101,8 +105,92 @@
 
   <!-- ================= AUTH LOGIC (Flip Card) ================= -->
   <script>
+    // Backend API server URL
+    const API_BASE = 'http://localhost:5000';
+    
+    // ===== DOM ELEMENTS =====
     const flipCard = document.getElementById("flipCard");
     const toggleAuth = document.getElementById("toggleAuth");
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginMessage = document.getElementById('loginMessage');
+    const registerMessage = document.getElementById('registerMessage');
+    const loginBtn = document.getElementById('loginBtn');
+    const registerBtn = document.getElementById('registerBtn');
+
+    /**
+     * Display message (error or success) in authentication UI
+     * @param {HTMLElement} el - Message element
+     * @param {string} text - Message text to display
+     * @param {string} type - 'error' or 'success'
+     */
+    const setMessage = (el, text, type = 'error') => {
+      if (!el) return;
+      el.textContent = text || '';
+      el.classList.remove('error', 'success');
+      if (text) el.classList.add(type);
+    };
+
+    /**
+     * Save JWT token and user data to browser localStorage for session persistence
+     * @param {string} token - JWT auth token (7-day expiry)
+     * @param {Object} user - User object with id, name, email
+     */
+    const saveSession = (token, user) => {
+      console.log('[Login] Saving session - user:', user);
+      localStorage.setItem('token', token);
+      localStorage.setItem('userName', user.name || '');
+      localStorage.setItem('userId', user.id || '');
+      console.log('[Login] Session saved - token:', token.substring(0, 20) + '..., userName:', user.name);
+    };
+
+    // ===== AUTHENTICATION HANDLER =====
+    /**
+     * Handle login or register request
+     * Posts credentials to backend, saves JWT token and user data on success
+     * @param {string} url - Backend endpoint (/api/auth/login or /api/auth/register)
+     * @param {Object} payload - Form data (email, password, etc.)
+     * @param {HTMLElement} button - Submit button to disable during request
+     * @param {HTMLElement} messageEl - Element to display success/error message
+     * @param {string} successText - Text to show on successful authentication
+     */
+    const handleAuth = async (url, payload, button, messageEl, successText) => {
+      setMessage(messageEl, '');
+      const original = button.textContent;
+      button.disabled = true;
+      button.textContent = 'Please wait...';
+
+      try {
+        console.log('[Login] Auth request:', url);
+        const res = await fetch(`${API_BASE}${url}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        console.log('[Login] Auth response - status:', res.status, 'data keys:', Object.keys(data));
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        console.log('[Login] Auth successful, saving session...');
+        saveSession(data.token, data.user);
+        console.log('[Login] Session saved, showing success message and redirecting...');
+        setMessage(messageEl, successText, 'success');
+        setTimeout(() => {
+          console.log('[Login] Redirecting to home.html');
+          window.location.href = 'home.html';
+        }, 700);
+      } catch (err) {
+        console.error('[Login] Auth error:', err.message);
+        setMessage(messageEl, err.message || 'Something went wrong.');
+      } finally {
+        button.disabled = false;
+        button.textContent = original;
+      }
+    };
 
     toggleAuth.addEventListener("click", () => {
       flipCard.classList.toggle("flipped");
@@ -114,6 +202,35 @@
       } else {
         flipCard.classList.remove("flipped");
       }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      await handleAuth(
+        '/api/auth/login',
+        { email, password },
+        loginBtn,
+        loginMessage,
+        'Login successful. Redirecting...'
+      );
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+
+      await handleAuth(
+        '/api/auth/register',
+        { name, email, password },
+        registerBtn,
+        registerMessage,
+        'Registration successful. Redirecting...'
+      );
     });
   </script>
 
