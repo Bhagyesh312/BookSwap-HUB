@@ -1,13 +1,25 @@
 const express = require('express');
-const { cart, books } = require('../data');
+const { getDb } = require('../db');
 
 const router = express.Router();
 
-router.get('/', (_req, res) => {
-  res.json({ items: cart });
+router.get('/', async (_req, res) => {
+  const db = await getDb();
+  const items = await db.all(`
+    SELECT
+      book_id AS bookId,
+      quantity,
+      title,
+      price,
+      original,
+      image
+    FROM cart
+    ORDER BY book_id ASC
+  `);
+  res.json({ items });
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { bookId, quantity = 1, title, price, original, image } = req.body || {};
   const id = Number(bookId);
   const qty = Number(quantity);
@@ -16,7 +28,8 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'bookId and quantity (>=1) are required' });
   }
 
-  const book = books.find((item) => item.id === id);
+  const db = await getDb();
+  const book = await db.get('SELECT * FROM books WHERE id = ?', id);
 
   const itemTitle = book?.title || title;
   const itemPrice = Number(book?.price ?? price);
@@ -27,38 +40,67 @@ router.post('/', (req, res) => {
     return res.status(400).json({ error: 'Valid title and price are required when book is not in catalog' });
   }
 
-  const existing = cart.find((item) => item.bookId === id);
-  if (existing) {
-    existing.quantity += qty;
-  } else {
-    cart.push({
-      bookId: id,
-      quantity: qty,
-      title: itemTitle,
-      price: itemPrice,
-      original: Number.isNaN(itemOriginal) ? itemPrice : itemOriginal,
-      image: itemImage
-    });
-  }
+  await db.run(
+    `
+    INSERT INTO cart (book_id, quantity, title, price, original, image)
+    VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT(book_id) DO UPDATE SET
+      quantity = cart.quantity + excluded.quantity,
+      title = excluded.title,
+      price = excluded.price,
+      original = excluded.original,
+      image = excluded.image
+  `,
+    id,
+    qty,
+    itemTitle,
+    itemPrice,
+    Number.isNaN(itemOriginal) ? itemPrice : itemOriginal,
+    itemImage
+  );
 
-  return res.status(201).json({ items: cart });
+  const items = await db.all(`
+    SELECT
+      book_id AS bookId,
+      quantity,
+      title,
+      price,
+      original,
+      image
+    FROM cart
+    ORDER BY book_id ASC
+  `);
+
+  return res.status(201).json({ items });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const index = cart.findIndex((item) => item.bookId === id);
+  const db = await getDb();
+  const result = await db.run('DELETE FROM cart WHERE book_id = ?', id);
 
-  if (index === -1) {
+  if (!result.changes) {
     return res.status(404).json({ error: 'Cart item not found' });
   }
 
-  cart.splice(index, 1);
-  return res.json({ items: cart });
+  const items = await db.all(`
+    SELECT
+      book_id AS bookId,
+      quantity,
+      title,
+      price,
+      original,
+      image
+    FROM cart
+    ORDER BY book_id ASC
+  `);
+  return res.json({ items });
 });
 
-router.delete('/', (_req, res) => {
-  cart.splice(0, cart.length);
-  return res.json({ items: cart });
+router.delete('/', async (_req, res) => {
+  const db = await getDb();
+  await db.run('DELETE FROM cart');
+  return res.json({ items: [] });
 });
 
 module.exports = router;

@@ -2,6 +2,8 @@
 
 Minimal Express backend starter for BookSwap Hub.
 
+Now uses SQLite for persistent storage.
+
 ## Quick start
 
 1. Copy env file:
@@ -25,5 +27,5 @@ Server runs on `http://localhost:5000` by default.
 
 ## Notes
 
-- Data is in-memory only (no database yet).
-- Cart resets when server restarts.
+- Data is persisted in SQLite at `backend/data/bookswap.db`.
+- Books are seeded once from `src/books.json` when DB is empty.
