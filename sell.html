@@ -57,22 +57,22 @@
       <p class="sub">Fill the details below to list your book on BookSwap Hub.</p>
 
       <!-- Book Listing Form -->
-      <form class="sell-form">
+      <form class="sell-form" id="sellForm">
 
         <div class="field">
           <label>Book Name</label>
-          <input type="text" placeholder="Eg: Engineering Mathematics" required>
+          <input name="title" type="text" placeholder="Eg: Engineering Mathematics" required>
         </div>
 
         <div class="field">
           <label>Author Name</label>
-          <input type="text" placeholder="Eg: B.S. Grewal" required>
+          <input name="author" type="text" placeholder="Eg: B.S. Grewal" required>
         </div>
 
 
         <div class="field">
           <label>Book Condition</label>
-          <select title="Select book condition" required>
+          <select name="condition" title="Select book condition" required>
             <option value="">Select Condition</option>
             <option>New</option>
             <option>Like New</option>
@@ -83,12 +83,12 @@
 
         <div class="field">
           <label>Edition</label>
-          <input type="text" placeholder="Eg: 3rd Edition">
+          <input name="edition" type="text" placeholder="Eg: 3rd Edition">
         </div>
 
         <div class="field">
           <label>Language</label>
-          <select title="Select language" required>
+          <select name="language" title="Select language" required>
             <option value="">Select Language</option>
             <option>English</option>
             <option>Hindi</option>
@@ -99,22 +99,22 @@
 
         <div class="field">
           <label>MRP (₹)</label>
-          <input type="number" placeholder="Eg: 499" required>
+          <input name="original" type="number" placeholder="Eg: 499" required>
         </div>
 
         <div class="field">
           <label>Selling Price (₹)</label>
-          <input type="number" placeholder="Eg: 250" required>
+          <input name="price" type="number" placeholder="Eg: 250" required>
         </div>
 
         <div class="field">
           <label>Quantity</label>
-          <input type="number" placeholder="Eg: 1" required>
+          <input name="quantity" type="number" placeholder="Eg: 1" required>
         </div>
 
         <div class="field">
           <label>Pickup / Delivery</label>
-          <select title="Select pickup or delivery option" required>
+          <select name="deliveryOption" title="Select pickup or delivery option" required>
             <option value="">Select Option</option>
             <option>Pickup Only</option>
             <option>Delivery Only</option>
@@ -124,22 +124,22 @@
 
         <div class="field">
           <label>Seller Name</label>
-          <input type="text" placeholder="Eg: Bhagyesh Shah" required>
+          <input name="sellerName" type="text" placeholder="Eg: Bhagyesh Shah" required>
         </div>
 
         <div class="field">
           <label>Seller Contact</label>
-          <input type="tel" placeholder="Eg: 9876543210" pattern="[0-9]{10}" required>
+          <input name="sellerContact" type="tel" placeholder="Eg: 9876543210" pattern="[0-9]{10}" required>
         </div>
 
         <div class="field">
           <label>City / Location</label>
-          <input type="text" placeholder="Eg: Ahmedabad" required>
+          <input name="sellerCity" type="text" placeholder="Eg: Ahmedabad" required>
         </div>
 
         <div class="field">
           <label>Payment Mode</label>
-          <select title="Select payment mode" required>
+          <select name="paymentMode" title="Select payment mode" required>
             <option value="">Select Payment Option</option>
             <option>Cash</option>
             <option>UPI</option>
@@ -149,12 +149,12 @@
 
         <div class="field full">
           <label>Description</label>
-          <textarea rows="4" placeholder="Write details like notes, highlights, any damage, etc." required></textarea>
+          <textarea name="description" rows="4" placeholder="Write details like notes, highlights, any damage, etc." required></textarea>
         </div>
 
         <div class="field full">
           <label for="book-images">Upload Book Images</label>
-          <input id="book-images" type="file" accept="image/*" multiple required>
+          <input id="book-images" type="file" accept="image/*" multiple>
         </div>
 
         <div class="field full">
@@ -169,7 +169,7 @@
           </label>
         </div>
 
-        <button class="submit-btn" type="submit"> Submit Book Listing</button>
+        <button class="submit-btn" type="submit" id="sellSubmitBtn"> Submit Book Listing</button>
 
         <a href="home.html" class="back-btn">⬅ Back to Home</a>
 
@@ -237,3 +237,58 @@
 <script src="auth-ui.js"></script>
 <script src="cart-ui.js"></script>
 <script src="animations.js"></script>
+
+<script>
+/* ================= SELL FORM SUBMISSION ================= */
+document.getElementById('sellForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('sellSubmitBtn');
+    const originalText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = '⏳ Submitting...';
+
+    const form = e.target;
+    const fd   = new FormData(form);
+
+    const payload = {
+        title:          fd.get('title'),
+        author:         fd.get('author'),
+        condition:      fd.get('condition'),
+        edition:        fd.get('edition'),
+        language:       fd.get('language'),
+        original:       fd.get('original'),
+        price:          fd.get('price'),
+        quantity:       fd.get('quantity'),
+        deliveryOption: fd.get('deliveryOption'),
+        sellerName:     fd.get('sellerName'),
+        sellerContact:  fd.get('sellerContact'),
+        sellerCity:     fd.get('sellerCity'),
+        paymentMode:    fd.get('paymentMode'),
+        description:    fd.get('description')
+    };
+
+    try {
+        const res = await fetch('/api/books/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert('✅ Book listed successfully! Your book is now available on BookSwap Hub.');
+            form.reset();
+        } else {
+            alert('❌ ' + (data.error || 'Something went wrong. Please try again.'));
+        }
+    } catch (err) {
+        console.error('Sell form error:', err);
+        alert('❌ Network error. Make sure the server is running and try again.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+});
+</script>

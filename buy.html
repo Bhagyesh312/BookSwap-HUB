@@ -246,8 +246,8 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Auth UI is initialized by auth-ui.js
             
-            // API endpoint configuration
-            const API_BASE = 'http://localhost:5000';
+            // API endpoint configuration (empty string uses same origin)
+            const API_BASE = '';
             
             // Enable enhanced features (CSS will respond to this class)
             document.body.classList.add('js-enhanced');

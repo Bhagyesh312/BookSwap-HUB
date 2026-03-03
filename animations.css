@@ -144,11 +144,11 @@ body {
 
     0%,
     100% {
-        box-shadow: 0 10px 30px rgba(212, 165, 116, 0.3);
+        box-shadow: 0 10px 30px rgba(249, 115, 22, 0.3);
     }
 
     50% {
-        box-shadow: 0 10px 45px rgba(212, 165, 116, 0.65);
+        box-shadow: 0 10px 45px rgba(249, 115, 22, 0.65);
     }
 }
 
@@ -204,7 +204,7 @@ body {
     width: 0;
     height: 3px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #d4a574, #cd7f32, #d4a574);
+    background: linear-gradient(90deg, #f97316, #ef4444, #8b5cf6);
     transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
 }
 
@@ -232,11 +232,11 @@ body {
 
     0%,
     100% {
-        box-shadow: 0 0 18px rgba(212, 165, 116, 0.2), 0 0 0 2px rgba(212, 165, 116, 0.2);
+        box-shadow: 0 0 18px rgba(249, 115, 22, 0.2), 0 0 0 2px rgba(249, 115, 22, 0.2);
     }
 
     50% {
-        box-shadow: 0 0 40px rgba(212, 165, 116, 0.5), 0 0 0 2px rgba(205, 127, 50, 0.45);
+        box-shadow: 0 0 40px rgba(249, 115, 22, 0.5), 0 0 0 2px rgba(249, 115, 22, 0.45);
     }
 }
 
@@ -252,13 +252,13 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #d4a574, #cd7f32);
-    color: #3e2723;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: #0f172a;
     border: none;
     font-size: 22px;
     cursor: pointer;
     z-index: 999;
-    box-shadow: 0 8px 24px rgba(212, 165, 116, 0.45);
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.45);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -276,7 +276,7 @@ body {
 
 #scrollTopBtn:hover {
     transform: translateY(-4px) scale(1.1);
-    box-shadow: 0 14px 35px rgba(212, 165, 116, 0.6);
+    box-shadow: 0 14px 35px rgba(249, 115, 22, 0.6);
 }
 
 /* ── Ripple effect on buttons ───────────────────────── */
@@ -303,7 +303,7 @@ body {
 
 /* ── Progress bar glow ──────────────────────────────── */
 .progress-bar {
-    background: linear-gradient(90deg, #d4a574, #cd7f32, #d4a574) !important;
+    background: linear-gradient(90deg, #f97316, #ef4444, #8b5cf6) !important;
     background-size: 200% 100% !important;
     animation: shimmerBar 2s linear infinite !important;
 }
@@ -533,7 +533,7 @@ select:focus {
     height: 100%;
     width: 3px;
     border-radius: 2px;
-    background: linear-gradient(180deg, #d4a574, #cd7f32);
+    background: linear-gradient(180deg, #f97316, #ef4444);
     animation: accentPulse 1.2s ease-in-out infinite;
 }
 
@@ -719,7 +719,7 @@ select:focus {
     height: 200%;
     background: linear-gradient(105deg,
             transparent 40%,
-            rgba(212, 165, 116, 0.15) 50%,
+            rgba(249, 115, 22, 0.15) 50%,
             transparent 60%);
     transform: skewX(-15deg);
     transition: left 0.6s ease;
@@ -737,5 +737,5 @@ select:focus {
 
 .about-img:hover img {
     transform: scale(1.04);
-    box-shadow: 0 24px 55px rgba(139, 69, 19, 0.3);
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.3);
 }

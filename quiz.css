@@ -5,9 +5,9 @@
 :root {
     --quiz-bg: #fffbf5;
     --quiz-card: #ffffff;
-    --primary: #d4a574;
+    --primary: #f97316;
     /* Match home.css primary */
-    --accent: #e8c4a0;
+    --accent: #fdba74;
     --text: #333;
 }
 
@@ -100,7 +100,7 @@ body {
 
 .option-btn.selected {
     background: var(--primary);
-    color: #3e2723;
+    color: #0f172a;
     border-color: var(--primary);
 }
 
@@ -115,7 +115,7 @@ body {
 
 .result-msg {
     font-size: 1.2rem;
-    color: #666;
+    color: #64748b;
 }
 
 .result-book-card {
@@ -144,7 +144,7 @@ body {
 
 .book-info .author {
     font-style: italic;
-    color: #555;
+    color: #475569;
     margin-bottom: 15px;
 }
 
@@ -165,7 +165,7 @@ body {
 
 .action-btn {
     background: var(--primary);
-    color: #3e2723;
+    color: #0f172a;
     border: none;
     padding: 10px 20px;
     border-radius: 6px;

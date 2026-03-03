@@ -106,7 +106,7 @@
   <!-- ================= AUTH LOGIC (Flip Card) ================= -->
   <script>
     // Backend API server URL
-    const API_BASE = 'http://localhost:5000';
+    const API_BASE = '';
     
     // ===== DOM ELEMENTS =====
     const flipCard = document.getElementById("flipCard");
@@ -138,9 +138,8 @@
      */
     const saveSession = (token, user) => {
       console.log('[Login] Saving session - user:', user);
-      localStorage.setItem('token', token);
-      localStorage.setItem('userName', user.name || '');
-      localStorage.setItem('userId', user.id || '');
+      localStorage.setItem('authToken', token);
+      localStorage.setItem('authUser', JSON.stringify(user));
       console.log('[Login] Session saved - token:', token.substring(0, 20) + '..., userName:', user.name);
     };
 

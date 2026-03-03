@@ -4,7 +4,7 @@
  * Handles cart persistence, rendering, and basic modal operations.
  */
 (function () {
-  const API_BASE = 'http://localhost:5000';
+  const API_BASE = '';
 
   // --- Utility Helpers ---
   const el = id => document.getElementById(id);

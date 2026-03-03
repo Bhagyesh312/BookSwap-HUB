@@ -10,7 +10,7 @@
 /* BODY (DON'T CENTER NAVBAR) */
 body {
   min-height: 100vh;
-  background: #fffaf0;
+  background: #f8fafc;
 }
 
 
@@ -41,8 +41,8 @@ body {
   -webkit-backdrop-filter: blur(14px);
   backdrop-filter: blur(14px);
 
-  border: 1px solid rgba(62, 39, 35, 0.1);
-  box-shadow: 0 25px 60px rgba(62, 39, 35, 0.15);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.15);
 }
 
 
@@ -50,13 +50,13 @@ body {
 .sell-card h1 {
   font-size: 30px;
   font-weight: 900;
-  color: #3e2723;
+  color: #0f172a;
 }
 
 .sub {
   margin-top: 8px;
   font-size: 14px;
-  color: #5d4037;
+  color: #1e293b;
   opacity: .9;
 }
 
@@ -87,7 +87,7 @@ body {
 .field label {
   font-weight: 700;
   font-size: 14px;
-  color: #3e2723;
+  color: #0f172a;
 }
 
 
@@ -98,12 +98,12 @@ body {
   padding: 14px 16px;
 
   border-radius: 16px;
-  border: 1px solid rgba(205, 127, 50, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.15);
 
   background: rgba(255, 255, 255, 0.95);
 
   font-size: 14px;
-  color: #3e2723;
+  color: #0f172a;
 
   transition: .25s ease;
 }
@@ -118,8 +118,8 @@ body {
 .field select:focus,
 .field textarea:focus {
   outline: none;
-  border-color: #3e2723;
-  box-shadow: 0 0 0 3px rgba(183, 110, 121, 0.18);
+  border-color: #0f172a;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
 }
 
 
@@ -134,8 +134,8 @@ body {
 /* ============================= */
 
 .check-area {
-  background: rgba(62, 39, 35, 0.06);
-  border: 1px solid rgba(62, 39, 35, 0.08);
+  background: rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   padding: 14px;
   border-radius: 16px;
 }
@@ -146,7 +146,7 @@ body {
   gap: 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #4e342e;
+  color: #334155;
 }
 
 .check input {
@@ -171,17 +171,17 @@ body {
   font-weight: 900;
 
   cursor: pointer;
-  color: #3e2723;
+  color: #fff;
 
-  background: #d4a574;
+  background: linear-gradient(135deg, #f97316, #ef4444);
 
-  box-shadow: 0 18px 35px rgba(212, 165, 116, 0.25);
+  box-shadow: 0 18px 35px rgba(249, 115, 22, 0.25);
   transition: .25s ease;
 }
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 18px 35px rgba(212, 165, 116, 0.4);
+  box-shadow: 0 18px 35px rgba(249, 115, 22, 0.4);
 }
 
 
@@ -193,7 +193,7 @@ body {
 
   text-decoration: none;
   font-weight: 800;
-  color: #3e2723;
+  color: #0f172a;
 }
 
 .back-btn:hover {

@@ -3,8 +3,9 @@
  * This function checks localStorage for token and displays appropriate UI elements
  */
 function initAuthUI() {
-    const token = localStorage.getItem('token');
-    const userName = localStorage.getItem('userName');
+    const token = localStorage.getItem('authToken');
+    const authUser = localStorage.getItem('authUser');
+    const userName = authUser ? JSON.parse(authUser).name : null;
     const loginBtn = document.getElementById('loginBtn');
     const userProfile = document.getElementById('userProfile');
     
@@ -57,9 +58,8 @@ function initAuthUI() {
             logoutBtn.onclick = function(e) {
                 e.preventDefault();
                 console.log('[AuthUI] Logging out...');
-                localStorage.removeItem('token');
-                localStorage.removeItem('userName');
-                localStorage.removeItem('userId');
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('authUser');
                 console.log('[AuthUI] localStorage cleared, redirecting to home...');
                 window.location.href = 'home.html';
             };

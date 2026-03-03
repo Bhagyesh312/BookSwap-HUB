@@ -73,10 +73,10 @@
 
         <!-- EMPTY STATE -->
         <div id="emptyState" class="empty-state" style="display: none;">
-            <div class="empty-icon">📭</div>
+            <div class="empty-icon"><svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
             <h3>No orders yet</h3>
             <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
-            <a href="buy.html" class="btn btn-primary">🛍️ Start Shopping</a>
+            <a href="buy.html" class="btn btn-primary">Start Shopping</a>
         </div>
 
     </div>
@@ -144,7 +144,7 @@
             <!-- ACTION BUTTONS -->
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="closeDetailModal">Close</button>
-                <button class="btn btn-primary" id="trackOrderBtn">🗺️ Track Order</button>
+                <button class="btn btn-primary" id="trackOrderBtn">Track Order</button>
             </div>
         </div>
     </div>
@@ -177,7 +177,7 @@
     <!-- ================= ORDERS LOGIC ================= -->
     <script>
         // ===== CONFIGURATION & STATE =====
-        const API_BASE = 'http://localhost:5000';
+        const API_BASE = '';
         const notifEl = document.getElementById('notification');
         let ordersData = [];
 
@@ -246,7 +246,7 @@
         const loadOrders = async () => {
             try {
                 const headers = getAuthHeader();
-                const res = await fetch(`${API_BASE}/api/orders`, { headers });
+                const res = await fetch(`${API_BASE}/api/orders/`, { headers });
                 if (!res.ok) throw new Error('Failed to load orders');
 
                 const data = await res.json();
@@ -275,7 +275,7 @@
          */
         const renderOrders = (orders) => {
             const html = orders.map(order => {
-                const statusClass = order.status?.toLowerCase() || 'pending';
+                const statusClass = (order.status || 'pending').toLowerCase();
                 const statusLabel = {
                     'pending': 'Pending',
                     'confirmed': 'Confirmed',
@@ -284,32 +284,72 @@
                     'cancelled': 'Cancelled'
                 }[statusClass] || 'Pending';
 
-                const itemsCount = (order.items || []).length;
-                const firstItem = order.items?.[0]?.title || 'Order';
+                const items = order.items || [];
+                const itemsHTML = items.slice(0, 2).map(item => {
+                    const title = item.title || 'Untitled';
+                    const qty = item.quantity || 1;
+                    const price = item.price || 0;
+                    const imgSrc = item.image || '';
+                    
+                    return `
+                    <div class="order-item">
+                        <div class="item-image">
+                            ${imgSrc ? `<img src="${imgSrc}" alt="${title}">` : title.charAt(0).toUpperCase()}
+                        </div>
+                        <div class="item-details">
+                            <h4 class="item-title">${title}</h4>
+                            <div class="item-meta">
+                                <span>Qty: ${qty}</span>
+                            </div>
+                        </div>
+                        <div class="item-amount">
+                            <div class="item-price">₹${formatIN(price * qty)}</div>
+                            <div class="item-quantity">₹${formatIN(price)} × ${qty}</div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                const moreItems = items.length > 2 ? `<p style="color:#999;font-size:13px;margin-top:10px;">+ ${items.length - 2} more item(s)</p>` : '';
 
                 return `
-                    <div class="order-card" data-order-id="${order.id}" data-animate="fade-up">
-                        <div class="card-header">
-                            <div class="order-info">
-                                <h3>Order #${order.id}</h3>
-                                <p class="order-date">${formatDate(order.createdAt)}</p>
+                    <div class="order-card" data-order-id="${order.id}">
+                        <div class="order-card-header">
+                            <div class="order-left-info">
+                                <div class="order-id-label">Order ID</div>
+                                <div class="order-id">#${order.id}</div>
+                                <div class="order-date">${formatDate(order.createdAt)}</div>
                             </div>
-                            <span class="status-badge ${statusClass}">${statusLabel}</span>
+                            <span class="status-badge status-${statusClass}">${statusLabel}</span>
                         </div>
 
-                        <div class="card-content">
-                            <div class="item-preview">
-                                <div class="item-count">${itemsCount} item${itemsCount !== 1 ? 's' : ''}</div>
-                                <p class="item-title">${firstItem}</p>
+                        <div class="order-card-body">
+                            <div class="order-items">
+                                ${itemsHTML}
+                                ${moreItems}
                             </div>
-                            <div class="order-total">₹${formatIN(order.totalAmount)}</div>
+                            <div class="order-summary">
+                                <div class="summary-row">
+                                    <span>Items (${items.length})</span>
+                                    <span class="summary-value">₹${formatIN(order.totalAmount)}</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping</span>
+                                    <span class="summary-value">₹0</span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>Total</span>
+                                    <span>₹${formatIN(order.totalAmount)}</span>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="card-footer">
-                            <div class="shipping-info">
-                                ${order.city}, ${order.state}
+                        <div class="order-card-footer">
+                            <div class="shipping-info" style="font-size:13px;color:#666;">
+                                ${order.city || ''}, ${order.state || ''}
                             </div>
-                            <button class="btn-view-details" data-order-id="${order.id}">View Details →</button>
+                            <div class="order-actions">
+                                <button class="action-btn btn-view-details" data-order-id="${order.id}">View Details</button>
+                            </div>
                         </div>
                     </div>
                 `;
