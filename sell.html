@@ -7,10 +7,13 @@
   <title>Sell a Book | BookSwap Hub</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="home.css">
   <link rel="stylesheet" href="sell.css" />
   <link rel="stylesheet" href="cart.css">
+  <link rel="stylesheet" href="wishlist.css">
   <link rel="stylesheet" href="animations.css">
+  <link rel="stylesheet" href="enhancements.css">
 </head>
 
 <body>
@@ -29,21 +32,33 @@
       <div class="nav-auth">
         <!-- Login Button (shown when not logged in) -->
         <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
-        
+
         <!-- User Profile (shown when logged in) -->
         <div id="userProfile" class="user-profile hidden">
-            <button id="profileToggle" class="profile-btn" aria-label="User menu">
-                <span class="profile-avatar">👤</span>
-                <span class="profile-name"></span>
-            </button>
-            <div id="profileMenu" class="profile-menu hidden">
-                <a href="profile.html" class="profile-menu-item">Profile Settings</a>
-                <a href="orders.html" class="profile-menu-item">My Orders</a>
-                <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
-            </div>
+          <button id="profileToggle" class="profile-btn" aria-label="User menu">
+            <span class="profile-avatar">👤</span>
+            <span class="profile-name"></span>
+          </button>
+          <div id="profileMenu" class="profile-menu hidden">
+            <a href="profile.html" class="profile-menu-item">Profile Settings</a>
+            <a href="orders.html" class="profile-menu-item">My Orders</a>
+            <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+          </div>
         </div>
-        <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
-            class="cart-label">CART</span><span id="cartCount" class="cart-count" aria-live="polite">0</span></button>
+
+        <!-- Wishlist Icon -->
+        <button class="wishlist-icon-btn" aria-label="Open Wishlist" title="My Wishlist">
+          <span class="wishlist-ico"><i class="fa-regular fa-heart"></i></span>
+          <span class="wishlist-label">WISHLIST</span>
+          <span class="wishlist-count" aria-live="polite">0</span>
+        </button>
+
+        <!-- Cart Icon -->
+        <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
+          <span class="cart-ico"><i class="fa-solid fa-cart-shopping"></i></span>
+          <span class="cart-label">CART</span>
+          <span id="cartCount" class="cart-count" aria-live="polite">0</span>
+        </button>
       </div>
 
     </div>
@@ -149,7 +164,8 @@
 
         <div class="field full">
           <label>Description</label>
-          <textarea name="description" rows="4" placeholder="Write details like notes, highlights, any damage, etc." required></textarea>
+          <textarea name="description" rows="4" placeholder="Write details like notes, highlights, any damage, etc."
+            required></textarea>
         </div>
 
         <div class="field full">
@@ -207,88 +223,97 @@
     <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
   </footer>
 
-</body>
-
-</html>
-
-<!-- ================= CART MODAL ================= -->
-<div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
-  <div class="cart-panel">
-    <header class="cart-header">
-      <h3>Your Cart</h3>
-      <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
-    </header>
-    <div id="cartItems" class="cart-items">
-      <!-- cart items -->
+  <!-- CART SIDEBAR -->
+  <div id="cartModal" class="cart-modal" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <div class="cart-overlay"></div>
+    <div class="cart-panel">
+      <header class="cart-header">
+        <h3><i class="fa-solid fa-cart-shopping"></i> Your Cart</h3>
+        <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
+      </header>
+      <div id="cartItems" class="cart-items">
+        <!-- cart items -->
+      </div>
+      <footer class="cart-footer">
+        <div class="cart-total">
+          <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
+          <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
+        </div>
+        <div class="cart-actions">
+          <button id="clearCart" class="clear-cart">Clear</button>
+          <button id="checkoutBtn" class="checkout">Checkout</button>
+        </div>
+      </footer>
     </div>
-    <footer class="cart-footer">
-      <div class="cart-total">
-        <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
-        <div class="saved-total">You Saved: ₹<span id="cartSavedAmount">0</span></div>
-      </div>
-      <div class="cart-actions">
-        <button id="clearCart" class="clear-cart">Clear</button>
-        <button id="checkoutBtn" class="checkout">Checkout</button>
-      </div>
-    </footer>
   </div>
-</div>
 
-<script src="auth-ui.js"></script>
-<script src="cart-ui.js"></script>
-<script src="animations.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="cart-ui.js"></script>
+  <script src="wishlist.js"></script>
+  <script src="animations.js"></script>
+  <script src="enhancements.js"></script>
 
-<script>
-/* ================= SELL FORM SUBMISSION ================= */
-document.getElementById('sellForm').addEventListener('submit', async function (e) {
-    e.preventDefault();
+  <script>
+    /* ================= SELL FORM SUBMISSION ================= */
+    document.getElementById('sellForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
 
-    const btn = document.getElementById('sellSubmitBtn');
-    const originalText = btn.textContent;
-    btn.disabled = true;
-    btn.textContent = '⏳ Submitting...';
+      const btn = document.getElementById('sellSubmitBtn');
+      const originalText = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = '⏳ Submitting...';
 
-    const form = e.target;
-    const fd   = new FormData(form);
+      const form = e.target;
+      const fd = new FormData(form);
 
-    const payload = {
-        title:          fd.get('title'),
-        author:         fd.get('author'),
-        condition:      fd.get('condition'),
-        edition:        fd.get('edition'),
-        language:       fd.get('language'),
-        original:       fd.get('original'),
-        price:          fd.get('price'),
-        quantity:       fd.get('quantity'),
+      const payload = {
+        title: fd.get('title'),
+        author: fd.get('author'),
+        condition: fd.get('condition'),
+        edition: fd.get('edition'),
+        language: fd.get('language'),
+        original: fd.get('original'),
+        price: fd.get('price'),
+        quantity: fd.get('quantity'),
         deliveryOption: fd.get('deliveryOption'),
-        sellerName:     fd.get('sellerName'),
-        sellerContact:  fd.get('sellerContact'),
-        sellerCity:     fd.get('sellerCity'),
-        paymentMode:    fd.get('paymentMode'),
-        description:    fd.get('description')
-    };
+        sellerName: fd.get('sellerName'),
+        sellerContact: fd.get('sellerContact'),
+        sellerCity: fd.get('sellerCity'),
+        paymentMode: fd.get('paymentMode'),
+        description: fd.get('description')
+      };
 
-    try {
+      try {
         const res = await fetch('/api/books/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
         const data = await res.json();
 
         if (res.ok) {
-            alert('✅ Book listed successfully! Your book is now available on BookSwap Hub.');
-            form.reset();
+          if (typeof showToast === 'function') {
+            showToast({ type: 'success', title: 'Book Listed!', message: 'Your book is now available on BookSwap Hub.' });
+          }
+          form.reset();
         } else {
-            alert('❌ ' + (data.error || 'Something went wrong. Please try again.'));
+          if (typeof showToast === 'function') {
+            showToast({ type: 'error', title: 'Submission Failed', message: data.error || 'Something went wrong. Please try again.' });
+          }
         }
-    } catch (err) {
+      } catch (err) {
         console.error('Sell form error:', err);
-        alert('❌ Network error. Make sure the server is running and try again.');
-    } finally {
+        if (typeof showToast === 'function') {
+          showToast({ type: 'error', title: 'Network Error', message: 'Make sure the server is running and try again.' });
+        }
+      } finally {
         btn.disabled = false;
         btn.textContent = originalText;
-    }
-});
-</script>
+      }
+    });
+  </script>
+
+</body>
+
+</html>

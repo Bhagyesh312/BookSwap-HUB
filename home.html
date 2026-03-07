@@ -5,11 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BookSwap Hub</title>
+
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="home.css?v=2">
+    <!-- Font Awesome 6 (icons for wishlist, cart, arrows) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Swiper.js CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+
+    <!-- Site Stylesheets -->
+    <link rel="stylesheet" href="home.css?v=3">
     <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="wishlist.css">
     <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="enhancements.css">
 </head>
 
 <body>
@@ -48,7 +59,7 @@
             <div class="nav-auth">
                 <!-- Login Button (shown when not logged in) -->
                 <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
-                
+
                 <!-- User Profile (shown when logged in) -->
                 <div id="userProfile" class="user-profile hidden">
                     <button id="profileToggle" class="profile-btn" aria-label="User menu">
@@ -62,35 +73,114 @@
                     </div>
                 </div>
 
-                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
-                        class="cart-label">CART</span><span id="cartCount" class="cart-count"
-                        aria-live="polite">0</span></button>
+                <!-- Wishlist Icon -->
+                <button class="wishlist-icon-btn" aria-label="Open Wishlist" title="My Wishlist">
+                    <span class="wishlist-ico"><i class="fa-regular fa-heart"></i></span>
+                    <span class="wishlist-label">WISHLIST</span>
+                    <span class="wishlist-count" aria-live="polite">0</span>
+                </button>
+
+                <!-- Cart Icon -->
+                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
+                    <span class="cart-ico"><i class="fa-solid fa-cart-shopping"></i></span>
+                    <span class="cart-label">CART</span>
+                    <span id="cartCount" class="cart-count" aria-live="polite">0</span>
+                </button>
             </div>
 
         </div>
     </nav>
 
+    <!-- ================= NEWS TICKER ================= -->
+    <div class="news-ticker">
+        <div class="ticker-label">
+            <i class="fa-solid fa-bullhorn"></i>
+            <span>Latest</span>
+        </div>
+        <div class="ticker-wrapper">
+            <div class="ticker-content">
+                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Flash Sale: Get 30% off on all Classic Literature this weekend!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> Free delivery on orders above ₹499</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-star"></i> New arrivals: 500+ books added this week!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Price Drop Alerts: Add books to wishlist and get notified when prices drop!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Flash Sale: Get 30% off on all Classic Literature this weekend!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> Free delivery on orders above ₹499</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-star"></i> New arrivals: 500+ books added this week!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Price Drop Alerts: Add books to wishlist and get notified when prices drop!</span>
+            </div>
+        </div>
+    </div>
 
-    <!-- ================= HERO SECTION ================= -->
-    <section class="hero">
-        <div class="hero-text" data-animate="fade-left">
-            <h2>Where Books Find New Owners </h2>
-            <p>Buy affordable books, sell your extras, and exchange easily with BookSwap Hub.</p>
 
-            <div class="hero-buttons">
-                <a href="buy.html" class="btn primary">📖 Buy Books</a>
-                <a href="sell.html" class="btn outline">💰 Sell Books</a>
+    <!-- ================= HERO SLIDER (Swiper.js) ================= -->
+    <section class="hero-slider">
+        <div class="swiper heroSwiper">
+            <div class="swiper-wrapper">
+
+                <!-- Slide 1 -->
+                <div class="swiper-slide hero-slide hero-slide-1">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h2 class="hero-slide-title">Where Books Find <span>New Owners</span></h2>
+                        <p class="hero-slide-subtitle">Buy affordable books, sell your extras, and exchange easily with
+                            BookSwap Hub.</p>
+                        <a href="buy.html" class="btn primary hero-slide-btn">Shop Now</a>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="swiper-slide hero-slide hero-slide-2">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h2 class="hero-slide-title">Discover Your Next <span>Great Read</span></h2>
+                        <p class="hero-slide-subtitle">Thousands of books across every genre — at prices that won't
+                            break the bank.</p>
+                        <a href="buy.html" class="btn primary hero-slide-btn">Explore Now</a>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="swiper-slide hero-slide hero-slide-3">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h2 class="hero-slide-title">Sell Your Books <span>Instantly</span></h2>
+                        <p class="hero-slide-subtitle">Upload details, set your price, and reach thousands of buyers in
+                            minutes.</p>
+                        <a href="sell.html" class="btn primary hero-slide-btn">Start Selling</a>
+                    </div>
+                </div>
+
+                <!-- Slide 4 -->
+                <div class="swiper-slide hero-slide hero-slide-4">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h2 class="hero-slide-title">Trusted by <span>Book Lovers</span></h2>
+                        <p class="hero-slide-subtitle">Join our growing community of readers who save big on quality
+                            books.</p>
+                        <a href="quiz.html" class="btn primary hero-slide-btn">Find Your Match</a>
+                    </div>
+                </div>
+
             </div>
 
-            <p class="trust-text"> Trusted by people for affordable learning!</p>
-        </div>
+            <!-- Navigation Arrows -->
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
 
-        <div class="hero-image" data-animate="fade-right" data-delay="200">
-            <video autoplay muted loop playsinline>
-                <source src="media/mixkit-library-shelf-full-of-books-50729-full-hd.mp4" type="video/mp4">
-            </video>
+            <!-- Pagination Dots -->
+            <div class="swiper-pagination"></div>
         </div>
-
     </section>
 
     <!-- ================= FEATURES / SERVICES ================= -->
@@ -106,7 +196,7 @@
             <div class="icon">📗</div>
             <h3>Used Books</h3>
             <p>Quality second-hand books verified by us.</p>
-            <a href="buy.html" class="card-link">Check Now →</a></a>
+            <a href="buy.html" class="card-link">Check Now →</a>
         </div>
 
         <div class="box" data-animate="flip-up" data-delay="500">
@@ -121,7 +211,7 @@
     <section class="quiz-banner" data-animate="zoom-in">
         <h2>Don't know what to read next?</h2>
         <p>Take our 1-minute quiz to find your perfect book match!</p>
-        <a href="quiz.html" class="btn primary quiz-btn">🔥 Start Matchmaker</a>
+        <a href="quiz.html" class="btn primary quiz-btn">Start Matchmaker</a>
     </section>
 
     <!-- ================= FEATURED BOOKS ================= -->
@@ -163,11 +253,12 @@
         <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
     </footer>
 
-    <!-- ================= CART MODAL ================= -->
-    <div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <!-- ================= CART SIDEBAR ================= -->
+    <div id="cartModal" class="cart-modal" role="dialog" aria-modal="true" aria-label="Shopping cart">
+        <div class="cart-overlay"></div>
         <div class="cart-panel">
             <header class="cart-header">
-                <h3>Your Cart</h3>
+                <h3><i class="fa-solid fa-cart-shopping"></i> Your Cart</h3>
                 <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
             </header>
             <div id="cartItems" class="cart-items">
@@ -186,11 +277,69 @@
         </div>
     </div>
 
+    <!-- ================= SCRIPTS ================= -->
     <script src="auth-ui.js"></script>
     <script src="cart-ui.js"></script>
+    <script src="wishlist.js"></script>
     <script src="animations.js"></script>
+    <script src="enhancements.js"></script>
+
+    <!-- Swiper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
+        /* ── Hero Slider Initialization ─────────────────────── */
+        const heroSwiper = new Swiper('.heroSwiper', {
+            loop: true,
+            speed: 800,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            effect: 'fade',
+            fadeEffect: { crossFade: true },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+            on: {
+                /* Staggered text reveal on each slide change */
+                slideChangeTransitionStart: function () {
+                    /* Reset all slide animations first */
+                    this.slides.forEach(slide => {
+                        const c = slide.querySelector('.hero-slide-content');
+                        if (c) {
+                            c.classList.remove('animate-in');
+                            /* Force reflow on children so animations replay */
+                            c.querySelectorAll('.hero-slide-title, .hero-slide-subtitle, .hero-slide-btn').forEach(el => {
+                                el.style.animation = 'none';
+                                void el.offsetWidth;
+                                el.style.animation = '';
+                            });
+                        }
+                    });
+                    /* Trigger staggered entrance on active slide */
+                    const activeSlide = this.slides[this.activeIndex];
+                    const content = activeSlide.querySelector('.hero-slide-content');
+                    if (content) {
+                        void content.offsetWidth; // reflow
+                        content.classList.add('animate-in');
+                    }
+                },
+                init: function () {
+                    /* Animate the first slide's text on load */
+                    const firstSlide = this.slides[this.activeIndex];
+                    const content = firstSlide.querySelector('.hero-slide-content');
+                    if (content) content.classList.add('animate-in');
+                }
+            }
+        });
+
+        /* ── Top Picks / Featured Books ─────────────────────── */
         const API_BASE = '';
 
         // Fallback Top 4 Picks data
@@ -222,9 +371,15 @@
             const topBooks = await getTopBooks();
 
             grid.innerHTML = topBooks.map(book => {
+                const wishlisted = window.wishlistAPI && window.wishlistAPI.isInWishlist(book.id);
                 return `
                     <div class="book-card" style="cursor: pointer;" onclick="viewBookDetails(${book.id})">
-                        <img src="${book.image}" alt="${book.title}">
+                        <div class="card-image">
+                            <img src="${book.image}" alt="${book.title}">
+                            <button class="wishlist-heart ${wishlisted ? 'wishlisted' : ''}" data-book-id="${book.id}" title="Add to wishlist">
+                                <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                            </button>
+                        </div>
                         <h3>${book.title}</h3>
                         <p class="price">₹${book.price}</p>
                         <button class="buy-btn" onclick="event.stopPropagation(); goToBuy(${book.id})">Buy Now</button>

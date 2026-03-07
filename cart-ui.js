@@ -1,7 +1,9 @@
 /**
  * cart-ui.js
  * Standalone cart UI logic for pages without the full buy script.
- * Handles cart persistence, rendering, and basic modal operations.
+ * Handles cart persistence, rendering, and sidebar panel operations.
+ * 
+ * Cart sidebar now uses CSS transitions (.open class) instead of display toggle.
  */
 (function () {
   const API_BASE = '';
@@ -60,7 +62,7 @@
   // --- Core UI Functions ---
 
   /**
-   * Renders items into the cart modal and calculates totals
+   * Renders items into the cart sidebar panel and calculates totals
    */
   const renderCart = async () => {
     const cart = await getCart();
@@ -86,6 +88,11 @@
       total += linePrice;
       origTotal += lineOrig;
 
+      // Use QuantitySelector if available, fallback to simple display
+      const qtyHTML = typeof window.QuantitySelector !== 'undefined' 
+        ? window.QuantitySelector.create(item.qty, item.id)
+        : `<div class="ci-qty">Qty: ${item.qty}</div>`;
+
       return `
                 <div class="cart-row" data-id="${item.id}">
                     <div class="ci-left">
@@ -93,7 +100,7 @@
                     </div>
                     <div class="ci-body">
                         <div class="ci-title">${item.title}</div>
-                        <div class="ci-qty">Qty: ${item.qty}</div>
+                        ${qtyHTML}
                         <div class="ci-price">₹${formatIN(linePrice)} <span class="cancelled">₹${formatIN(lineOrig)}</span></div>
                     </div>
                     <div class="ci-actions">
@@ -107,22 +114,26 @@
   };
 
   /**
-   * Opens the cart modal and triggers a re-render
+   * Opens the cart sidebar with slide-in animation
    */
   const openCart = async () => {
     const modal = el('cartModal');
     if (modal) {
-      modal.classList.remove('hidden');
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden'; // prevent scroll
       await renderCart();
     }
   };
 
   /**
-   * Closes the cart modal
+   * Closes the cart sidebar with slide-out animation
    */
   const closeCart = () => {
     const modal = el('cartModal');
-    if (modal) modal.classList.add('hidden');
+    if (modal) {
+      modal.classList.remove('open');
+      document.body.style.overflow = ''; // restore scroll
+    }
   };
 
   /**
@@ -155,6 +166,32 @@
     await renderCart();
   };
 
+  /**
+   * Updates quantity for a cart item
+   * @param {number|string} id - Book ID
+   * @param {number} newQty - New quantity
+   */
+  const updateQuantity = async (id, newQty) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qty: newQty })
+      });
+      if (!res.ok) throw new Error('API update failed');
+    } catch (_e) {
+      // Fallback to localStorage
+      const cart = getCartFromStorage();
+      const item = cart.find(x => x.id === Number(id));
+      if (item) {
+        item.qty = newQty;
+        localStorage.setItem('cart', JSON.stringify(cart));
+      }
+    }
+    await updateCount();
+    await renderCart();
+  };
+
   // --- Initialization ---
 
   /**
@@ -175,20 +212,60 @@
     if (checkout) {
       checkout.addEventListener('click', async () => {
         const c = await getCart();
-        if (!c.length) return alert('Cart is empty');
-        alert('Proceeding to checkout — items: ' + c.length);
+        if (!c.length) {
+          if (typeof showToast === 'function') {
+            showToast({ type: 'warning', title: 'Empty Cart', message: 'Add some books to your cart first!' });
+          }
+          return;
+        }
+        // Redirect to checkout page
+        window.location.href = 'checkout.html';
       });
     }
 
     if (itemsEl) {
       itemsEl.addEventListener('click', async e => {
+        // Handle remove button
         const rem = e.target.closest('button.remove-item');
-        if (!rem) return;
-        await removeFromCart(rem.dataset.id);
+        if (rem) {
+          await removeFromCart(rem.dataset.id);
+          return;
+        }
+        
+        // Handle quantity buttons
+        const minusBtn = e.target.closest('.qty-minus');
+        const plusBtn = e.target.closest('.qty-plus');
+        if (minusBtn || plusBtn) {
+          const selector = e.target.closest('.qty-selector');
+          if (!selector) return;
+          
+          const itemId = selector.dataset.itemId;
+          const valueEl = selector.querySelector('.qty-value');
+          let qty = parseInt(valueEl.textContent, 10);
+          
+          if (minusBtn && qty > 1) {
+            qty--;
+          } else if (plusBtn) {
+            qty++;
+          }
+          
+          valueEl.textContent = qty;
+          if (selector.querySelector('.qty-minus')) {
+            selector.querySelector('.qty-minus').disabled = qty <= 1;
+          }
+          
+          await updateQuantity(itemId, qty);
+        }
       });
     }
 
+    /* Close on overlay click */
     if (modal) {
+      const overlay = modal.querySelector('.cart-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', closeCart);
+      }
+      /* Also close if clicking the modal area outside the panel */
       modal.addEventListener('click', e => {
         if (e.target === modal) closeCart();
       });
@@ -197,8 +274,10 @@
     updateCount();
   };
 
-  // Expose init globally for manual triggers if needed
+  // Expose globally
   window.initCartUI = init;
+  window.openCartSidebar = openCart;
+  window.closeCartSidebar = closeCart;
 
   // Auto-init on DOMContentLoaded
   document.addEventListener('DOMContentLoaded', init);

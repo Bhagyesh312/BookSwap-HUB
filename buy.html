@@ -7,10 +7,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="buy.css">
     <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="wishlist.css">
     <link rel="stylesheet" href="animations.css">
+    <link rel="stylesheet" href="enhancements.css">
 </head>
 
 <body>
@@ -33,7 +38,7 @@
             <div class="nav-auth">
                 <!-- Login Button (shown when not logged in) -->
                 <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
-                
+
                 <!-- User Profile (shown when logged in) -->
                 <div id="userProfile" class="user-profile hidden">
                     <button id="profileToggle" class="profile-btn" aria-label="User menu">
@@ -47,9 +52,19 @@
                     </div>
                 </div>
 
-                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart"><span class="cart-ico">🛒</span><span
-                        class="cart-label">CART</span><span id="cartCount" class="cart-count"
-                        aria-live="polite">0</span></button>
+                <!-- Wishlist Icon -->
+                <button class="wishlist-icon-btn" aria-label="Open Wishlist" title="My Wishlist">
+                    <span class="wishlist-ico"><i class="fa-regular fa-heart"></i></span>
+                    <span class="wishlist-label">WISHLIST</span>
+                    <span class="wishlist-count" aria-live="polite">0</span>
+                </button>
+
+                <!-- Cart Icon -->
+                <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
+                    <span class="cart-ico"><i class="fa-solid fa-cart-shopping"></i></span>
+                    <span class="cart-label">CART</span>
+                    <span id="cartCount" class="cart-count" aria-live="polite">0</span>
+                </button>
             </div>
 
         </div>
@@ -77,48 +92,63 @@
 
         <!-- ===== BOOK TYPE TOGGLE ===== -->
         <div class="book-type-toggle">
-            <button class="toggle-btn active" data-type="new">New Books</button>
-            <button class="toggle-btn" data-type="old">Old Books</button>
+            <button class="toggle-btn active" data-type="new"><i class="fa-solid fa-sparkles"></i> New Books</button>
+            <button class="toggle-btn" data-type="old"><i class="fa-solid fa-book"></i> Old Books</button>
         </div>
 
         <div class="section-subnav" aria-label="Book sections">
-            <button class="section-btn" data-section="education">Education</button>
-            <button class="section-btn" data-section="romance">Romance</button>
-            <button class="section-btn" data-section="thriller">Thriller</button>
-            <button class="section-btn" data-section="fantasy">Fantasy</button>
-            <button class="section-btn" data-section="science-fiction">Science Fiction</button>
-            <button class="section-btn" data-section="self-help">Self Help</button>
-            <button class="section-btn" data-section="business">Business</button>
-            <button class="section-btn" data-section="classics">Classics</button>
+            <button class="section-btn active" data-section="all"><i class="fa-solid fa-layer-group"></i> All</button>
+            <button class="section-btn" data-section="education"><i class="fa-solid fa-graduation-cap"></i> Education</button>
+            <button class="section-btn" data-section="romance"><i class="fa-solid fa-heart"></i> Romance</button>
+            <button class="section-btn" data-section="thriller"><i class="fa-solid fa-skull"></i> Thriller</button>
+            <button class="section-btn" data-section="fantasy"><i class="fa-solid fa-dragon"></i> Fantasy</button>
+            <button class="section-btn" data-section="science-fiction"><i class="fa-solid fa-rocket"></i> Sci-Fi</button>
+            <button class="section-btn" data-section="self-help"><i class="fa-solid fa-brain"></i> Self Help</button>
+            <button class="section-btn" data-section="business"><i class="fa-solid fa-briefcase"></i> Business</button>
+            <button class="section-btn" data-section="classics"><i class="fa-solid fa-feather-pointed"></i> Classics</button>
         </div>
 
         <!-- ===== FILTER SIDEBAR ===== -->
         <aside class="filters">
 
-            <h3> Filters</h3>
+            <h3>Filters</h3>
 
             <div class="filter-group">
                 <label>Price Range</label>
-                <select title="Select price range" id="priceFilter" onchange="applyFilters()">
-                    <option value="">All Prices</option>
-                    <option value="0-350">Below ₹350</option>
-                    <option value="350-550">₹350 – ₹550</option>
-                    <option value="550-800">₹550 – ₹800</option>
-                    <option value="800+">Above ₹800</option>
-                </select>
+                <div class="custom-select" data-select-id="priceFilter">
+                    <button class="select-trigger" type="button">
+                        <span class="select-value">All Prices</span>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </button>
+                    <ul class="select-options">
+                        <li data-value="" class="selected"><i class="fa-solid fa-coins"></i> All Prices</li>
+                        <li data-value="0-350"><i class="fa-solid fa-tag"></i> Below ₹350</li>
+                        <li data-value="350-550"><i class="fa-solid fa-tags"></i> ₹350 – ₹550</li>
+                        <li data-value="550-800"><i class="fa-solid fa-gem"></i> ₹550 – ₹800</li>
+                        <li data-value="800+"><i class="fa-solid fa-crown"></i> Above ₹800</li>
+                    </ul>
+                    <input type="hidden" id="priceFilter" value="">
+                </div>
             </div>
 
             <div class="filter-group">
                 <label>Sort By</label>
-                <select title="Select sort option" id="sortFilter" onchange="applyFilters()">
-                    <option value="popularity">Popularity</option>
-                    <option value="price-low">Price Low → High</option>
-                    <option value="price-high">Price High → Low</option>
-                    <option value="newest">Newest</option>
-                </select>
+                <div class="custom-select" data-select-id="sortFilter">
+                    <button class="select-trigger" type="button">
+                        <span class="select-value">Popularity</span>
+                        <i class="fa-solid fa-chevron-down select-arrow"></i>
+                    </button>
+                    <ul class="select-options">
+                        <li data-value="popularity" class="selected"><i class="fa-solid fa-fire"></i> Popularity</li>
+                        <li data-value="price-low"><i class="fa-solid fa-arrow-down-short-wide"></i> Price Low → High</li>
+                        <li data-value="price-high"><i class="fa-solid fa-arrow-up-wide-short"></i> Price High → Low</li>
+                        <li data-value="newest"><i class="fa-solid fa-clock"></i> Newest First</li>
+                    </ul>
+                    <input type="hidden" id="sortFilter" value="popularity">
+                </div>
             </div>
 
-            <button class="reset-btn" onclick="resetFilters()">↻ Reset Filters</button>
+            <button class="reset-btn" onclick="resetFilters()"><i class="fa-solid fa-rotate-right"></i> Reset Filters</button>
 
         </aside>
 
@@ -162,11 +192,12 @@
         <p class="footer-bottom">© 2026 BookSwap Hub | Just for Practice</p>
     </footer>
 
-    <!-- CART MODAL -->
-    <div id="cartModal" class="cart-modal hidden" role="dialog" aria-modal="true" aria-label="Shopping cart">
+    <!-- CART SIDEBAR -->
+    <div id="cartModal" class="cart-modal" role="dialog" aria-modal="true" aria-label="Shopping cart">
+        <div class="cart-overlay"></div>
         <div class="cart-panel">
             <header class="cart-header">
-                <h3>Your Cart</h3>
+                <h3><i class="fa-solid fa-cart-shopping"></i> Your Cart</h3>
                 <button id="closeCart" class="close-cart" aria-label="Close cart">✕</button>
             </header>
             <div id="cartItems" class="cart-items">
@@ -245,16 +276,16 @@
         // Main application initialization when DOM is fully loaded
         document.addEventListener('DOMContentLoaded', async () => {
             // Auth UI is initialized by auth-ui.js
-            
+
             // API endpoint configuration (empty string uses same origin)
             const API_BASE = '';
-            
+
             // Enable enhanced features (CSS will respond to this class)
             document.body.classList.add('js-enhanced');
 
             // DOM utility function for cleaner element selection
             const el = id => document.getElementById(id);
-            
+
             // ===== DOM ELEMENT REFERENCES =====
             const grid = el('bookGrid');                    // Main book display grid
             const searchInput = el('searchInput');          // Book search input field
@@ -262,7 +293,7 @@
             const sort = el('sortFilter');                  // Sort order dropdown
             const resetBtn = document.querySelector('.reset-btn');  // Reset filters button
             const searchBtn = document.querySelector('.search-container button');  // Search button
-            
+
             // Cart UI elements
             const cartBtn = el('cartBtn');                  // Cart toggle button
             const cartCount = el('cartCount');              // Cart item count badge
@@ -272,7 +303,7 @@
             const closeCartBtn = el('closeCart');           // Close cart button
             const clearCartBtn = el('clearCart');           // Clear cart button
             const checkoutBtn = el('checkoutBtn');          // Checkout button
-            
+
             // Book details modal elements
             const detailsModal = el('detailsModal');
             const closeDetailsBtn = el('closeDetailsBtn');
@@ -394,9 +425,13 @@
              */            const render = (b, index = 0) => {
                 const d = b.original > 0 ? Math.round(((b.original - b.price) / b.original) * 100) : 0;
                 const img = b.image || '';
+                const wishlisted = window.wishlistAPI && window.wishlistAPI.isInWishlist(b.id);
                 return `
             <div class="book-card" data-id="${b.id}" style="--stagger:${index % 12}">
-                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}">` : '<div style="color:#aaa">No cover</div>'}
+                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}">` : '<div class="no-cover-text">No cover</div>'}
+                    <button class="wishlist-heart ${wishlisted ? 'wishlisted' : ''}" data-book-id="${b.id}" title="Add to wishlist">
+                        <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                    </button>
                     <span class="discount-badge">-${d}%</span>
                 </div>
                 <h4>${b.title}</h4>
@@ -461,15 +496,52 @@
                 return 'education';
             };
 
+            // ===== PAGINATION STATE =====
+            const ITEMS_PER_PAGE = 12;
+            let currentPage = 1;
+            let filteredItems = [];
+
             /**
-             * Display filtered books in the grid
+             * Display filtered books in the grid with pagination
              * Renders book cards with animation setup
              * @param {Array} items - Books to display
+             * @param {number} page - Page number to display
              */
-            const display = items => {
-                grid.innerHTML = items.length
-                    ? items.map((book, idx) => render(book, idx)).join('')
+            const display = (items, page = 1) => {
+                filteredItems = items;
+                currentPage = page;
+                
+                const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+                const startIdx = (page - 1) * ITEMS_PER_PAGE;
+                const pageItems = items.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+                
+                grid.innerHTML = pageItems.length
+                    ? pageItems.map((book, idx) => render(book, startIdx + idx)).join('')
                     : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
+
+                // Add pagination controls
+                const existingPagination = document.querySelector('.pagination-container');
+                if (existingPagination) existingPagination.remove();
+                
+                if (totalPages > 1 && typeof window.Pagination !== 'undefined') {
+                    const paginationHTML = window.Pagination.create(page, totalPages, items.length);
+                    grid.insertAdjacentHTML('afterend', paginationHTML);
+                    
+                    // Initialize pagination click handler
+                    const paginationEl = document.querySelector('.pagination-container');
+                    if (paginationEl) {
+                        paginationEl.addEventListener('click', (e) => {
+                            const btn = e.target.closest('.pagination-btn');
+                            if (!btn || btn.disabled || btn.classList.contains('active')) return;
+                            
+                            const newPage = parseInt(btn.dataset.page, 10);
+                            display(filteredItems, newPage);
+                            
+                            // Scroll to top of book grid
+                            grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+                    }
+                }
 
                 requestAnimationFrame(setupCardScrollReveal);
             };
@@ -491,7 +563,7 @@
                 else if (sort.value === 'price-high') items.sort((a, b) => b.price - a.price);
                 else if (sort.value === 'newest') items = items.slice().reverse();
 
-                display(items);
+                display(items, 1); // Reset to page 1 when filters change
             };
 
             /**
@@ -502,6 +574,7 @@
                 sort.value = 'popularity';
                 searchInput.value = '';
                 selectedSection = 'all';
+                currentPage = 1;
                 document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
                 apply();
             };
@@ -596,7 +669,12 @@
                     cartCount.classList.add('bump');
                 } catch (_e) { }
                 await renderCart();
-                showNotification(`✓ "${b.title}" added to cart!`);
+                // Use toast notification for added to cart
+                if (typeof showToast === 'function') {
+                    showToast({ type: 'cart', title: 'Added to Cart', message: `"${b.title}" has been added to your cart.` });
+                } else {
+                    showNotification(`✓ "${b.title}" added to cart!`);
+                }
             };
 
             /**
@@ -674,13 +752,17 @@
                 if (savedEl) savedEl.textContent = formatIN(Math.max(0, originalTotal - total));
             };
 
-            // Modal control functions
+            // Cart sidebar control functions (CSS transition-based)
             const openCart = async () => {
-                cartModal.classList.remove('hidden');
+                cartModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
                 await renderCart();
             };
 
-            const closeCart = () => cartModal.classList.add('hidden');
+            const closeCart = () => {
+                cartModal.classList.remove('open');
+                document.body.style.overflow = '';
+            };
 
             /**
              * Open book details modal with full information
@@ -710,6 +792,10 @@
             };
 
             const loadBooks = async () => {
+                // Show skeleton loading while fetching
+                if (typeof BookSkeleton !== 'undefined') {
+                    BookSkeleton.show('bookGrid', 8);
+                }
                 try {
                     const res = await fetch(`${API_BASE}/api/books`);
                     if (!res.ok) throw new Error('Failed to load books');
@@ -735,7 +821,25 @@
                     await addToCart(id);
                 } else if (action === 'view-details') {
                     const book = allBooks.find(b => b.id === Number(id));
-                    if (book) openDetailsModal(book);
+                    if (book) {
+                        // Use the enhanced quick-view modal if available
+                        if (typeof openQuickView === 'function') {
+                            openQuickView({
+                                id: book.id,
+                                title: book.title,
+                                author: book.author,
+                                price: book.price,
+                                original: book.original,
+                                image: book.image,
+                                condition: book.binding || 'New',
+                                language: book.language,
+                                edition: book.edition,
+                                description: book.synopsis || 'No description available.'
+                            });
+                        } else {
+                            openDetailsModal(book);
+                        }
+                    }
                 }
             });
 
@@ -750,6 +854,9 @@
 
             cartBtn.addEventListener('click', openCart);
             closeCartBtn.addEventListener('click', closeCart);
+            /* Close on overlay click */
+            const cartOverlay = cartModal.querySelector('.cart-overlay');
+            if (cartOverlay) cartOverlay.addEventListener('click', closeCart);
             cartModal.addEventListener('click', e => { if (e.target === cartModal) closeCart(); });
             clearCartBtn.addEventListener('click', async () => { await clearCart(); });
             checkoutBtn.addEventListener('click', async () => {
@@ -758,7 +865,7 @@
                     showNotification('❌ Cart is empty. Add some books first!');
                     return;
                 }
-                
+
                 // Check if user is logged in
                 const token = localStorage.getItem('authToken');
                 if (!token) {
@@ -766,7 +873,7 @@
                     setTimeout(() => window.location.href = 'login.html', 1200);
                     return;
                 }
-                
+
                 // Proceed to checkout
                 window.location.href = 'checkout.html';
             });
@@ -803,7 +910,68 @@
 
             window.searchBooks = apply;
             window.applyFilters = apply;
-            window.resetFilters = reset;
+            window.resetFilters = () => {
+                // Reset custom dropdowns
+                document.querySelectorAll('.custom-select').forEach(sel => {
+                    const firstOption = sel.querySelector('.select-options li');
+                    if (firstOption) {
+                        sel.querySelectorAll('.select-options li').forEach(li => li.classList.remove('selected'));
+                        firstOption.classList.add('selected');
+                        sel.querySelector('.select-value').textContent = firstOption.textContent.trim();
+                        const input = sel.querySelector('input[type="hidden"]');
+                        if (input) input.value = firstOption.dataset.value || '';
+                    }
+                });
+                // Reset section buttons
+                document.querySelectorAll('.section-btn').forEach(b => b.classList.remove('active'));
+                const allBtn = document.querySelector('.section-btn[data-section="all"]');
+                if (allBtn) allBtn.classList.add('active');
+                selectedSection = 'all';
+                currentPage = 1;
+                apply();
+            };
+
+            // ===== CUSTOM DROPDOWN SETUP =====
+            document.querySelectorAll('.custom-select').forEach(sel => {
+                const trigger = sel.querySelector('.select-trigger');
+                const options = sel.querySelector('.select-options');
+                const valueDisplay = sel.querySelector('.select-value');
+                const hiddenInput = sel.querySelector('input[type="hidden"]');
+
+                // Toggle dropdown
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // Close other dropdowns
+                    document.querySelectorAll('.custom-select.open').forEach(other => {
+                        if (other !== sel) other.classList.remove('open');
+                    });
+                    sel.classList.toggle('open');
+                });
+
+                // Select option
+                sel.querySelectorAll('.select-options li').forEach(opt => {
+                    opt.addEventListener('click', () => {
+                        sel.querySelectorAll('.select-options li').forEach(li => li.classList.remove('selected'));
+                        opt.classList.add('selected');
+                        valueDisplay.textContent = opt.textContent.trim();
+                        if (hiddenInput) hiddenInput.value = opt.dataset.value || '';
+                        sel.classList.remove('open');
+                        apply(); // Trigger filter update
+                    });
+                });
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', () => {
+                document.querySelectorAll('.custom-select.open').forEach(sel => sel.classList.remove('open'));
+            });
+
+            // Expose addToCart globally for quick-view modal
+            window.addToCartFromQuickView = async (book) => {
+                if (book && book.id) {
+                    await addToCart(book.id);
+                }
+            };
 
             setupStaticScrollReveal();
 
@@ -820,7 +988,9 @@
     </script>
 
     <script src="auth-ui.js"></script>
+    <script src="wishlist.js"></script>
     <script src="animations.js"></script>
+    <script src="enhancements.js"></script>
 
 </body>
 

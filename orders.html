@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="orders.css?v=2">
     <link rel="stylesheet" href="animations.css?v=2">
+    <link rel="stylesheet" href="enhancements.css">
 </head>
 
 <body>
@@ -53,7 +54,7 @@
                 <span id="orderCount" class="order-count">Loading...</span>
             </div>
             <div class="toolbar-right">
-                <select id="statusFilter" class="filter-select">
+                <select id="statusFilter" class="filter-select" aria-label="Filter orders by status">
                     <option value="">All Status</option>
                     <option value="pending">Pending</option>
                     <option value="confirmed">Confirmed</option>
@@ -72,7 +73,7 @@
         </div>
 
         <!-- EMPTY STATE -->
-        <div id="emptyState" class="empty-state" style="display: none;">
+        <div id="emptyState" class="empty-state hidden">
             <div class="empty-icon"><svg width="64" height="64" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
             <h3>No orders yet</h3>
             <p>You haven't placed any orders yet. Start shopping to see your orders here!</p>
@@ -135,7 +136,7 @@
                 </div>
 
                 <!-- SPECIAL NOTES -->
-                <div id="notesSection" class="detail-section" style="display: none;">
+                <div id="notesSection" class="detail-section hidden">
                     <h3>Delivery Notes</h3>
                     <p id="modalNotes" class="notes-text">—</p>
                 </div>
@@ -342,6 +343,10 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        ${statusClass !== 'cancelled' && typeof window.OrderTracking !== 'undefined' 
+                            ? window.OrderTracking.create(statusClass) 
+                            : ''}
 
                         <div class="order-card-footer">
                             <div class="shipping-info" style="font-size:13px;color:#666;">
@@ -466,6 +471,7 @@
     </script>
 
     <script src="animations.js"></script>
+    <script src="enhancements.js"></script>
 
 </body>
 

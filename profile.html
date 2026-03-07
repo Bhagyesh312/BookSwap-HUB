@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile - BookSwap Hub</title>
     <link rel="stylesheet" href="animations.css?v=2">
+    <link rel="stylesheet" href="enhancements.css">
     <link rel="stylesheet" href="profile.css?v=3">
 </head>
 <body>
@@ -254,7 +255,7 @@
                             <p>Receive updates about your orders and new books</p>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="emailNotifications" checked>
+                            <input type="checkbox" id="emailNotifications" checked aria-label="Email Notifications">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -265,7 +266,7 @@
                             <p>Get notified when your orders are shipped</p>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="orderAlerts" checked>
+                            <input type="checkbox" id="orderAlerts" checked aria-label="Order Alerts">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -276,7 +277,7 @@
                             <p>Receive special offers and promotions</p>
                         </div>
                         <label class="toggle-switch">
-                            <input type="checkbox" id="marketingEmails">
+                            <input type="checkbox" id="marketingEmails" aria-label="Marketing Emails">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -287,7 +288,7 @@
                             <p>Switch to dark theme (coming soon)</p>
                         </div>
                         <label class="toggle-switch disabled">
-                            <input type="checkbox" disabled>
+                            <input type="checkbox" disabled aria-label="Dark Mode">
                             <span class="toggle-slider"></span>
                         </label>
                     </div>
@@ -800,5 +801,6 @@
         // Full initialization on window load
         window.addEventListener('load', initProfile);
     </script>
+    <script src="enhancements.js"></script>
 </body>
 </html>

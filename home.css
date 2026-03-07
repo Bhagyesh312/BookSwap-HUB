@@ -250,6 +250,7 @@
         opacity: 0;
         transform: translateY(-6px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -314,88 +315,179 @@
 }
 
 
-/* ================= HERO SECTION ================= */
-.hero {
+/* ================= HERO SLIDER (Swiper.js) ================= */
+.hero-slider {
     position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.heroSwiper {
+    width: 100%;
+    height: 550px;
+}
+
+/* Individual slide — full background image */
+.hero-slide {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 80px 8%;
-    flex-wrap: wrap;
-    gap: 50px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 25%, #e0e7ff 50%, #fdf2f8 75%, #faf5ff 100%);
-    min-height: 550px;
+    justify-content: center;
 }
 
-/* Remove full-bleed background, video is now visible element on right */
-/* Hero video container */
-.hero-image {
-    position: relative;
-    width: 45%;
-    min-height: 450px;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
-    overflow: hidden;
-    z-index: 2;
-    flex-shrink: 0;
+/* Per-slide background images */
+.hero-slide-1 {
+    background-image: url('https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=1920&q=80');
 }
 
-/* make the video cover the container */
-.hero-image video {
+.hero-slide-2 {
+    background-image: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1920&q=80');
+}
+
+.hero-slide-3 {
+    background-image: url('https://images.unsplash.com/photo-1526243741027-444d633d7365?auto=format&fit=crop&w=1920&q=80');
+}
+
+.hero-slide-4 {
+    background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1920&q=80');
+}
+
+/* Dark overlay for text readability */
+.hero-slide-overlay {
     position: absolute;
     inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+    background: linear-gradient(135deg,
+            rgba(15, 23, 42, 0.75) 0%,
+            rgba(15, 23, 42, 0.5) 50%,
+            rgba(15, 23, 42, 0.65) 100%);
+    z-index: 1;
 }
 
-/* Remove the overlay since video is now a visible element */
-.hero::before {
-    display: none;
-}
-
-/* Hero content text block */
-.hero-text {
-    max-width: 550px;
+/* Slide text container */
+.hero-slide-content {
     position: relative;
     z-index: 2;
-    flex: 1;
-    min-width: 300px;
+    text-align: center;
+    max-width: 720px;
+    padding: 0 30px;
 }
 
-.hero-text h2 {
-    font-size: 48px;
-    margin-bottom: 20px;
-    color: #0f172a;
+/* ── Staggered Text Reveal Animation ──────────────────── */
+/* Each child starts invisible and below, then cascades upward */
+.hero-slide-title,
+.hero-slide-subtitle,
+.hero-slide-btn {
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+/* When .animate-in is added by JS, stagger the children */
+.hero-slide-content.animate-in .hero-slide-title {
+    animation: heroFadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0s forwards;
+}
+
+.hero-slide-content.animate-in .hero-slide-subtitle {
+    animation: heroFadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.2s forwards;
+}
+
+.hero-slide-content.animate-in .hero-slide-btn {
+    animation: heroFadeSlideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s forwards;
+}
+
+/* Animated entrance state — also applied to content for reflow trigger */
+.hero-slide-content.animate-in {
+    /* no animation on parent, children animate individually */
+}
+
+@keyframes heroFadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Title */
+.hero-slide-title {
+    font-size: 50px;
     font-weight: 800;
+    color: #f8fafc;
     line-height: 1.2;
+    margin-bottom: 18px;
     letter-spacing: -0.5px;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-.hero-text h2 span {
+.hero-slide-title span {
     background: linear-gradient(135deg, #f97316, #ef4444);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-.hero-text p {
+/* Subtitle */
+.hero-slide-subtitle {
     font-size: 18px;
-    color: #475569;
-    line-height: 1.8;
-    margin-bottom: 12px;
-    font-weight: 500;
+    color: rgba(226, 232, 240, 0.95);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    font-weight: 400;
 }
 
-.hero-buttons {
-    margin-top: 22px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+/* CTA button on slides — delay is handled via .animate-in stagger above */
+.hero-slide-btn {
+    display: inline-block;
 }
 
+/* Swiper navigation arrows — custom styling */
+.heroSwiper .swiper-button-prev,
+.heroSwiper .swiper-button-next {
+    color: rgba(255, 255, 255, 0.85);
+    background: rgba(15, 23, 42, 0.4);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+}
+
+.heroSwiper .swiper-button-prev:hover,
+.heroSwiper .swiper-button-next:hover {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4);
+}
+
+.heroSwiper .swiper-button-prev::after,
+.heroSwiper .swiper-button-next::after {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+/* Pagination dots */
+.heroSwiper .swiper-pagination-bullet {
+    width: 12px;
+    height: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+.heroSwiper .swiper-pagination-bullet-active {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    width: 32px;
+    border-radius: 6px;
+}
+
+/* ================= BUTTONS (global) ================= */
 .btn {
     padding: 16px 32px;
     border-radius: 14px;
@@ -417,7 +509,6 @@
 .btn.primary:hover {
     transform: translateY(-4px) scale(1.05);
     box-shadow: 0 16px 40px rgba(249, 115, 22, 0.5);
-    /* background: #fdba74; removed hover color change */
 }
 
 .btn.outline {
@@ -707,44 +798,184 @@
         font-size: 22px;
     }
 
-    .hero {
-        padding: 55px 6%;
-        text-align: center;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 35px;
+    /* Hero slider responsive */
+    .heroSwiper {
+        height: 400px;
     }
 
-    .hero-text {
-        max-width: 100%;
+    .hero-slide-title {
+        font-size: 32px;
     }
 
-    .hero-text h2 {
-        font-size: 36px;
+    .hero-slide-subtitle {
+        font-size: 15px;
     }
 
-    .hero-buttons {
-        justify-content: center;
+    .heroSwiper .swiper-button-prev,
+    .heroSwiper .swiper-button-next {
+        width: 38px;
+        height: 38px;
     }
 
-    .hero-image {
-        position: relative;
-        width: 100%;
-        min-height: 350px;
-        z-index: 2;
-    }
-
-    .hero-image video {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+    .heroSwiper .swiper-button-prev::after,
+    .heroSwiper .swiper-button-next::after {
+        font-size: 14px;
     }
 
     .corner-img {
         width: 70px;
         height: 70px;
+    }
+
+    /* Navbar responsive adjustments */
+    .wishlist-icon-btn .wishlist-label,
+    .cart-icon-btn .cart-label {
+        display: none;
+    }
+
+    .wishlist-icon-btn,
+    .cart-icon-btn {
+        padding: 8px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .heroSwiper {
+        height: 350px;
+    }
+
+    .hero-slide-title {
+        font-size: 26px;
+    }
+
+    .hero-slide-subtitle {
+        font-size: 14px;
+        margin-bottom: 18px;
+    }
+
+    .hero-slide-content {
+        padding: 0 20px;
+    }
+
+    .btn.primary.hero-slide-btn {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   NEWS TICKER
+   ═══════════════════════════════════════════════════════ */
+
+.news-ticker {
+    display: flex;
+    align-items: stretch;
+    background: linear-gradient(90deg, #fef3c7 0%, #fde68a 50%, #fef3c7 100%);
+    overflow: hidden;
+    position: relative;
+    z-index: 50;
+    border-bottom: 3px solid #f59e0b;
+}
+
+.ticker-label {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    z-index: 2;
+    box-shadow: 4px 0 15px rgba(220, 38, 38, 0.4);
+    animation: labelPulse 2s ease-in-out infinite;
+}
+
+@keyframes labelPulse {
+    0%, 100% { box-shadow: 4px 0 15px rgba(220, 38, 38, 0.4); }
+    50% { box-shadow: 4px 0 25px rgba(220, 38, 38, 0.7); }
+}
+
+.ticker-label i {
+    font-size: 14px;
+    animation: bellShake 1s ease-in-out infinite;
+}
+
+@keyframes bellShake {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+.ticker-wrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+}
+
+.ticker-content {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    animation: tickerScroll 35s linear infinite;
+    padding: 12px 0;
+}
+
+.ticker-content:hover {
+    animation-play-state: paused;
+}
+
+@keyframes tickerScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.ticker-item {
+    color: #92400e;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 20px;
+}
+
+.ticker-item i {
+    color: #dc2626;
+    font-size: 12px;
+}
+
+.ticker-separator {
+    color: #d97706;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .ticker-label {
+        padding: 10px 14px;
+        font-size: 11px;
+    }
+    
+    .ticker-label span {
+        display: none;
+    }
+    
+    .ticker-item {
+        font-size: 12px;
+        padding: 0 14px;
+    }
+    
+    .ticker-content {
+        padding: 10px 0;
     }
 }

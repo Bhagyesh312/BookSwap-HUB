@@ -190,6 +190,15 @@
     padding-right: 8px;
 }
 
+.loading-text {
+    text-align: center;
+    color: #999;
+}
+
+.hidden {
+    display: none !important;
+}
+
 .summary-items::-webkit-scrollbar {
     width: 6px;
 }

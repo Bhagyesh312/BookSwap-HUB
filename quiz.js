@@ -201,7 +201,12 @@ function showResult() {
     // Pick Random
     const finalBook = matches[Math.floor(Math.random() * matches.length)];
 
-    if (!finalBook) return alert("No book found! Try again.");
+    if (!finalBook) {
+        if (typeof showToast === 'function') {
+            showToast({ type: 'warning', title: 'No Match', message: 'No book found! Try adjusting your preferences.' });
+        }
+        return;
+    }
 
     // Show Result Container
     questionContainer.classList.add('hidden');
