@@ -7,6 +7,7 @@
   <title>BookSwap Hub | Login / Register</title>
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="login.css" />
   <link rel="stylesheet" href="animations.css">
   <link rel="stylesheet" href="enhancements.css">
@@ -51,7 +52,7 @@
                   <span>Remember me</span>
                 </label>
 
-                <a href="#">Forgot password?</a>
+                <a href="#" onclick="showForgotPassword(); return false;">Forgot password?</a>
               </div>
 
                 <button class="btn" id="loginBtn" type="submit">Login</button>
@@ -101,6 +102,34 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ================= FORGOT PASSWORD MODAL ================= -->
+  <div class="forgot-modal-overlay" id="forgotModal">
+    <div class="forgot-modal">
+      <button class="forgot-close" onclick="hideForgotPassword()">&times;</button>
+      <h2><i class="fas fa-key"></i> Reset Password</h2>
+      <p>Enter your email address and we'll send you a link to reset your password.</p>
+      
+      <form id="forgotForm">
+        <div class="input-box">
+          <label>Email Address</label>
+          <input id="forgotEmail" type="email" placeholder="your@email.com" required>
+        </div>
+        
+        <button class="btn" id="forgotBtn" type="submit">
+          <i class="fas fa-paper-plane"></i> Send Reset Link
+        </button>
+        
+        <p id="forgotMessage" class="auth-message" aria-live="polite"></p>
+      </form>
+      
+      <p class="forgot-back">
+        <a href="#" onclick="hideForgotPassword(); return false;">
+          <i class="fas fa-arrow-left"></i> Back to Login
+        </a>
+      </p>
     </div>
   </div>
 
@@ -231,6 +260,81 @@
         registerMessage,
         'Registration successful. Redirecting...'
       );
+    });
+
+    // ===== FORGOT PASSWORD FUNCTIONALITY =====
+    const forgotModal = document.getElementById('forgotModal');
+    const forgotForm = document.getElementById('forgotForm');
+    const forgotEmail = document.getElementById('forgotEmail');
+    const forgotBtn = document.getElementById('forgotBtn');
+    const forgotMessage = document.getElementById('forgotMessage');
+
+    function showForgotPassword() {
+      forgotModal.classList.add('active');
+      forgotEmail.value = document.getElementById('loginEmail').value || '';
+      forgotEmail.focus();
+      setMessage(forgotMessage, '');
+    }
+
+    function hideForgotPassword() {
+      forgotModal.classList.remove('active');
+      setMessage(forgotMessage, '');
+    }
+
+    // Close modal on overlay click
+    forgotModal.addEventListener('click', (e) => {
+      if (e.target === forgotModal) {
+        hideForgotPassword();
+      }
+    });
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && forgotModal.classList.contains('active')) {
+        hideForgotPassword();
+      }
+    });
+
+    forgotForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = forgotEmail.value.trim();
+      
+      if (!email) {
+        setMessage(forgotMessage, 'Please enter your email address');
+        return;
+      }
+
+      const original = forgotBtn.innerHTML;
+      forgotBtn.disabled = true;
+      forgotBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      setMessage(forgotMessage, '');
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to send reset email');
+        }
+
+        setMessage(forgotMessage, 'Check your email for the reset link!', 'success');
+        forgotEmail.value = '';
+        
+        // Auto close after 3 seconds
+        setTimeout(() => {
+          hideForgotPassword();
+        }, 3000);
+      } catch (err) {
+        setMessage(forgotMessage, err.message || 'Something went wrong');
+      } finally {
+        forgotBtn.disabled = false;
+        forgotBtn.innerHTML = original;
+      }
     });
   </script>
 

@@ -244,3 +244,126 @@ form {
     height: 510px;
   }
 }
+
+/* ================= FORGOT PASSWORD MODAL ================= */
+.forgot-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.forgot-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.forgot-modal {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+  transform: scale(0.9) translateY(-20px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+.forgot-modal-overlay.active .forgot-modal {
+  transform: scale(1) translateY(0);
+}
+
+.forgot-close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #64748b;
+  cursor: pointer;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.forgot-close:hover {
+  color: #ef4444;
+}
+
+.forgot-modal h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a3a52;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.forgot-modal h2 i {
+  color: #f97316;
+}
+
+.forgot-modal > p {
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.forgot-modal form {
+  margin-top: 0;
+}
+
+.forgot-modal .btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.forgot-modal .btn i {
+  font-size: 14px;
+}
+
+.forgot-back {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.forgot-back a {
+  color: #64748b;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s;
+}
+
+.forgot-back a:hover {
+  color: #f97316;
+}
+
+@media (max-width: 480px) {
+  .forgot-modal {
+    padding: 24px;
+    margin: 16px;
+  }
+  
+  .forgot-modal h2 {
+    font-size: 20px;
+  }
+}

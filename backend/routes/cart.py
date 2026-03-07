@@ -106,6 +106,34 @@ def remove_from_cart(book_id):
     return jsonify({'items': [item.to_dict() for item in items]})
 
 
+@cart_bp.route('/<int:book_id>', methods=['PATCH'])
+@require_auth
+def update_cart_item(book_id):
+    """
+    Update quantity of a cart item
+    """
+    user_id = g.user['id']
+    data = request.get_json() or {}
+    
+    new_qty = data.get('qty') or data.get('quantity')
+    
+    if new_qty is None or int(new_qty) < 1:
+        return jsonify({'error': 'Valid quantity (>=1) is required'}), 400
+    
+    item = CartItem.query.filter_by(user_id=user_id, book_id=book_id).first()
+    
+    if not item:
+        return jsonify({'error': 'Cart item not found'}), 404
+    
+    item.quantity = int(new_qty)
+    db.session.commit()
+    
+    # Return updated cart
+    items = CartItem.query.filter_by(user_id=user_id).order_by(CartItem.book_id.asc()).all()
+    
+    return jsonify({'items': [item.to_dict() for item in items]})
+
+
 @cart_bp.route('/', methods=['DELETE'])
 @require_auth
 def clear_cart():

@@ -6,6 +6,7 @@
     <title>Checkout | BookSwap Hub</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="checkout.css">
     <link rel="stylesheet" href="animations.css">
@@ -169,6 +170,17 @@
                         <button type="button" id="applyCouponBtn">Apply</button>
                     </div>
                     <div id="couponStatus"></div>
+                    
+                    <!-- Available Coupons -->
+                    <div class="available-coupons" id="availableCoupons">
+                        <button type="button" class="toggle-coupons" id="toggleCouponsBtn">
+                            <i class="fa-solid fa-ticket"></i> View Available Coupons
+                            <i class="fa-solid fa-chevron-down toggle-icon"></i>
+                        </button>
+                        <div class="coupons-list hidden" id="couponsList">
+                            <!-- Coupons will be populated by JS -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- DIVIDER -->
@@ -400,6 +412,78 @@
             input.onkeypress = (e) => {
                 if (e.key === 'Enter') applyCoupon();
             };
+            
+            // Initialize available coupons toggle
+            initAvailableCoupons(input);
+        };
+        
+        /**
+         * Initialize the available coupons dropdown
+         */
+        const initAvailableCoupons = (inputEl) => {
+            const toggleBtn = document.getElementById('toggleCouponsBtn');
+            const couponsList = document.getElementById('couponsList');
+            
+            if (!toggleBtn || !couponsList || typeof window.CouponSystem === 'undefined') return;
+            
+            // Build coupons HTML
+            const coupons = window.CouponSystem.coupons;
+            const couponsHTML = Object.entries(coupons).map(([code, coupon]) => {
+                const minText = coupon.minOrder > 0 ? `Min. order ₹${coupon.minOrder}` : 'No minimum order';
+                const valueText = coupon.type === 'percent' ? `${coupon.value}%<br>OFF` : `₹${coupon.value}<br>OFF`;
+                
+                return `
+                    <div class="coupon-card" data-code="${code}">
+                        <div class="coupon-left">
+                            <span class="coupon-value">${valueText}</span>
+                        </div>
+                        <div class="coupon-center">
+                            <span class="coupon-title">${coupon.description}</span>
+                            <span class="coupon-min"><i class="fa-solid fa-info-circle"></i> ${minText}</span>
+                        </div>
+                        <div class="coupon-right">
+                            <span class="coupon-code">${code}</span>
+                            <button type="button" class="use-coupon-btn" data-code="${code}">Apply</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            couponsList.innerHTML = couponsHTML;
+            
+            // Toggle visibility
+            toggleBtn.onclick = () => {
+                couponsList.classList.toggle('hidden');
+                toggleBtn.querySelector('.toggle-icon').classList.toggle('rotated');
+            };
+            
+            // Click to use coupon - works on button or whole card
+            couponsList.addEventListener('click', (e) => {
+                const card = e.target.closest('.coupon-card');
+                if (card) {
+                    const code = card.dataset.code;
+                    if (inputEl) {
+                        // Remove applied state from all cards
+                        couponsList.querySelectorAll('.coupon-card').forEach(c => c.classList.remove('applied'));
+                        
+                        // Set code in input
+                        inputEl.value = code;
+                        inputEl.focus();
+                        
+                        // Auto-apply the coupon
+                        document.getElementById('applyCouponBtn')?.click();
+                        
+                        // Mark this card as applied
+                        card.classList.add('applied');
+                        
+                        // Collapse the list after short delay
+                        setTimeout(() => {
+                            couponsList.classList.add('hidden');
+                            toggleBtn.querySelector('.toggle-icon').classList.remove('rotated');
+                        }, 300);
+                    }
+                }
+            });
         };
 
         /**

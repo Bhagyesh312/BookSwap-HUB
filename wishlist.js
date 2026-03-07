@@ -301,7 +301,7 @@
                 <div class="wishlist-row${hasPriceDrop ? ' price-dropped' : ''}" data-id="${id}">
                     ${hasPriceDrop ? '<span class="price-drop-badge"><i class="fa-solid fa-arrow-trend-down"></i> Price Drop!</span>' : ''}
                     <div class="wi-left">
-                        <img src="${book.image || 'https://via.placeholder.com/70x95?text=No+Cover'}" alt="${book.title}">
+                        <img src="${book.image || 'https://via.placeholder.com/70x95?text=No+Cover'}" alt="${book.title}" loading="lazy">
                     </div>
                     <div class="wi-body">
                         <div class="wi-title">${book.title}</div>

@@ -5,11 +5,19 @@
 function initAuthUI() {
     const token = localStorage.getItem('authToken');
     const authUser = localStorage.getItem('authUser');
-    const userName = authUser ? JSON.parse(authUser).name : null;
+    const user = authUser ? JSON.parse(authUser) : null;
+    const userName = user?.name;
+    const userRole = user?.role || 'user';
     const loginBtn = document.getElementById('loginBtn');
     const userProfile = document.getElementById('userProfile');
     
-    console.log('[AuthUI] Init - token:', !!token, 'userName:', userName);
+    // Also store in 'user' key for admin panel compatibility
+    if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+    }
+    
+    console.log('[AuthUI] Init - token:', !!token, 'userName:', userName, 'role:', userRole);
     
     if (!loginBtn || !userProfile) {
         console.log('[AuthUI] Nav elements not found on this page');
@@ -31,6 +39,11 @@ function initAuthUI() {
             const firstName = userName.split(' ')[0];
             profileName.textContent = firstName;
             console.log('[AuthUI] Display name:', firstName);
+        }
+        
+        // Show admin link in navbar if user is admin
+        if (userRole === 'admin') {
+            showAdminLink();
         }
 
         // Toggle profile menu with click handler
@@ -60,6 +73,8 @@ function initAuthUI() {
                 console.log('[AuthUI] Logging out...');
                 localStorage.removeItem('authToken');
                 localStorage.removeItem('authUser');
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
                 console.log('[AuthUI] localStorage cleared, redirecting to home...');
                 window.location.href = 'home.html';
             };
@@ -71,6 +86,28 @@ function initAuthUI() {
         loginBtn.classList.remove('hidden');
         userProfile.classList.add('hidden');
     }
+}
+
+/**
+ * Show admin link in navbar for admin users
+ */
+function showAdminLink() {
+    const navLinks = document.querySelector('.nav-links');
+    if (!navLinks) return;
+    
+    // Check if admin link already exists
+    if (navLinks.querySelector('.admin-link')) return;
+    
+    // Create admin link
+    const adminLink = document.createElement('a');
+    adminLink.href = 'admin.html';
+    adminLink.className = 'admin-link';
+    adminLink.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Admin';
+    adminLink.style.cssText = 'color: #f97316; font-weight: 600;';
+    
+    // Add before the last link or at end
+    navLinks.appendChild(adminLink);
+    console.log('[AuthUI] Admin link added to navbar');
 }
 
 // Initialize when DOM is ready

@@ -99,25 +99,37 @@
         </div>
         <div class="ticker-wrapper">
             <div class="ticker-content">
-                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Flash Sale: Get 30% off on all Classic Literature this weekend!</span>
+                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> FREE Delivery on orders above ₹999!</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> Free delivery on orders above ₹499</span>
+                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order - No minimum!</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order</span>
+                <span class="ticker-item"><i class="fa-solid fa-percent"></i> Code SAVE10: Get 10% off on orders above ₹300</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-star"></i> New arrivals: 500+ books added this week!</span>
+                <span class="ticker-item"><i class="fa-solid fa-percent"></i> Code SAVE20: Get 20% off on orders above ₹500</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Price Drop Alerts: Add books to wishlist and get notified when prices drop!</span>
+                <span class="ticker-item"><i class="fa-solid fa-tags"></i> Code FLAT50: Flat ₹50 off on orders above ₹200</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Flash Sale: Get 30% off on all Classic Literature this weekend!</span>
+                <span class="ticker-item"><i class="fa-solid fa-tags"></i> Code FLAT100: Flat ₹100 off on orders above ₹400</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> Free delivery on orders above ₹499</span>
+                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Code BOOKWORM: Mega 25% off on orders above ₹1000!</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order</span>
+                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Add books to wishlist and never miss a deal!</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-star"></i> New arrivals: 500+ books added this week!</span>
+                <span class="ticker-item"><i class="fa-solid fa-truck-fast"></i> FREE Delivery on orders above ₹999!</span>
                 <span class="ticker-separator">•</span>
-                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Price Drop Alerts: Add books to wishlist and get notified when prices drop!</span>
+                <span class="ticker-item"><i class="fa-solid fa-gift"></i> Use code FIRSTBUY for 15% off your first order - No minimum!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-percent"></i> Code SAVE10: Get 10% off on orders above ₹300</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-percent"></i> Code SAVE20: Get 20% off on orders above ₹500</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-tags"></i> Code FLAT50: Flat ₹50 off on orders above ₹200</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-tags"></i> Code FLAT100: Flat ₹100 off on orders above ₹400</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-fire"></i> Code BOOKWORM: Mega 25% off on orders above ₹1000!</span>
+                <span class="ticker-separator">•</span>
+                <span class="ticker-item"><i class="fa-solid fa-heart"></i> Add books to wishlist and never miss a deal!</span>
             </div>
         </div>
     </div>
@@ -264,6 +276,9 @@
             <div id="cartItems" class="cart-items">
                 <!-- cart items -->
             </div>
+            <div id="cartCharges" class="cart-charges">
+                <!-- charges breakdown -->
+            </div>
             <footer class="cart-footer">
                 <div class="cart-total">
                     <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
@@ -368,6 +383,11 @@
             const grid = document.getElementById('topPicksGrid');
             if (!grid) return;
 
+            // Show skeleton loading while fetching
+            if (typeof window.BookSkeleton !== 'undefined') {
+                window.BookSkeleton.show('topPicksGrid', 4);
+            }
+
             const topBooks = await getTopBooks();
 
             grid.innerHTML = topBooks.map(book => {
@@ -375,7 +395,7 @@
                 return `
                     <div class="book-card" style="cursor: pointer;" onclick="viewBookDetails(${book.id})">
                         <div class="card-image">
-                            <img src="${book.image}" alt="${book.title}">
+                            <img src="${book.image}" alt="${book.title}" loading="lazy">
                             <button class="wishlist-heart ${wishlisted ? 'wishlisted' : ''}" data-book-id="${book.id}" title="Add to wishlist">
                                 <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                             </button>

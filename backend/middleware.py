@@ -31,7 +31,8 @@ def require_auth(f):
             g.user = {
                 'id': int(payload.get('sub', 0)),
                 'email': payload.get('email'),
-                'name': payload.get('name')
+                'name': payload.get('name'),
+                'role': payload.get('role', 'user')
             }
             return f(*args, **kwargs)
         except jwt.ExpiredSignatureError:
@@ -42,13 +43,26 @@ def require_auth(f):
     return decorated_function
 
 
+def require_admin(f):
+    """
+    Admin authorization decorator - requires user to have admin role
+    Must be used after require_auth decorator
+    """
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not hasattr(g, 'user') or g.user.get('role') != 'admin':
+            return jsonify({'error': 'Admin access required'}), 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 def create_token(user):
     """
     Create JWT token for authenticated user
-    Token expires in 7 days and includes user email and name
+    Token expires in 7 days and includes user email, name, and role
     
     Args:
-        user: User object with id, email, name attributes
+        user: User object with id, email, name, role attributes
     
     Returns:
         str: Signed JWT token
@@ -59,6 +73,7 @@ def create_token(user):
         'sub': str(user.id),
         'email': user.email,
         'name': user.name,
+        'role': getattr(user, 'role', 'user') or 'user',
         'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7),
         'iat': datetime.datetime.utcnow()
     }

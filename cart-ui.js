@@ -20,8 +20,17 @@
     image: item.image || ''
   }));
 
+  /**
+   * Get JWT authentication header if user is logged in
+   */
+  const getAuthHeader = () => {
+    const token = localStorage.getItem('authToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+  };
+
   const getCartFromApi = async () => {
-    const res = await fetch(`${API_BASE}/api/cart`);
+    const headers = { ...getAuthHeader() };
+    const res = await fetch(`${API_BASE}/api/cart`, { headers });
     if (!res.ok) throw new Error('Failed to fetch cart');
     const data = await res.json();
     return normalizeCartItems(data.items);
@@ -62,55 +71,117 @@
   // --- Core UI Functions ---
 
   /**
+   * Calculate delivery charges based on subtotal
+   */
+  const getDeliveryCharge = (subtotal) => {
+    if (subtotal >= 999) return 0; // Free delivery above ₹999
+    if (subtotal >= 499) return 29;
+    return 49;
+  };
+
+  /**
    * Renders items into the cart sidebar panel and calculates totals
    */
   const renderCart = async () => {
     const cart = await getCart();
     const itemsEl = el('cartItems');
+    const chargesEl = el('cartCharges');
     const totalEl = el('cartTotal');
     const savedEl = el('cartSavedAmount');
 
     if (!itemsEl) return;
 
     if (!cart.length) {
-      itemsEl.innerHTML = '<div class="empty">Your cart is empty.</div>';
+      itemsEl.innerHTML = `
+        <div class="empty-cart">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <p>Your cart is empty</p>
+          <span>Add some books to get started!</span>
+        </div>`;
+      if (chargesEl) chargesEl.innerHTML = '';
       if (totalEl) totalEl.textContent = '0';
-      if (savedEl) savedEl.textContent = '0';
+      if (savedEl) savedEl.parentElement.style.display = 'none';
       return;
     }
 
-    let total = 0;
+    let subtotal = 0;
     let origTotal = 0;
+    const itemCount = cart.reduce((s, i) => s + i.qty, 0);
 
     itemsEl.innerHTML = cart.map(item => {
       const linePrice = item.price * item.qty;
       const lineOrig = (item.original || item.price) * item.qty;
-      total += linePrice;
+      subtotal += linePrice;
       origTotal += lineOrig;
-
-      // Use QuantitySelector if available, fallback to simple display
-      const qtyHTML = typeof window.QuantitySelector !== 'undefined' 
-        ? window.QuantitySelector.create(item.qty, item.id)
-        : `<div class="ci-qty">Qty: ${item.qty}</div>`;
+      const hasDiscount = lineOrig > linePrice;
 
       return `
-                <div class="cart-row" data-id="${item.id}">
-                    <div class="ci-left">
-                        <img src="${item.image || 'https://via.placeholder.com/80x100?text=No+Cover'}" alt="${item.title}">
-                    </div>
-                    <div class="ci-body">
-                        <div class="ci-title">${item.title}</div>
-                        ${qtyHTML}
-                        <div class="ci-price">₹${formatIN(linePrice)} <span class="cancelled">₹${formatIN(lineOrig)}</span></div>
-                    </div>
-                    <div class="ci-actions">
-                        <button class="remove-item" data-id="${item.id}">Remove</button>
-                    </div>
-                </div>`;
+        <div class="cart-row" data-id="${item.id}">
+          <div class="ci-image">
+            <img src="${item.image || 'https://via.placeholder.com/80x100?text=No+Cover'}" alt="${item.title}" loading="lazy">
+          </div>
+          <div class="ci-details">
+            <div class="ci-title">${item.title}</div>
+            <div class="ci-controls">
+              <div class="qty-selector" data-item-id="${item.id}">
+                <button class="qty-btn qty-minus" ${item.qty <= 1 ? 'disabled' : ''} aria-label="Decrease quantity">
+                  <i class="fa-solid fa-minus"></i>
+                </button>
+                <span class="qty-value">${item.qty}</span>
+                <button class="qty-btn qty-plus" aria-label="Increase quantity">
+                  <i class="fa-solid fa-plus"></i>
+                </button>
+              </div>
+              <button class="remove-btn" data-id="${item.id}" aria-label="Remove item">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </div>
+          <div class="ci-pricing">
+            <span class="ci-current-price">₹${formatIN(linePrice)}</span>
+            ${hasDiscount ? `<span class="ci-original-price">₹${formatIN(lineOrig)}</span>` : ''}
+          </div>
+        </div>`;
     }).join('');
 
-    if (totalEl) totalEl.textContent = formatIN(total);
-    if (savedEl) savedEl.textContent = formatIN(Math.max(0, origTotal - total));
+    // Calculate charges
+    const delivery = getDeliveryCharge(subtotal);
+    const gstRate = 0; // No GST on books in India
+    const gst = Math.round(subtotal * gstRate);
+    const platformFee = 0; // Could add platform fee
+    const discount = Math.max(0, origTotal - subtotal);
+    const grandTotal = subtotal + delivery + gst + platformFee;
+
+    // Render charges breakdown
+    if (chargesEl) {
+      chargesEl.innerHTML = `
+        <div class="charges-section">
+          <div class="charge-row">
+            <span>Subtotal (${itemCount} ${itemCount === 1 ? 'item' : 'items'})</span>
+            <span>₹${formatIN(subtotal)}</span>
+          </div>
+          ${discount > 0 ? `
+          <div class="charge-row discount">
+            <span><i class="fa-solid fa-tag"></i> Discount</span>
+            <span>-₹${formatIN(discount)}</span>
+          </div>` : ''}
+          <div class="charge-row ${delivery === 0 ? 'free' : ''}">
+            <span><i class="fa-solid fa-truck"></i> Delivery</span>
+            <span>${delivery === 0 ? '<span class="free-badge">FREE</span>' : '₹' + formatIN(delivery)}</span>
+          </div>
+          ${delivery > 0 && subtotal < 999 ? `
+          <div class="free-delivery-hint">
+            <i class="fa-solid fa-info-circle"></i> Add ₹${formatIN(999 - subtotal)} more for FREE delivery!
+          </div>` : ''}
+        </div>
+      `;
+    }
+
+    if (totalEl) totalEl.textContent = formatIN(grandTotal);
+    if (savedEl) {
+      savedEl.textContent = formatIN(discount + (delivery === 0 ? 49 : 0));
+      savedEl.parentElement.style.display = discount > 0 || delivery === 0 ? 'flex' : 'none';
+    }
   };
 
   /**
@@ -142,7 +213,8 @@
    */
   const removeFromCart = async id => {
     try {
-      const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, { method: 'DELETE' });
+      const headers = { ...getAuthHeader() };
+      const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, { method: 'DELETE', headers });
       if (!res.ok) throw new Error('API remove failed');
     } catch (_e) {
       const c = getCartFromStorage().filter(x => x.id !== Number(id));
@@ -157,7 +229,8 @@
    */
   const clearCart = async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/cart`, { method: 'DELETE' });
+      const headers = { ...getAuthHeader() };
+      const res = await fetch(`${API_BASE}/api/cart`, { method: 'DELETE', headers });
       if (!res.ok) throw new Error('API clear failed');
     } catch (_e) {
       localStorage.removeItem('cart');
@@ -173,9 +246,10 @@
    */
   const updateQuantity = async (id, newQty) => {
     try {
+      const headers = { 'Content-Type': 'application/json', ...getAuthHeader() };
       const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify({ qty: newQty })
       });
       if (!res.ok) throw new Error('API update failed');
@@ -225,9 +299,16 @@
 
     if (itemsEl) {
       itemsEl.addEventListener('click', async e => {
-        // Handle remove button
-        const rem = e.target.closest('button.remove-item');
+        // Handle remove button (both old and new)
+        const rem = e.target.closest('button.remove-item') || e.target.closest('button.remove-btn');
         if (rem) {
+          // Add remove animation
+          const row = rem.closest('.cart-row');
+          if (row) {
+            row.style.transform = 'translateX(100%)';
+            row.style.opacity = '0';
+            await new Promise(r => setTimeout(r, 200));
+          }
           await removeFromCart(rem.dataset.id);
           return;
         }
@@ -245,14 +326,18 @@
           
           if (minusBtn && qty > 1) {
             qty--;
+            // Animate
+            valueEl.classList.add('qty-change');
           } else if (plusBtn) {
             qty++;
+            valueEl.classList.add('qty-change');
           }
           
           valueEl.textContent = qty;
-          if (selector.querySelector('.qty-minus')) {
-            selector.querySelector('.qty-minus').disabled = qty <= 1;
-          }
+          selector.querySelector('.qty-minus').disabled = qty <= 1;
+          
+          // Remove animation class
+          setTimeout(() => valueEl.classList.remove('qty-change'), 150);
           
           await updateQuantity(itemId, qty);
         }

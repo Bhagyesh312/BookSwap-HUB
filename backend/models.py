@@ -85,8 +85,13 @@ class User(db.Model):
     state = db.Column(db.String(100))
     zip = db.Column(db.String(20))
     country = db.Column(db.String(100), default='India')
+    role = db.Column(db.String(20), default='user')  # 'user' or 'admin'
     last_login_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Password reset fields
+    reset_token = db.Column(db.String(100), nullable=True)
+    reset_token_expires = db.Column(db.DateTime, nullable=True)
     
     # Relationships
     cart_items = db.relationship('CartItem', backref='user', lazy=True, cascade='all, delete-orphan')
@@ -97,7 +102,8 @@ class User(db.Model):
         return {
             'id': self.id,
             'name': self.name,
-            'email': self.email
+            'email': self.email,
+            'role': self.role
         }
     
     def to_full_dict(self):
@@ -112,6 +118,7 @@ class User(db.Model):
             'state': self.state,
             'zip': self.zip,
             'country': self.country,
+            'role': self.role,
             'createdAt': self.created_at.isoformat() if self.created_at else None,
             'lastLogin': self.last_login_at.isoformat() if self.last_login_at else None
         }

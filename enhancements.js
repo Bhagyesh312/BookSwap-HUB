@@ -555,6 +555,64 @@ window.CouponSystem = {
         input.onkeypress = (e) => {
             if (e.key === 'Enter') applyBtn.click();
         };
+        
+        // Initialize available coupons display
+        this.renderAvailableCoupons(input);
+    },
+    
+    /**
+     * Render the list of available coupons
+     */
+    renderAvailableCoupons(inputEl) {
+        const toggleBtn = document.getElementById('toggleCouponsBtn');
+        const couponsList = document.getElementById('couponsList');
+        
+        if (!toggleBtn || !couponsList) return;
+        
+        // Build coupons HTML
+        const couponsHTML = Object.entries(this.coupons).map(([code, coupon]) => {
+            const minText = coupon.minOrder > 0 ? `Min. order ₹${coupon.minOrder}` : 'No minimum order';
+            const valueText = coupon.type === 'percent' ? `${coupon.value}% OFF` : `₹${coupon.value} OFF`;
+            
+            return `
+                <div class="coupon-card" data-code="${code}">
+                    <div class="coupon-left">
+                        <span class="coupon-value">${valueText}</span>
+                        <span class="coupon-desc">${coupon.description}</span>
+                    </div>
+                    <div class="coupon-right">
+                        <span class="coupon-code">${code}</span>
+                        <span class="coupon-min">${minText}</span>
+                        <button type="button" class="use-coupon-btn" data-code="${code}">Use</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        couponsList.innerHTML = couponsHTML;
+        
+        // Toggle visibility
+        toggleBtn.onclick = () => {
+            couponsList.classList.toggle('hidden');
+            toggleBtn.querySelector('.toggle-icon').classList.toggle('rotated');
+        };
+        
+        // Click to use coupon
+        couponsList.addEventListener('click', (e) => {
+            const useBtn = e.target.closest('.use-coupon-btn');
+            if (useBtn) {
+                const code = useBtn.dataset.code;
+                if (inputEl) {
+                    inputEl.value = code;
+                    inputEl.focus();
+                    // Auto-apply
+                    document.getElementById('applyCouponBtn')?.click();
+                    // Collapse the list
+                    couponsList.classList.add('hidden');
+                    toggleBtn.querySelector('.toggle-icon').classList.remove('rotated');
+                }
+            }
+        });
     }
 };
 
@@ -753,15 +811,43 @@ window.Pagination = {
         'track': 'To track your order, please go to your Profile → Orders section. You can see the status of all your orders there.',
         'order': 'You can view your orders by clicking on the user icon and selecting "My Orders". Each order shows a tracking timeline!',
         'return': 'For returns, please contact us within 7 days of delivery. Go to Orders → Select Order → Request Return.',
+        'refund': 'Refunds are processed within 5-7 business days after we receive the returned item. Contact support if delayed.',
         'payment': 'We accept COD, UPI, and Credit/Debit cards. If you faced a payment issue, please check your bank statement and contact us.',
         'sell': 'Want to sell books? Click on "Sell Book" in the navigation. Fill out the form with book details and we\'ll list it for you!',
         'buy': 'Browse our collection on the "Buy Book" page. Use filters to find exactly what you need!',
-        'discount': 'Try these coupon codes: SAVE10, SAVE20, FLAT50, or FIRSTBUY for great discounts!',
-        'coupon': 'Try these coupon codes: SAVE10, SAVE20, FLAT50, or FIRSTBUY for great discounts!',
+        'discount': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
+        'coupon': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
+        'code': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
         'hello': 'Hello! Nice to meet you. How can I assist you with your book shopping today?',
         'hi': 'Hi there! What can I help you with?',
-        'thanks': 'You\'re welcome! Feel free to ask if you need anything else. Happy reading!',
-        'help': 'I can help you with: tracking orders, returns, payments, buying/selling books, and coupon codes. Just ask!'
+        'hey': 'Hey! Welcome to BookSwap Hub. What can I help you with today?',
+        'thanks': 'You\'re welcome! Feel free to ask if you need anything else. Happy reading! 📚',
+        'thank': 'You\'re welcome! Feel free to ask if you need anything else. Happy reading! 📚',
+        'help': 'I can help you with: tracking orders, returns, payments, buying/selling books, coupon codes, delivery info, and account questions. Just ask!',
+        'delivery': 'Free delivery on orders above ₹999! Otherwise, delivery charges are ₹49 (under ₹499) or ₹29 (₹499-₹999). Delivery takes 3-7 business days.',
+        'shipping': 'Free shipping on orders above ₹999! Standard delivery takes 3-7 business days depending on your location.',
+        'price': 'Book prices vary based on condition and rarity. You can sort by price on the Buy page to find books in your budget!',
+        'account': 'To manage your account, click on the profile icon and select "Profile Settings". You can update your info, change password, and more.',
+        'password': 'To change your password, go to Profile Settings → Security section. Enter your current password and set a new one.',
+        'login': 'Having trouble logging in? Try resetting your password using the "Forgot Password" link on the login page.',
+        'register': 'To create an account, click "Login/Register" and fill out the registration form. It only takes a minute!',
+        'contact': 'You can reach us at bookswaphub@gmail.com or use the Contact page. We typically respond within 24 hours.',
+        'email': 'Reach us at bookswaphub@gmail.com for any queries. We respond within 24 hours!',
+        'cart': 'Your cart items are saved! Go to the cart icon in the navbar to view, update quantities, or checkout.',
+        'wishlist': 'Click the heart icon on any book to add it to your wishlist. Access your wishlist from the navbar.',
+        'quiz': 'Try our Book Matchmaker quiz to discover books tailored to your preferences! Find it in the navigation.',
+        'recommend': 'Try our Book Matchmaker quiz for personalized book recommendations based on your reading preferences!',
+        'cancel': 'To cancel an order, go to My Orders and click "Cancel Order" if it hasn\'t shipped yet. Already shipped orders cannot be cancelled.',
+        'status': 'Check your order status in Profile → My Orders. You\'ll see: Pending, Processing, Shipped, or Delivered.',
+        'time': 'Typical delivery time is 3-7 business days. You can track your order in the Orders section.',
+        'book': 'Looking for a specific book? Use the search bar on the Buy page, or filter by genre, author, or condition.',
+        'genre': 'We have fiction, non-fiction, academic, romance, thriller, sci-fi, biography, and more! Use filters on the Buy page.',
+        'condition': 'Books come in various conditions: New, Like New, Good, Acceptable. Descriptions include details about any wear.',
+        'good': 'Glad I could help! Is there anything else you\'d like to know?',
+        'great': 'Awesome! Let me know if you need anything else!',
+        'bye': 'Goodbye! Happy reading and come back soon! 📖',
+        'ok': 'Great! Let me know if you have any other questions.',
+        'okay': 'Perfect! Feel free to ask if you need more help.'
     };
     
     function addMessage(text, isUser = false) {

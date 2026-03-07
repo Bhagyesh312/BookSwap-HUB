@@ -837,9 +837,62 @@
     .cart-icon-btn {
         padding: 8px 14px;
     }
+    
+    /* Nav links wrap better on tablet */
+    .nav-links {
+        gap: 12px;
+        justify-content: center;
+    }
+    
+    .nav-links a {
+        font-size: 13px;
+        padding: 6px 10px;
+    }
 }
 
 @media (max-width: 480px) {
+    /* Navbar mobile */
+    .navbar {
+        padding: 10px 0;
+    }
+    
+    .nav-container {
+        padding: 0 12px;
+        gap: 8px;
+    }
+    
+    .nav-links {
+        gap: 6px;
+        justify-content: center;
+    }
+    
+    .nav-links a {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+    
+    .nav-auth {
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .user-greeting {
+        display: none;
+    }
+    
+    .wishlist-icon-btn,
+    .cart-icon-btn {
+        padding: 6px 10px;
+        font-size: 14px;
+    }
+    
+    .nav-btn.nav-login {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    
+    /* Hero */
     .heroSwiper {
         height: 350px;
     }
@@ -860,6 +913,26 @@
     .btn.primary.hero-slide-btn {
         padding: 12px 24px;
         font-size: 14px;
+    }
+    
+    /* Footer */
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+        gap: 24px;
+    }
+    
+    .footer-box {
+        align-items: center;
+    }
+    
+    /* General content spacing */
+    .section-header h2 {
+        font-size: 24px;
+    }
+    
+    .book-card {
+        min-width: 140px;
     }
 }
 

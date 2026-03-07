@@ -203,6 +203,9 @@
             <div id="cartItems" class="cart-items">
                 <!-- cart items -->
             </div>
+            <div id="cartCharges" class="cart-charges">
+                <!-- charges breakdown -->
+            </div>
             <footer class="cart-footer">
                 <div class="cart-total">
                     <div class="selling-total">Total: ₹<span id="cartTotal">0</span></div>
@@ -222,7 +225,7 @@
             <button id="closeDetailsBtn" class="close-details-btn" aria-label="Close details">✕</button>
             <div class="details-content">
                 <div class="details-image">
-                    <img id="detailsImage" src="" alt="Book cover">
+                    <img id="detailsImage" src="" alt="Book cover" loading="lazy">
                 </div>
                 <div class="details-info">
                     <h2 id="detailsTitle"></h2>
@@ -428,7 +431,7 @@
                 const wishlisted = window.wishlistAPI && window.wishlistAPI.isInWishlist(b.id);
                 return `
             <div class="book-card" data-id="${b.id}" style="--stagger:${index % 12}">
-                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}">` : '<div class="no-cover-text">No cover</div>'}
+                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}" loading="lazy">` : '<div class="no-cover-text">No cover</div>'}
                     <button class="wishlist-heart ${wishlisted ? 'wishlisted' : ''}" data-book-id="${b.id}" title="Add to wishlist">
                         <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                     </button>
@@ -696,6 +699,32 @@
                 await renderCart();
             };
 
+            /**
+             * Update quantity for a cart item
+             * @param {number} id - Book ID
+             * @param {number} newQty - New quantity
+             */
+            const updateQuantity = async (id, newQty) => {
+                try {
+                    const headers = { ...getAuthHeader(), 'Content-Type': 'application/json' };
+                    const res = await fetch(`${API_BASE}/api/cart/${Number(id)}`, {
+                        method: 'PATCH',
+                        headers,
+                        body: JSON.stringify({ qty: newQty })
+                    });
+                    if (!res.ok) throw new Error('Failed to update quantity');
+                } catch (_error) {
+                    const cart = getCartFromStorage();
+                    const item = cart.find(x => x.id === Number(id));
+                    if (item) {
+                        item.qty = newQty;
+                        localStorage.setItem('cart', JSON.stringify(cart));
+                    }
+                }
+                await updateCount();
+                await renderCart();
+            };
+
             // Clear entire cart (authenticated or guest)
             const clearCart = async () => {
                 try {
@@ -714,42 +743,106 @@
              * Render cart items and update total price display
              * Fetches current cart and displays each item with price, quantity, and remove button
              */
+            // Calculate delivery charges based on subtotal
+            const getDeliveryCharge = (subtotal) => {
+                if (subtotal >= 999) return 0;
+                if (subtotal >= 499) return 29;
+                return 49;
+            };
+
             const renderCart = async () => {
                 const c = await getCart();
+                const chargesEl = document.getElementById('cartCharges');
+                
                 if (!c.length) {
-                    cartItemsEl.innerHTML = '<div class="empty">Your cart is empty.</div>';
+                    cartItemsEl.innerHTML = `
+                        <div class="empty-cart">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            <p>Your cart is empty</p>
+                            <span>Add some books to get started!</span>
+                        </div>`;
+                    if (chargesEl) chargesEl.innerHTML = '';
                     cartTotalEl.textContent = '0';
                     const savedEl = document.getElementById('cartSavedAmount');
-                    if (savedEl) savedEl.textContent = '0';
+                    if (savedEl) savedEl.parentElement.style.display = 'none';
                     return;
                 }
 
-                let total = 0;
+                let subtotal = 0;
                 let originalTotal = 0;
+                const itemCount = c.reduce((s, i) => s + i.qty, 0);
+                
                 cartItemsEl.innerHTML = c.map(item => {
                     const linePrice = item.price * item.qty;
                     const lineOriginal = (item.original || item.price) * item.qty;
-                    total += linePrice;
+                    subtotal += linePrice;
                     originalTotal += lineOriginal;
+                    const hasDiscount = lineOriginal > linePrice;
                     return `
                 <div class="cart-row" data-id="${item.id}">
-                    <div class="ci-left">
-                        <img src="${item.image || 'https://via.placeholder.com/80x100?text=No+Cover'}" alt="${item.title}">
+                    <div class="ci-image">
+                        <img src="${item.image || 'https://via.placeholder.com/80x100?text=No+Cover'}" alt="${item.title}" loading="lazy">
                     </div>
-                    <div class="ci-body">
+                    <div class="ci-details">
                         <div class="ci-title">${item.title}</div>
-                        <div class="ci-qty">Qty: ${item.qty}</div>
-                        <div class="ci-price">₹${formatIN(linePrice)} <span class="cancelled">₹${formatIN(lineOriginal)}</span></div>
+                        <div class="ci-controls">
+                            <div class="qty-selector" data-item-id="${item.id}">
+                                <button class="qty-btn qty-minus" ${item.qty <= 1 ? 'disabled' : ''} aria-label="Decrease quantity">
+                                    <i class="fa-solid fa-minus"></i>
+                                </button>
+                                <span class="qty-value">${item.qty}</span>
+                                <button class="qty-btn qty-plus" aria-label="Increase quantity">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                            <button class="remove-btn" data-id="${item.id}" aria-label="Remove item">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="ci-actions">
-                        <button class="remove-item" data-id="${item.id}">Remove</button>
+                    <div class="ci-pricing">
+                        <span class="ci-current-price">₹${formatIN(linePrice)}</span>
+                        ${hasDiscount ? `<span class="ci-original-price">₹${formatIN(lineOriginal)}</span>` : ''}
                     </div>
                 </div>`;
                 }).join('');
 
-                cartTotalEl.textContent = formatIN(total);
+                // Calculate charges
+                const delivery = getDeliveryCharge(subtotal);
+                const discount = Math.max(0, originalTotal - subtotal);
+                const grandTotal = subtotal + delivery;
+
+                // Render charges breakdown
+                if (chargesEl) {
+                    chargesEl.innerHTML = `
+                        <div class="charges-section">
+                            <div class="charge-row">
+                                <span>Subtotal (${itemCount} ${itemCount === 1 ? 'item' : 'items'})</span>
+                                <span>₹${formatIN(subtotal)}</span>
+                            </div>
+                            ${discount > 0 ? `
+                            <div class="charge-row discount">
+                                <span><i class="fa-solid fa-tag"></i> Discount</span>
+                                <span>-₹${formatIN(discount)}</span>
+                            </div>` : ''}
+                            <div class="charge-row ${delivery === 0 ? 'free' : ''}">
+                                <span><i class="fa-solid fa-truck"></i> Delivery</span>
+                                <span>${delivery === 0 ? '<span class="free-badge">FREE</span>' : '₹' + formatIN(delivery)}</span>
+                            </div>
+                            ${delivery > 0 && subtotal < 999 ? `
+                            <div class="free-delivery-hint">
+                                <i class="fa-solid fa-info-circle"></i> Add ₹${formatIN(999 - subtotal)} more for FREE delivery!
+                            </div>` : ''}
+                        </div>
+                    `;
+                }
+
+                cartTotalEl.textContent = formatIN(grandTotal);
                 const savedEl = document.getElementById('cartSavedAmount');
-                if (savedEl) savedEl.textContent = formatIN(Math.max(0, originalTotal - total));
+                if (savedEl) {
+                    savedEl.textContent = formatIN(discount + (delivery === 0 ? 49 : 0));
+                    savedEl.parentElement.style.display = discount > 0 || delivery === 0 ? 'flex' : 'none';
+                }
             };
 
             // Cart sidebar control functions (CSS transition-based)
@@ -879,9 +972,45 @@
             });
 
             cartItemsEl.addEventListener('click', async e => {
-                const rem = e.target.closest('button.remove-item');
-                if (!rem) return;
-                await removeFromCart(rem.dataset.id);
+                // Handle remove button (both old and new classes)
+                const rem = e.target.closest('button.remove-item') || e.target.closest('button.remove-btn');
+                if (rem) {
+                    const row = rem.closest('.cart-row');
+                    if (row) {
+                        row.style.transform = 'translateX(100%)';
+                        row.style.opacity = '0';
+                        await new Promise(r => setTimeout(r, 200));
+                    }
+                    await removeFromCart(rem.dataset.id);
+                    return;
+                }
+                
+                // Handle quantity +/- buttons
+                const minusBtn = e.target.closest('.qty-minus');
+                const plusBtn = e.target.closest('.qty-plus');
+                if (minusBtn || plusBtn) {
+                    const selector = e.target.closest('.qty-selector');
+                    if (!selector) return;
+                    
+                    const itemId = selector.dataset.itemId;
+                    const valueEl = selector.querySelector('.qty-value');
+                    let qty = parseInt(valueEl.textContent, 10);
+                    
+                    if (minusBtn && qty > 1) {
+                        qty--;
+                        valueEl.classList.add('qty-change');
+                    } else if (plusBtn) {
+                        qty++;
+                        valueEl.classList.add('qty-change');
+                    }
+                    
+                    valueEl.textContent = qty;
+                    selector.querySelector('.qty-minus').disabled = qty <= 1;
+                    
+                    setTimeout(() => valueEl.classList.remove('qty-change'), 150);
+                    
+                    await updateQuantity(itemId, qty);
+                }
             });
 
             [price, sort].forEach(elm => elm.addEventListener('change', apply));
