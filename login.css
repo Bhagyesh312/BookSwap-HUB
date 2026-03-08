@@ -45,10 +45,10 @@ body {
   font-weight: 800;
   font-size: 16px;
   color: #fff;
-  background: linear-gradient(135deg, #f97316, #ef4444);
-  box-shadow: 0 16px 35px rgba(249, 115, 22, 0.25);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 16px 35px rgba(245, 158, 11, 0.25);
   transform: translateY(-2px);
-  box-shadow: 0 16px 35px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 16px 35px rgba(245, 158, 11, 0.4);
 }
 
 
@@ -138,7 +138,7 @@ form {
 
 .input-box input:focus {
   border-color: #1a3a52;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
 }
 
 /* EXTRAS */
@@ -184,10 +184,10 @@ form {
   font-weight: 800;
   font-size: 16px;
   color: #fff;
-  background: linear-gradient(135deg, #f97316, #ef4444);
-  box-shadow: 0 18px 30px rgba(249, 115, 22, 0.25);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 18px 30px rgba(245, 158, 11, 0.25);
   transform: translateY(-2px);
-  box-shadow: 0 18px 30px rgba(249, 115, 22, 0.4);
+  box-shadow: 0 18px 30px rgba(245, 158, 11, 0.4);
 }
 
 /* TOGGLE TEXT AND LINK */
@@ -295,7 +295,7 @@ form {
 }
 
 .forgot-close:hover {
-  color: #ef4444;
+  color: #d97706;
 }
 
 .forgot-modal h2 {
@@ -309,7 +309,7 @@ form {
 }
 
 .forgot-modal h2 i {
-  color: #f97316;
+  color: #f59e0b;
 }
 
 .forgot-modal > p {
@@ -354,7 +354,7 @@ form {
 }
 
 .forgot-back a:hover {
-  color: #f97316;
+  color: #f59e0b;
 }
 
 @media (max-width: 480px) {

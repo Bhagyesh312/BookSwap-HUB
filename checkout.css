@@ -6,7 +6,7 @@
     color: #f8fafc;
     padding: 50px 30px;
     text-align: center;
-    border-bottom: 4px solid #f97316;
+    border-bottom: 4px solid #f59e0b;
 }
 
 .checkout-header h1 {
@@ -50,13 +50,13 @@
     border-radius: 16px;
     padding: 30px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-    border: 1px solid rgba(249, 115, 22, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.15);
     transition: all 0.3s ease;
 }
 
 .form-card:hover {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-    border-color: rgba(249, 115, 22, 0.3);
+    border-color: rgba(245, 158, 11, 0.3);
 }
 
 .card-header {
@@ -98,9 +98,9 @@
 .form-grid input:focus,
 .form-grid textarea:focus {
     outline: none;
-    border-color: #f97316;
+    border-color: #f59e0b;
     background: #fff;
-    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
 }
 
 .form-grid input::placeholder,
@@ -131,7 +131,7 @@
 }
 
 .payment-option:hover {
-    border-color: #f97316;
+    border-color: #f59e0b;
     background: #eff6ff;
 }
 
@@ -140,7 +140,7 @@
     height: 20px;
     margin-right: 16px;
     cursor: pointer;
-    accent-color: #f97316;
+    accent-color: #f59e0b;
 }
 
 .option-content {
@@ -161,7 +161,7 @@
 }
 
 .payment-option input[type="radio"]:checked + .option-content .option-title {
-    color: #f97316;
+    color: #f59e0b;
 }
 
 /* ===== SUMMARY CARD ===== */
@@ -169,7 +169,7 @@
     background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
     border-radius: 16px;
     padding: 25px;
-    box-shadow: 0 8px 30px rgba(249, 115, 22, 0.15);
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.15);
     border: 2px solid #e2e8f0;
 }
 
@@ -209,7 +209,7 @@
 }
 
 .summary-items::-webkit-scrollbar-thumb {
-    background: #f97316;
+    background: #f59e0b;
     border-radius: 10px;
 }
 
@@ -259,7 +259,7 @@
 
 .item-price {
     font-weight: 700;
-    color: #f97316;
+    color: #f59e0b;
     font-size: 14px;
 }
 
@@ -311,7 +311,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     border-radius: 12px;
     margin: 15px 0;
     color: #fff;
@@ -353,14 +353,14 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     color: #fff;
-    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
 .btn-primary:disabled {
@@ -376,7 +376,7 @@
 
 .btn-secondary:hover {
     background: #e2e8f0;
-    border-color: #f97316;
+    border-color: #f59e0b;
 }
 
 /* ===== SECURITY BADGE ===== */

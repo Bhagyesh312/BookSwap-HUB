@@ -16,6 +16,10 @@
     <link rel="stylesheet" href="wishlist.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="enhancements.css">
+
+    <!-- Page Transition Loader -->
+    <link rel="stylesheet" href="page-transition.css">
+    <script src="page-transition.js"></script>
 </head>
 
 <body>
@@ -98,14 +102,17 @@
 
         <div class="section-subnav" aria-label="Book sections">
             <button class="section-btn active" data-section="all"><i class="fa-solid fa-layer-group"></i> All</button>
-            <button class="section-btn" data-section="education"><i class="fa-solid fa-graduation-cap"></i> Education</button>
+            <button class="section-btn" data-section="education"><i class="fa-solid fa-graduation-cap"></i>
+                Education</button>
             <button class="section-btn" data-section="romance"><i class="fa-solid fa-heart"></i> Romance</button>
             <button class="section-btn" data-section="thriller"><i class="fa-solid fa-skull"></i> Thriller</button>
             <button class="section-btn" data-section="fantasy"><i class="fa-solid fa-dragon"></i> Fantasy</button>
-            <button class="section-btn" data-section="science-fiction"><i class="fa-solid fa-rocket"></i> Sci-Fi</button>
+            <button class="section-btn" data-section="science-fiction"><i class="fa-solid fa-rocket"></i>
+                Sci-Fi</button>
             <button class="section-btn" data-section="self-help"><i class="fa-solid fa-brain"></i> Self Help</button>
             <button class="section-btn" data-section="business"><i class="fa-solid fa-briefcase"></i> Business</button>
-            <button class="section-btn" data-section="classics"><i class="fa-solid fa-feather-pointed"></i> Classics</button>
+            <button class="section-btn" data-section="classics"><i class="fa-solid fa-feather-pointed"></i>
+                Classics</button>
         </div>
 
         <!-- ===== FILTER SIDEBAR ===== -->
@@ -140,15 +147,18 @@
                     </button>
                     <ul class="select-options">
                         <li data-value="popularity" class="selected"><i class="fa-solid fa-fire"></i> Popularity</li>
-                        <li data-value="price-low"><i class="fa-solid fa-arrow-down-short-wide"></i> Price Low → High</li>
-                        <li data-value="price-high"><i class="fa-solid fa-arrow-up-wide-short"></i> Price High → Low</li>
+                        <li data-value="price-low"><i class="fa-solid fa-arrow-down-short-wide"></i> Price Low → High
+                        </li>
+                        <li data-value="price-high"><i class="fa-solid fa-arrow-up-wide-short"></i> Price High → Low
+                        </li>
                         <li data-value="newest"><i class="fa-solid fa-clock"></i> Newest First</li>
                     </ul>
                     <input type="hidden" id="sortFilter" value="popularity">
                 </div>
             </div>
 
-            <button class="reset-btn" onclick="resetFilters()"><i class="fa-solid fa-rotate-right"></i> Reset Filters</button>
+            <button class="reset-btn" onclick="resetFilters()"><i class="fa-solid fa-rotate-right"></i> Reset
+                Filters</button>
 
         </aside>
 
@@ -183,8 +193,8 @@
 
             <div class="footer-box">
                 <h3>Contact</h3>
-                <p>📞 +91 99999 99999</p>
-                <p>📧 bookswaphub@gmail.com</p>
+                <p>📞 +91 9409715902</p>
+                <p>📧 bookswaphubsupport@gmail.com</p>
                 <p>📍 India</p>
             </div>
         </div>
@@ -408,6 +418,7 @@
                 pages: book.pages || 'N/A',
                 language: book.language || 'N/A',
                 binding: book.binding || 'N/A',
+                quantity: Number(book.quantity !== undefined ? book.quantity : 1),
                 synopsis: book.synopsis || 'No synopsis available'
             });
 
@@ -441,7 +452,9 @@
                 <p class="author">By ${b.author}</p>
                 <p class="price">₹${b.price} <span>₹${b.original}</span></p>
                 <div class="card-btns">
-                    <button class="buy" data-action="buy">Add to Cart</button>
+                    <button class="buy" data-action="buy" ${b.quantity <= 0 ? 'disabled style="background:#cbd5e1;cursor:not-allowed;" title="Out of Stock"' : ''}>
+                        ${b.quantity <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                    </button>
                     <button class="view-details" data-action="view-details" data-id="${b.id}" title="View book details">Info</button>
                 </div>
             </div>`;
@@ -513,11 +526,11 @@
             const display = (items, page = 1) => {
                 filteredItems = items;
                 currentPage = page;
-                
+
                 const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
                 const startIdx = (page - 1) * ITEMS_PER_PAGE;
                 const pageItems = items.slice(startIdx, startIdx + ITEMS_PER_PAGE);
-                
+
                 grid.innerHTML = pageItems.length
                     ? pageItems.map((book, idx) => render(book, startIdx + idx)).join('')
                     : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
@@ -525,21 +538,21 @@
                 // Add pagination controls
                 const existingPagination = document.querySelector('.pagination-container');
                 if (existingPagination) existingPagination.remove();
-                
+
                 if (totalPages > 1 && typeof window.Pagination !== 'undefined') {
                     const paginationHTML = window.Pagination.create(page, totalPages, items.length);
                     grid.insertAdjacentHTML('afterend', paginationHTML);
-                    
+
                     // Initialize pagination click handler
                     const paginationEl = document.querySelector('.pagination-container');
                     if (paginationEl) {
                         paginationEl.addEventListener('click', (e) => {
                             const btn = e.target.closest('.pagination-btn');
                             if (!btn || btn.disabled || btn.classList.contains('active')) return;
-                            
+
                             const newPage = parseInt(btn.dataset.page, 10);
                             display(filteredItems, newPage);
-                            
+
                             // Scroll to top of book grid
                             grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         });
@@ -656,8 +669,15 @@
                             image: b.image || ''
                         })
                     });
-                    if (!res.ok) throw new Error('Failed to add item');
+                    if (!res.ok) {
+                        const errorData = await res.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'Failed to add item');
+                    }
                 } catch (_error) {
+                    if (_error.message && _error.message !== 'Failed to add item' && _error.message !== 'Failed to fetch') {
+                        showNotification(_error.message, 'error');
+                        return; // Stop if it's a specific API error like stock limit
+                    }
                     const c = getCartFromStorage();
                     const existing = c.find(x => x.id === bid);
                     if (existing) existing.qty += 1;
@@ -712,8 +732,17 @@
                         headers,
                         body: JSON.stringify({ qty: newQty })
                     });
-                    if (!res.ok) throw new Error('Failed to update quantity');
+                    if (!res.ok) {
+                        const errorData = await res.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'Failed to update quantity');
+                    }
                 } catch (_error) {
+                    if (_error.message && _error.message !== 'Failed to update quantity' && _error.message !== 'Failed to fetch') {
+                        showNotification(_error.message, 'error');
+                        // Re-render to revert the optimistic UI update
+                        await renderCart();
+                        return;
+                    }
                     const cart = getCartFromStorage();
                     const item = cart.find(x => x.id === Number(id));
                     if (item) {
@@ -753,7 +782,7 @@
             const renderCart = async () => {
                 const c = await getCart();
                 const chargesEl = document.getElementById('cartCharges');
-                
+
                 if (!c.length) {
                     cartItemsEl.innerHTML = `
                         <div class="empty-cart">
@@ -771,7 +800,7 @@
                 let subtotal = 0;
                 let originalTotal = 0;
                 const itemCount = c.reduce((s, i) => s + i.qty, 0);
-                
+
                 cartItemsEl.innerHTML = c.map(item => {
                     const linePrice = item.price * item.qty;
                     const lineOriginal = (item.original || item.price) * item.qty;
@@ -876,6 +905,20 @@
                 el('detailsSynopsis').textContent = book.synopsis || 'No synopsis available';
                 el('detailsPriceValue').textContent = `₹${book.price}`;
                 el('detailsOriginalValue').textContent = `₹${book.original}`;
+
+                // Update Add to Cart button based on stock
+                if (book.quantity <= 0) {
+                    detailsAddToCart.disabled = true;
+                    detailsAddToCart.textContent = '❌ Out of Stock';
+                    detailsAddToCart.style.background = '#cbd5e1';
+                    detailsAddToCart.style.cursor = 'not-allowed';
+                } else {
+                    detailsAddToCart.disabled = false;
+                    detailsAddToCart.textContent = '🛒 Add to Cart';
+                    detailsAddToCart.style.background = '';
+                    detailsAddToCart.style.cursor = '';
+                }
+
                 detailsModal.classList.remove('hidden');
             };
 
@@ -984,18 +1027,18 @@
                     await removeFromCart(rem.dataset.id);
                     return;
                 }
-                
+
                 // Handle quantity +/- buttons
                 const minusBtn = e.target.closest('.qty-minus');
                 const plusBtn = e.target.closest('.qty-plus');
                 if (minusBtn || plusBtn) {
                     const selector = e.target.closest('.qty-selector');
                     if (!selector) return;
-                    
+
                     const itemId = selector.dataset.itemId;
                     const valueEl = selector.querySelector('.qty-value');
                     let qty = parseInt(valueEl.textContent, 10);
-                    
+
                     if (minusBtn && qty > 1) {
                         qty--;
                         valueEl.classList.add('qty-change');
@@ -1003,12 +1046,12 @@
                         qty++;
                         valueEl.classList.add('qty-change');
                     }
-                    
+
                     valueEl.textContent = qty;
                     selector.querySelector('.qty-minus').disabled = qty <= 1;
-                    
+
                     setTimeout(() => valueEl.classList.remove('qty-change'), 150);
-                    
+
                     await updateQuantity(itemId, qty);
                 }
             });

@@ -234,6 +234,38 @@ def delete_book(book_id):
         return jsonify({'error': str(e)}), 500
 
 
+@admin_bp.route('/books/<int:book_id>/stock', methods=['PATCH'])
+@require_auth
+@require_admin
+def update_book_stock(book_id):
+    """
+    Update a book's stock quantity (admin only)
+    """
+    from flask import request
+    
+    try:
+        data = request.get_json() or {}
+        new_quantity = data.get('quantity')
+        
+        if new_quantity is None or int(new_quantity) < 0:
+            return jsonify({'error': 'Valid positive quantity is required'}), 400
+            
+        book = Book.query.get(book_id)
+        if not book:
+            return jsonify({'error': 'Book not found'}), 404
+            
+        book.quantity = int(new_quantity)
+        db.session.commit()
+        
+        return jsonify({
+            'message': 'Book stock updated successfully',
+            'book': book.to_dict()
+        })
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+
 @admin_bp.route('/orders', methods=['GET'])
 @require_auth
 @require_admin

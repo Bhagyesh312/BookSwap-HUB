@@ -57,7 +57,7 @@ body {
   object-fit: cover;
   border-radius: 22px;
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.2);
-  border: 2px solid rgba(249, 115, 22, 0.2);
+  border: 2px solid rgba(245, 158, 11, 0.2);
 }
 
 
@@ -70,7 +70,7 @@ body {
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
-  border: 1px solid rgba(249, 115, 22, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.2);
 }
 
 .about-card h2 {
@@ -132,7 +132,7 @@ body {
 .input-box textarea {
   padding: 12px;
   border-radius: 10px;
-  border: 1px solid rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.15);
   font-family: inherit;
   font-size: 14px;
 }
@@ -140,8 +140,8 @@ body {
 .input-box input:focus,
 .input-box textarea:focus {
   outline: none;
-  border-color: #f97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 
 
@@ -163,7 +163,7 @@ body {
   overflow: hidden;
   box-shadow: 0 10px 35px rgba(15, 23, 42, 0.15);
   margin-top: 18px;
-  border: 2px solid rgba(249, 115, 22, 0.2);
+  border: 2px solid rgba(245, 158, 11, 0.2);
 }
 
 .location-map {

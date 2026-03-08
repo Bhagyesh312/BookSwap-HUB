@@ -3,7 +3,7 @@ Orders API Routes
 Handles order creation and retrieval for authenticated users
 """
 from flask import Blueprint, request, jsonify, g
-from models import db, CartItem, Order, OrderItem
+from models import db, CartItem, Order, OrderItem, Book
 from middleware import require_auth
 
 orders_bp = Blueprint('orders', __name__, url_prefix='/api/orders')
@@ -72,6 +72,14 @@ def create_order():
         # Create order items from cart
         order_items = []
         for cart_item in cart_items:
+            # Decrement stock
+            book = Book.query.get(cart_item.book_id)
+            if not book or book.quantity < cart_item.quantity:
+                db.session.rollback()
+                return jsonify({'error': f'Not enough stock for {cart_item.title}'}), 400
+            
+            book.quantity -= cart_item.quantity
+            
             order_item = OrderItem(
                 order_id=order.id,
                 book_id=cart_item.book_id,

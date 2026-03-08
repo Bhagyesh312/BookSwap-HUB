@@ -57,6 +57,10 @@ def add_to_cart():
     existing_item = CartItem.query.filter_by(user_id=user_id, book_id=book_id).first()
     
     if existing_item:
+        # Check stock limits
+        if book and existing_item.quantity + quantity > book.quantity:
+            return jsonify({'error': f'Only {book.quantity} copies available in stock'}), 400
+            
         # Update existing item
         existing_item.quantity += quantity
         existing_item.title = item_title
@@ -64,6 +68,10 @@ def add_to_cart():
         existing_item.original = item_original
         existing_item.image = item_image
     else:
+        # Check stock limits
+        if book and quantity > book.quantity:
+            return jsonify({'error': f'Only {book.quantity} copies available in stock'}), 400
+            
         # Create new cart item
         cart_item = CartItem(
             user_id=user_id,
@@ -124,6 +132,10 @@ def update_cart_item(book_id):
     
     if not item:
         return jsonify({'error': 'Cart item not found'}), 404
+        
+    book = Book.query.get(book_id)
+    if book and int(new_qty) > book.quantity:
+        return jsonify({'error': f'Only {book.quantity} copies available in stock'}), 400
     
     item.quantity = int(new_qty)
     db.session.commit()

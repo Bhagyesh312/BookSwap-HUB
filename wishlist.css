@@ -11,7 +11,7 @@
     padding: 8px 16px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #ec4899, #f43f5e);
+    background: linear-gradient(135deg, #d97706, #f43f5e);
     color: white;
     border: 2px solid transparent;
     font-weight: 800;
@@ -19,7 +19,7 @@
     text-decoration: none;
     cursor: pointer;
     transition: 0.3s ease;
-    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35),
+    box-shadow: 0 8px 24px rgba(217, 119, 6, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.15);
     letter-spacing: 0.5px;
     font-family: 'Poppins', sans-serif;
@@ -36,7 +36,7 @@
 
 .wishlist-icon-btn:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 30px rgba(236, 72, 153, 0.5);
+    box-shadow: 0 12px 30px rgba(217, 119, 6, 0.5);
 }
 
 .wishlist-icon-btn .wishlist-ico {
@@ -108,7 +108,7 @@
 }
 
 .wishlist-heart.wishlisted {
-    color: #ef4444;
+    color: #d97706;
     background: rgba(255, 255, 255, 1);
 }
 
@@ -198,7 +198,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 24px;
-    background: linear-gradient(135deg, #ec4899, #f43f5e);
+    background: linear-gradient(135deg, #d97706, #f43f5e);
     color: white;
 }
 
@@ -298,7 +298,7 @@
 .wishlist-row .wi-price {
     font-size: 15px;
     font-weight: 700;
-    color: #f97316;
+    color: #f59e0b;
 }
 
 .wishlist-row .wi-actions {
@@ -312,7 +312,7 @@
     padding: 8px 14px;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(135deg, #f97316, #ef4444);
+    background: linear-gradient(135deg, #f59e0b, #d97706);
     color: white;
     font-size: 12px;
     font-weight: 700;
@@ -324,7 +324,7 @@
 
 .wishlist-row .add-to-cart-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
 }
 
 .wishlist-row .remove-wishlist-btn {
@@ -340,8 +340,8 @@
 }
 
 .wishlist-row .remove-wishlist-btn:hover {
-    border-color: #ef4444;
-    color: #ef4444;
+    border-color: #d97706;
+    color: #d97706;
     background: #fef2f2;
 }
 
@@ -367,7 +367,7 @@
 
 .wishlist-footer .clear-wishlist:hover {
     background: #fef2f2;
-    color: #ef4444;
+    color: #d97706;
 }
 
 
@@ -377,21 +377,21 @@
 
 .wishlist-row.price-dropped {
     position: relative;
-    border: 2px solid #10b981;
+    border: 2px solid #d97706;
     background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
     animation: priceDropPulse 2s ease-in-out;
 }
 
 @keyframes priceDropPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.3); }
-    50% { box-shadow: 0 0 20px 4px rgba(16, 185, 129, 0.2); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.3); }
+    50% { box-shadow: 0 0 20px 4px rgba(217, 119, 6, 0.2); }
 }
 
 .price-drop-badge {
     position: absolute;
     top: -10px;
     right: 12px;
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, #d97706, #059669);
     color: #fff;
     padding: 4px 12px;
     border-radius: 20px;
@@ -400,7 +400,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
     animation: badgeBounce 0.6s ease;
 }
 
@@ -419,7 +419,7 @@
 
 .wishlist-row .wi-price .savings {
     display: inline-block;
-    background: #10b981;
+    background: #d97706;
     color: #fff;
     padding: 2px 8px;
     border-radius: 6px;
