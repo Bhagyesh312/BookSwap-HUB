@@ -40,7 +40,7 @@ from models import db, Book
 # ═══════════════════════════════════════════════════════════════════════════════
 TOTAL_TARGET   = 300        # total books to import (higher since we skip no-cover books)
 NEW_RATIO      = 0.6        # 60% new, 40% old
-GOOGLE_API_KEY = 'AIzaSyCwDWARz6BEmDH3EIHHlGCAFwOb_VRuLq4'
+GOOGLE_API_KEY = os.getenv('GOOGLE_BOOKS_API_KEY', '')
 DELAY_SECONDS  = 0.25       # polite delay between API calls
 # ═══════════════════════════════════════════════════════════════════════════════
 
