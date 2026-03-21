@@ -1,6 +1,7 @@
 """
 Flask Application Configuration
-Environment-based configuration for development for BookSwap Hub
+Environment-based configuration for BookSwap Hub
+All sensitive values MUST be set via environment variables (.env file).
 """
 import os
 from dotenv import load_dotenv
@@ -8,45 +9,73 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+def _require_env(key):
+    """Raise an error if a required env variable is missing in production."""
+    val = os.getenv(key)
+    if not val:
+        raise RuntimeError(f"Missing required environment variable: {key}")
+    return val
+
+
 class Config:
-    """Base configuration"""
-    SECRET_KEY = os.getenv('SECRET_KEY', 'bookswap-dev-secret-change-in-production')
-    JWT_SECRET = os.getenv('JWT_SECRET', 'bookswap-dev-secret-change-in-production')
-    
+    """Base configuration — no secrets hardcoded here."""
+
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_SECRET = os.getenv('JWT_SECRET')
+
     # Email Configuration (Gmail SMTP)
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 587
     MAIL_USE_TLS = True
-    MAIL_USERNAME = os.getenv('MAIL_USERNAME', 'bookswaphubsupport@gmail.com')
-    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', 'ftdxtfaohvhooidh')
-    MAIL_DEFAULT_SENDER = ('BookSwap Hub', 'bookswaphubsupport@gmail.com')
-    
-    # Frontend URL for reset links
+    MAIL_USERNAME = os.getenv('MAIL_USERNAME')
+    MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
+    MAIL_DEFAULT_SENDER = ('BookSwap Hub', os.getenv('MAIL_USERNAME', ''))
+
+    # Frontend URL for password reset links
     FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://127.0.0.1:5500')
-    
+
     # PostgreSQL Database Configuration
     DB_HOST = os.getenv('DB_HOST', 'localhost')
     DB_PORT = os.getenv('DB_PORT', '5432')
     DB_NAME = os.getenv('DB_NAME', 'bookswap')
     DB_USER = os.getenv('DB_USER', 'postgres')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
-    
+    DB_PASSWORD = os.getenv('DB_PASSWORD', '')
+
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+        f"postgresql://{os.getenv('DB_USER', 'postgres')}:{os.getenv('DB_PASSWORD', '')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME', 'bookswap')}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = os.getenv('SQLALCHEMY_ECHO', 'false').lower() == 'true'
 
+    # File Upload Configuration
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+    MAX_CONTENT_LENGTH = 20 * 1024 * 1024  # 20 MB max per request
+    ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png', 'webp', 'gif'}
+    ALLOWED_VIDEO_EXTENSIONS = {'mp4', 'mov', 'avi', 'webm'}
+
 
 class DevelopmentConfig(Config):
-    """Development configuration"""
+    """Development configuration — allows missing secrets with fallback warnings."""
     DEBUG = True
+
+    # Safe fallbacks for local dev only
+    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-only-secret-not-for-production')
+    JWT_SECRET = os.getenv('JWT_SECRET', 'dev-only-jwt-not-for-production')
 
 
 class ProductionConfig(Config):
-    """Production configuration"""
+    """Production configuration — all secrets must be explicitly set."""
     DEBUG = False
+
+    @classmethod
+    def validate(cls):
+        """Call this on startup to ensure all required secrets are present."""
+        _require_env('SECRET_KEY')
+        _require_env('JWT_SECRET')
+        _require_env('MAIL_USERNAME')
+        _require_env('MAIL_PASSWORD')
+        _require_env('DB_PASSWORD')
 
 
 # Configuration dictionary

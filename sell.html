@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="wishlist.css">
   <link rel="stylesheet" href="animations.css">
   <link rel="stylesheet" href="enhancements.css">
+  <link rel="stylesheet" href="chat-support.css">
 
     <!-- Page Transition Loader -->
     <link rel="stylesheet" href="page-transition.css">
@@ -46,6 +47,7 @@
           <div id="profileMenu" class="profile-menu hidden">
             <a href="profile.html" class="profile-menu-item">Profile Settings</a>
             <a href="orders.html" class="profile-menu-item">My Orders</a>
+            <a href="seller-dashboard.html" class="profile-menu-item">My Listings</a>
             <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
           </div>
         </div>
@@ -56,6 +58,21 @@
           <span class="wishlist-label">WISHLIST</span>
           <span class="wishlist-count" aria-live="polite">0</span>
         </button>
+
+        <!-- Notification Bell -->
+        <div class="notif-bell-wrap">
+            <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+                <i class="fa-solid fa-bell"></i>
+                <span id="notifBadge" class="notif-badge"></span>
+            </button>
+            <div id="notifPanel" class="notif-panel">
+                <div class="notif-panel-header">
+                    <strong>Notifications</strong>
+                    <span>Real-time updates</span>
+                </div>
+                <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+            </div>
+        </div>
 
         <!-- Cart Icon -->
         <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
@@ -259,6 +276,8 @@
   <script src="wishlist.js"></script>
   <script src="animations.js"></script>
   <script src="enhancements.js"></script>
+  <script src="notifications.js"></script>
+  <script src="chat-support.js"></script>
 
   <script>
     /* ================= SELL FORM SUBMISSION ================= */
@@ -273,28 +292,23 @@
       const form = e.target;
       const fd = new FormData(form);
 
-      const payload = {
-        title: fd.get('title'),
-        author: fd.get('author'),
-        condition: fd.get('condition'),
-        edition: fd.get('edition'),
-        language: fd.get('language'),
-        original: fd.get('original'),
-        price: fd.get('price'),
-        quantity: fd.get('quantity'),
-        deliveryOption: fd.get('deliveryOption'),
-        sellerName: fd.get('sellerName'),
-        sellerContact: fd.get('sellerContact'),
-        sellerCity: fd.get('sellerCity'),
-        paymentMode: fd.get('paymentMode'),
-        description: fd.get('description')
-      };
+      // Attach image files
+      const imageInput = document.getElementById('book-images');
+      if (imageInput.files.length > 0) {
+        Array.from(imageInput.files).forEach(file => fd.append('images', file));
+      }
+
+      // Attach video file
+      const videoInput = document.getElementById('book-video');
+      if (videoInput.files.length > 0) {
+        fd.append('video', videoInput.files[0]);
+      }
 
       try {
+        // Send as multipart/form-data (no Content-Type header — browser sets boundary automatically)
         const res = await fetch('/api/books/', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          body: fd
         });
 
         const data = await res.json();

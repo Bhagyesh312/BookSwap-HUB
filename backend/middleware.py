@@ -79,3 +79,10 @@ def create_token(user):
     }
     
     return jwt.encode(payload, Config.JWT_SECRET, algorithm='HS256')
+
+
+def decode_token(token):
+    """Decode a JWT token and return payload dict with 'id' key."""
+    payload = jwt.decode(token, Config.JWT_SECRET, algorithms=['HS256'])
+    payload['id'] = int(payload.get('sub', 0))
+    return payload

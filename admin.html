@@ -173,6 +173,8 @@
             <button class="tab-btn active" data-tab="users"><i class="fa-solid fa-users"></i> Users</button>
             <button class="tab-btn" data-tab="books"><i class="fa-solid fa-book"></i> Books</button>
             <button class="tab-btn" data-tab="orders"><i class="fa-solid fa-box"></i> Orders</button>
+            <button class="tab-btn" data-tab="listings"><i class="fa-solid fa-clock"></i> Pending Listings <span id="pendingListingsBadge" class="badge-count" style="display:none"></span></button>
+            <button class="tab-btn" data-tab="logs"><i class="fa-solid fa-scroll"></i> Activity Log</button>
         </div>
 
         <!-- Users Tab -->
@@ -189,10 +191,16 @@
                     </div>
                 </div>
             </div>
+            <!-- Bulk action bar (users) -->
+            <div class="bulk-bar" id="usersBulkBar" style="display:none">
+                <span id="usersBulkCount">0 selected</span>
+                <button class="bulk-btn danger" onclick="bulkAction('users','delete')"><i class="fa-solid fa-trash"></i> Delete Selected</button>
+            </div>
             <div class="table-container">
                 <table class="admin-table" id="usersTable">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllUsers" title="Select all"></th>
                             <th>ID</th>
                             <th>Name</th>
                             <th>Email</th>
@@ -206,6 +214,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="usersPagination" class="pagination-bar"></div>
         </div>
 
         <!-- Books Tab -->
@@ -225,16 +234,25 @@
                     </div>
                 </div>
             </div>
+            <!-- Bulk action bar (books) -->
+            <div class="bulk-bar" id="booksBulkBar" style="display:none">
+                <span id="booksBulkCount">0 selected</span>
+                <button class="bulk-btn approve" onclick="bulkAction('books','approve')"><i class="fa-solid fa-check"></i> Approve</button>
+                <button class="bulk-btn reject"  onclick="bulkAction('books','reject')"><i class="fa-solid fa-xmark"></i> Reject</button>
+                <button class="bulk-btn danger"  onclick="bulkAction('books','delete')"><i class="fa-solid fa-trash"></i> Delete</button>
+            </div>
             <div class="table-container">
                 <table class="admin-table" id="booksTable">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllBooks" title="Select all"></th>
                             <th>ID</th>
                             <th>Title</th>
                             <th>Author</th>
                             <th>Price</th>
                             <th>Type</th>
                             <th>Stock</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -243,6 +261,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="booksPagination" class="pagination-bar"></div>
         </div>
 
         <!-- Orders Tab -->
@@ -268,10 +287,24 @@
                     </select>
                 </div>
             </div>
+            <!-- Bulk action bar (orders) -->
+            <div class="bulk-bar" id="ordersBulkBar" style="display:none">
+                <span id="ordersBulkCount">0 selected</span>
+                <select id="ordersBulkStatus" class="filter-select" aria-label="Bulk status">
+                    <option value="">Set status...</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <button class="bulk-btn approve" onclick="bulkAction('orders','status',document.getElementById('ordersBulkStatus').value)"><i class="fa-solid fa-check"></i> Apply</button>
+                <button class="bulk-btn danger"  onclick="bulkAction('orders','delete')"><i class="fa-solid fa-trash"></i> Delete</button>
+            </div>
             <div class="table-container">
                 <table class="admin-table" id="ordersTable">
                     <thead>
                         <tr>
+                            <th><input type="checkbox" id="selectAllOrders" title="Select all"></th>
                             <th>Order ID</th>
                             <th>User</th>
                             <th>Items</th>
@@ -286,9 +319,77 @@
                     </tbody>
                 </table>
             </div>
+            <div id="ordersPagination" class="pagination-bar"></div>
         </div>
-    </section>
 
+        <!-- Pending Listings Tab -->
+        <div class="tab-panel" id="listingsPanel">
+            <div class="panel-header">
+                <h2>Pending Seller Listings</h2>
+                <div class="panel-actions">
+                    <div class="search-box">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="listingSearch" placeholder="Search listings...">
+                    </div>
+                </div>
+            </div>
+            <div class="bulk-bar" id="listingsBulkBar" style="display:none">
+                <span id="listingsBulkCount">0 selected</span>
+                <button class="bulk-btn approve" onclick="bulkActionListings('approve')"><i class="fa-solid fa-check"></i> Approve All</button>
+                <button class="bulk-btn reject"  onclick="bulkActionListings('reject')"><i class="fa-solid fa-xmark"></i> Reject All</button>
+            </div>
+            <div class="table-container">
+                <table class="admin-table" id="listingsTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" id="selectAllListings" title="Select all"></th>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Price</th>
+                            <th>Seller</th>
+                            <th>City</th>
+                            <th>Submitted</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Activity Log Tab -->
+        <div class="tab-panel" id="logsPanel">
+            <div class="panel-header">
+                <h2>Activity Log</h2>
+                <div class="panel-actions">
+                    <select id="logsResourceFilter" class="filter-select" aria-label="Filter by resource">
+                        <option value="all">All Resources</option>
+                        <option value="user">Users</option>
+                        <option value="book">Books</option>
+                        <option value="order">Orders</option>
+                    </select>
+                </div>
+            </div>
+            <div class="table-container">
+                <table class="admin-table" id="logsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Admin</th>
+                            <th>Action</th>
+                            <th>Resource</th>
+                            <th>Detail</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="logsPagination" class="pagination-bar"></div>
+        </div>
+
+    </section>
 
     <!-- ================= ADD BOOK MODAL ================= -->
     <div id="addBookModal" class="modal-overlay hidden">
@@ -412,6 +513,121 @@
     </div>
 
 
+    <!-- ================= EDIT BOOK MODAL ================= -->
+    <div id="editBookModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-pen-to-square"></i> Edit Book</h2>
+                <button class="modal-close" onclick="closeEditBookModal()">&times;</button>
+            </div>
+            <form id="editBookForm" class="add-book-form">
+                <input type="hidden" id="editBookId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookTitle">Title <span class="required">*</span></label>
+                        <input type="text" id="editBookTitle" name="title" required placeholder="Enter book title">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookAuthor">Author <span class="required">*</span></label>
+                        <input type="text" id="editBookAuthor" name="author" required placeholder="Enter author name">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookPrice">Selling Price (₹) <span class="required">*</span></label>
+                        <input type="number" id="editBookPrice" name="price" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookOriginal">Original Price (₹)</label>
+                        <input type="number" id="editBookOriginal" name="original" min="1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookCategory">Category</label>
+                        <select id="editBookCategory" name="category">
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-Fiction">Non-Fiction</option>
+                            <option value="Romance">Romance</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Fantasy">Fantasy</option>
+                            <option value="Science Fiction">Science Fiction</option>
+                            <option value="Self-Help">Self-Help</option>
+                            <option value="Business">Business</option>
+                            <option value="Education">Education</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookType">Type</label>
+                        <select id="editBookType" name="type">
+                            <option value="new">New</option>
+                            <option value="old">Old</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookLanguage">Language</label>
+                        <select id="editBookLanguage" name="language">
+                            <option value="English">English</option>
+                            <option value="Hindi">Hindi</option>
+                            <option value="Gujarati">Gujarati</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookQuantity">Stock Quantity</label>
+                        <input type="number" id="editBookQuantity" name="quantity" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookPublisher">Publisher</label>
+                        <input type="text" id="editBookPublisher" name="publisher">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookYear">Year</label>
+                        <input type="number" id="editBookYear" name="year" min="1800" max="2026">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editBookPages">Pages</label>
+                        <input type="number" id="editBookPages" name="pages" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="editBookBinding">Binding</label>
+                        <select id="editBookBinding" name="binding">
+                            <option value="Paperback">Paperback</option>
+                            <option value="Hardcover">Hardcover</option>
+                            <option value="Spiral">Spiral</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="editBookImage">Cover Image URL</label>
+                    <div class="image-input-group">
+                        <input type="url" id="editBookImage" name="image" placeholder="https://...">
+                        <div class="image-preview" id="editImagePreview">
+                            <i class="fa-solid fa-image"></i><span>Preview</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group full-width">
+                    <label for="editBookSynopsis">Synopsis</label>
+                    <textarea id="editBookSynopsis" name="synopsis" rows="4"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeEditBookModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- ================= FOOTER ================= -->
     <footer class="footer">
         <p class="footer-bottom">© 2026 BookSwap Hub | Admin Panel</p>
@@ -524,9 +740,11 @@
 
             // Load dashboard data
             await loadStats();
+            await loadDailyChart();
             await loadUsers();
             await loadBooks();
             await loadOrders();
+            await loadListings();
 
             // Start auto-refresh for stats
             startStatsAutoRefresh();
@@ -613,18 +831,7 @@
                     orderStatusChartInstance.update();
                 }
 
-                // Update Revenue Chart (mock data based on weekRevenue to make it look active, until API supports daily)
-                if (revenueChartInstance && data.weekRevenue) {
-                    const avgDaily = data.weekRevenue / 7;
-                    // Generate some random fluctuation around the average for visual effect
-                    const mockData = Array(7).fill(0).map(() => Math.max(0, avgDaily + (Math.random() * avgDaily - avgDaily / 2)));
-                    // Put today's actual revenue at the end if available
-                    if (data.todayRevenue !== undefined) {
-                        mockData[6] = data.todayRevenue;
-                    }
-                    revenueChartInstance.data.datasets[0].data = mockData;
-                    revenueChartInstance.update();
-                }
+                // Revenue chart is updated by loadDailyChart() separately
 
                 // Today's stats
                 const todayOrdersEl = document.getElementById('todayOrders');
@@ -640,6 +847,59 @@
                 }
             } catch (err) {
                 console.error('Stats error:', err);
+            }
+        }
+
+        // Load real daily revenue data into the chart
+        async function loadDailyChart() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/stats/daily`, { headers: getAuthHeaders() });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (!revenueChartInstance || !data.daily) return;
+
+                revenueChartInstance.data.labels                    = data.daily.map(d => d.day);
+                revenueChartInstance.data.datasets[0].data          = data.daily.map(d => d.revenue);
+
+                // Add a second dataset for order count on a secondary axis
+                if (revenueChartInstance.data.datasets.length < 2) {
+                    revenueChartInstance.data.datasets.push({
+                        label: 'Orders',
+                        data: data.daily.map(d => d.orders),
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59,130,246,0.08)',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#3b82f6',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        yAxisID: 'y2',
+                    });
+                    revenueChartInstance.options.scales.y2 = {
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { stepSize: 1, color: '#3b82f6' },
+                    };
+                } else {
+                    revenueChartInstance.data.datasets[1].data = data.daily.map(d => d.orders);
+                }
+
+                // Add date tooltips
+                revenueChartInstance.options.plugins.tooltip = {
+                    callbacks: {
+                        title: (items) => data.daily[items[0].dataIndex]?.date || '',
+                        label: (item) => item.datasetIndex === 0
+                            ? ` ₹${item.raw.toLocaleString('en-IN')}`
+                            : ` ${item.raw} order${item.raw !== 1 ? 's' : ''}`,
+                    }
+                };
+
+                revenueChartInstance.update();
+            } catch (err) {
+                console.error('Daily chart error:', err);
             }
         }
 
@@ -660,14 +920,68 @@
             const btn = document.getElementById('refreshStatsBtn');
             btn.classList.add('spinning');
             loadStats().finally(() => {
+                loadDailyChart();
                 setTimeout(() => btn.classList.remove('spinning'), 500);
             });
         });
 
+        // ===== PAGINATION HELPER =====
+        function renderPagination(containerId, pagination, loadFn) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (!pagination || pagination.pages <= 1) {
+                // Still show results info even on single page
+                if (pagination && pagination.total > 0) {
+                    container.innerHTML = `<div class="pagination-wrapper"><div class="pagination-results-info"><strong>${pagination.total} total records</strong></div></div>`;
+                } else {
+                    container.innerHTML = '';
+                }
+                return;
+            }
+
+            const { page, pages, total } = pagination;
+            const perPage = Math.ceil(total / pages);
+            const startItem = (page - 1) * perPage + 1;
+            const endItem = Math.min(page * perPage, total);
+
+            if (typeof window.Pagination !== 'undefined') {
+                container.innerHTML = window.Pagination.create(page, pages, total, startItem, endItem);
+
+                // Wire page buttons
+                container.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.pagination-btn');
+                    if (!btn || btn.disabled || btn.classList.contains('active')) return;
+                    const newPage = parseInt(btn.dataset.page, 10);
+                    window[loadFn](newPage);
+                    container.closest('.tab-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+
+                // Wire jump-to-page
+                const jumpInput = container.querySelector('.pagination-jump input');
+                const jumpBtn = container.querySelector('.pagination-jump button');
+                const doJump = () => {
+                    const val = parseInt(jumpInput?.value, 10);
+                    if (val >= 1 && val <= pages) {
+                        window[loadFn](val);
+                        container.closest('.tab-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                };
+                if (jumpBtn) jumpBtn.addEventListener('click', doJump);
+                if (jumpInput) jumpInput.addEventListener('keypress', e => { if (e.key === 'Enter') doJump(); });
+            }
+        }
+
+        // Debounce helper
+        function debounce(fn, delay) {
+            let t;
+            return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+        }
+
         // Load users
-        async function loadUsers() {
+        async function loadUsers(page = 1) {
+            const search = (document.getElementById('userSearch')?.value || '').trim();
             try {
-                const res = await fetch(`${API_BASE}/api/admin/users`, {
+                const res = await fetch(`${API_BASE}/api/admin/users?page=${page}&per_page=20&search=${encodeURIComponent(search)}`, {
                     headers: getAuthHeaders()
                 });
 
@@ -678,13 +992,12 @@
 
                 tbody.innerHTML = data.users.map(user => `
                     <tr data-id="${user.id}">
+                        <td><input type="checkbox" class="row-check" data-id="${user.id}"></td>
                         <td>${user.id}</td>
                         <td>${user.name}</td>
                         <td>${user.email}</td>
-                        <td>
-                            <span class="role-badge ${user.role}">${user.role}</span>
-                        </td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td><span class="role-badge ${user.role}">${user.role}</span></td>
+                        <td>${new Date(user.createdAt || user.created_at).toLocaleDateString()}</td>
                         <td class="actions">
                             <button class="action-btn promote" onclick="toggleRole(${user.id}, '${user.role}')" title="${user.role === 'admin' ? 'Demote to User' : 'Promote to Admin'}">
                                 <i class="fa-solid ${user.role === 'admin' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
@@ -695,15 +1008,18 @@
                         </td>
                     </tr>
                 `).join('');
+                setupCheckboxes('usersTable', 'selectAllUsers', 'usersBulkBar', 'usersBulkCount');
+                renderPagination('usersPagination', data.pagination, 'loadUsers');
             } catch (err) {
                 console.error('Users error:', err);
             }
         }
 
         // Load books
-        async function loadBooks() {
+        async function loadBooks(page = 1) {
+            const search = (document.getElementById('bookSearch')?.value || '').trim();
             try {
-                const res = await fetch(`${API_BASE}/api/admin/books`, {
+                const res = await fetch(`${API_BASE}/api/admin/books?page=${page}&per_page=20&search=${encodeURIComponent(search)}`, {
                     headers: getAuthHeaders()
                 });
 
@@ -714,6 +1030,7 @@
 
                 tbody.innerHTML = data.books.map(book => `
                     <tr data-id="${book.id}">
+                        <td><input type="checkbox" class="row-check" data-id="${book.id}"></td>
                         <td>${book.id}</td>
                         <td>${book.title}</td>
                         <td>${book.author}</td>
@@ -724,7 +1041,17 @@
                                 ${book.quantity} ${book.quantity < 5 ? '<i class="fa-solid fa-triangle-exclamation" title="Low Stock"></i>' : ''}
                             </span>
                         </td>
+                        <td>
+                            <span class="approval-badge ${book.isApproved ? 'approved' : 'pending'}">
+                                ${book.isApproved ? 'Live' : 'Pending'}
+                            </span>
+                        </td>
                         <td class="actions">
+                            ${!book.isApproved ? `<button class="action-btn view" onclick="approveBook(${book.id}, true)" title="Approve"><i class="fa-solid fa-check"></i></button>` : ''}
+                            ${book.isApproved  ? `<button class="action-btn promote" onclick="approveBook(${book.id}, false)" title="Reject"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                            <button class="action-btn edit" onclick="openEditBookModal(${JSON.stringify(book).replace(/"/g, '&quot;')})" title="Edit Book">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
                             <button class="action-btn promote" onclick="updateStock(${book.id}, ${book.quantity})" title="Update Stock">
                                 <i class="fa-solid fa-boxes-stacked"></i>
                             </button>
@@ -734,15 +1061,19 @@
                         </td>
                     </tr>
                 `).join('');
+                setupCheckboxes('booksTable', 'selectAllBooks', 'booksBulkBar', 'booksBulkCount');
+                renderPagination('booksPagination', data.pagination, 'loadBooks');
             } catch (err) {
                 console.error('Books error:', err);
             }
         }
 
         // Load orders
-        async function loadOrders() {
+        async function loadOrders(page = 1) {
+            const search = (document.getElementById('orderSearch')?.value || '').trim();
+            const status = document.getElementById('orderStatusFilter')?.value || 'all';
             try {
-                const res = await fetch(`${API_BASE}/api/admin/orders`, {
+                const res = await fetch(`${API_BASE}/api/admin/orders?page=${page}&per_page=20&search=${encodeURIComponent(search)}&status=${status}`, {
                     headers: getAuthHeaders()
                 });
 
@@ -752,12 +1083,13 @@
                 const tbody = document.querySelector('#ordersTable tbody');
 
                 if (!data.orders || data.orders.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:#64748b;">No orders yet</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#64748b;">No orders found</td></tr>';
+                    renderPagination('ordersPagination', null, 'loadOrders');
                     return;
                 }
 
                 tbody.innerHTML = data.orders.map(order => {
-                    const status = (order.status || 'pending').toLowerCase();
+                    const orderStatus = (order.status || 'pending').toLowerCase();
                     const itemCount = order.items?.length || 0;
                     const total = order.total || order.totalAmount || 0;
                     const userName = order.user_name || order.fullName || 'Unknown';
@@ -766,6 +1098,7 @@
 
                     return `
                     <tr data-id="${order.id}">
+                        <td><input type="checkbox" class="row-check" data-id="${order.id}"></td>
                         <td><strong>#${order.id}</strong></td>
                         <td>
                             <div class="order-user">
@@ -776,12 +1109,12 @@
                         <td><span class="items-badge">${itemCount} item${itemCount !== 1 ? 's' : ''}</span></td>
                         <td><strong>₹${parseFloat(total).toLocaleString()}</strong></td>
                         <td>
-                            <select class="status-select ${status}" onchange="updateOrderStatus(${order.id}, this.value)" aria-label="Order status">
-                                <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>
-                                <option value="confirmed" ${status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
-                                <option value="shipped" ${status === 'shipped' ? 'selected' : ''}>Shipped</option>
-                                <option value="delivered" ${status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                                <option value="cancelled" ${status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+                            <select class="status-select ${orderStatus}" onchange="updateOrderStatus(${order.id}, this.value)" aria-label="Order status">
+                                <option value="pending" ${orderStatus === 'pending' ? 'selected' : ''}>Pending</option>
+                                <option value="confirmed" ${orderStatus === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+                                <option value="shipped" ${orderStatus === 'shipped' ? 'selected' : ''}>Shipped</option>
+                                <option value="delivered" ${orderStatus === 'delivered' ? 'selected' : ''}>Delivered</option>
+                                <option value="cancelled" ${orderStatus === 'cancelled' ? 'selected' : ''}>Cancelled</option>
                             </select>
                         </td>
                         <td>${formattedDate}</td>
@@ -793,12 +1126,13 @@
                     </tr>
                 `;
                 }).join('');
+                setupCheckboxes('ordersTable', 'selectAllOrders', 'ordersBulkBar', 'ordersBulkCount');
+                renderPagination('ordersPagination', data.pagination, 'loadOrders');
             } catch (err) {
                 console.error('Orders error:', err);
             }
         }
 
-        // Toggle user role
         async function toggleRole(userId, currentRole) {
             const newRole = currentRole === 'admin' ? 'user' : 'admin';
 
@@ -923,15 +1257,15 @@
         }
 
         // Store orders data for view modal
-        let ordersCache = [];
+        let ordersCache = {};
 
         // View order details - show modal with full info
         function viewOrder(orderId) {
-            // Fetch fresh order data
-            fetch(`${API_BASE}/api/admin/orders`, { headers: getAuthHeaders() })
+            // Find from current table rows' data or re-fetch
+            fetch(`${API_BASE}/api/admin/orders?page=1&per_page=1&search=${orderId}`, { headers: getAuthHeaders() })
                 .then(res => res.json())
                 .then(data => {
-                    const order = data.orders.find(o => o.id === orderId);
+                    const order = (data.orders || []).find(o => o.id === orderId);
                     if (!order) {
                         showNotification('Order not found', 'error');
                         return;
@@ -1024,62 +1358,18 @@
                 const tabName = btn.dataset.tab;
                 document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
                 document.getElementById(`${tabName}Panel`).classList.add('active');
+
+                // Lazy-load logs tab
+                if (tabName === 'logs') loadLogs(1);
             });
         });
 
-        // Search and filter functionality
-        function setupSearch(inputId, tableId) {
-            const input = document.getElementById(inputId);
-            if (!input) return;
-
-            input.addEventListener('input', () => {
-                applyFilters(tableId);
-            });
-        }
-
-        function setupFilter(selectId, tableId) {
-            const select = document.getElementById(selectId);
-            if (!select) return;
-
-            select.addEventListener('change', () => {
-                applyFilters(tableId);
-            });
-        }
-
-        function applyFilters(tableId) {
-            const table = document.getElementById(tableId);
-            if (!table) return;
-
-            let query = '';
-
-            if (tableId === 'usersTable') query = (document.getElementById('userSearch')?.value || '').toLowerCase();
-            if (tableId === 'booksTable') query = (document.getElementById('bookSearch')?.value || '').toLowerCase();
-            if (tableId === 'ordersTable') query = (document.getElementById('orderSearch')?.value || '').toLowerCase();
-
-            const statusFilter = tableId === 'ordersTable' ? (document.getElementById('orderStatusFilter')?.value || 'all') : 'all';
-
-            const rows = table.querySelectorAll('tbody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                const matchesSearch = text.includes(query);
-
-                let matchesStatus = true;
-                if (tableId === 'ordersTable' && statusFilter !== 'all') {
-                    const statusSelect = row.querySelector('.status-select');
-                    if (statusSelect) {
-                        matchesStatus = statusSelect.value === statusFilter;
-                    }
-                }
-
-                row.style.display = matchesSearch && matchesStatus ? '' : 'none';
-            });
-        }
-
-        setupSearch('userSearch', 'usersTable');
-        setupSearch('bookSearch', 'booksTable');
-        setupSearch('orderSearch', 'ordersTable');
-        setupFilter('orderStatusFilter', 'ordersTable');
+        // Search and filter — server-side with debounce
+        document.getElementById('userSearch')?.addEventListener('input', debounce(() => loadUsers(1), 350));
+        document.getElementById('bookSearch')?.addEventListener('input', debounce(() => loadBooks(1), 350));
+        document.getElementById('orderSearch')?.addEventListener('input', debounce(() => loadOrders(1), 350));
+        document.getElementById('orderStatusFilter')?.addEventListener('change', () => loadOrders(1));
+        document.getElementById('logsResourceFilter')?.addEventListener('change', () => loadLogs(1));
 
         // ===== ADD BOOK MODAL =====
         const addBookModal = document.getElementById('addBookModal');
@@ -1158,6 +1448,297 @@
                 closeAddBookModal();
                 loadBooks();
                 loadStats();
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        });
+
+        // ===== CHECKBOX & BULK ACTION HELPERS =====
+        function setupCheckboxes(tableId, selectAllId, bulkBarId, bulkCountId) {
+            const selectAll = document.getElementById(selectAllId);
+            const bulkBar   = document.getElementById(bulkBarId);
+            const bulkCount = document.getElementById(bulkCountId);
+            if (!selectAll) return;
+
+            const getChecked = () => [...document.querySelectorAll(`#${tableId} .row-check:checked`)];
+
+            selectAll.addEventListener('change', () => {
+                document.querySelectorAll(`#${tableId} .row-check`).forEach(cb => cb.checked = selectAll.checked);
+                updateBulkBar();
+            });
+
+            document.getElementById(tableId).addEventListener('change', e => {
+                if (e.target.classList.contains('row-check')) updateBulkBar();
+            });
+
+            function updateBulkBar() {
+                const count = getChecked().length;
+                if (bulkBar)   bulkBar.style.display  = count > 0 ? 'flex' : 'none';
+                if (bulkCount) bulkCount.textContent   = `${count} selected`;
+            }
+        }
+
+        function getSelectedIds(tableId) {
+            return [...document.querySelectorAll(`#${tableId} .row-check:checked`)].map(cb => Number(cb.dataset.id));
+        }
+
+        async function bulkAction(resource, action, value) {
+            const tableMap = { books: 'booksTable', users: 'usersTable', orders: 'ordersTable' };
+            const ids = getSelectedIds(tableMap[resource]);
+            if (!ids.length) { showNotification('No items selected', 'error'); return; }
+            if (action === 'delete' && !confirm(`Delete ${ids.length} item(s)? This cannot be undone.`)) return;
+            if (action === 'status' && !value) { showNotification('Please select a status first', 'error'); return; }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/bulk`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ resource, ids, action, value })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showNotification(data.message, 'success');
+                if (resource === 'books')  { loadBooks(); loadListings(); loadStats(); }
+                if (resource === 'users')  { loadUsers(); loadStats(); }
+                if (resource === 'orders') { loadOrders(); loadStats(); }
+            } catch (err) {
+                showNotification(err.message || 'Bulk action failed', 'error');
+            }
+        }
+
+        async function bulkActionListings(action) {
+            const ids = getSelectedIds('listingsTable');
+            if (!ids.length) { showNotification('No items selected', 'error'); return; }
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/bulk`, {
+                    method: 'POST',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ resource: 'books', ids, action })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showNotification(data.message, 'success');
+                loadListings(); loadBooks(); loadStats();
+            } catch (err) {
+                showNotification(err.message || 'Action failed', 'error');
+            }
+        }
+
+        // ===== APPROVE / REJECT SINGLE BOOK =====
+        async function approveBook(bookId, approved) {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/books/${bookId}/approve`, {
+                    method: 'PATCH',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify({ approved })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+                showNotification(data.message, 'success');
+                loadBooks(); loadListings(); loadStats();
+            } catch (err) {
+                showNotification(err.message, 'error');
+            }
+        }
+
+        // ===== LOAD PENDING LISTINGS =====
+        async function loadListings() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/books`, { headers: getAuthHeaders() });
+                if (!res.ok) return;
+                const data = await res.json();
+                const pending = (data.books || []).filter(b => !b.isApproved);
+
+                // Update badge
+                const badge = document.getElementById('pendingListingsBadge');
+                if (badge) {
+                    badge.textContent = pending.length;
+                    badge.style.display = pending.length > 0 ? 'inline-flex' : 'none';
+                }
+
+                const tbody = document.querySelector('#listingsTable tbody');
+                if (!tbody) return;
+
+                if (pending.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#64748b;">No pending listings</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = pending.map(book => `
+                    <tr data-id="${book.id}">
+                        <td><input type="checkbox" class="row-check" data-id="${book.id}"></td>
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>₹${book.price}</td>
+                        <td>${book.sellerName || '—'}</td>
+                        <td>${book.sellerCity || '—'}</td>
+                        <td>${book.listedAt ? new Date(book.listedAt).toLocaleDateString('en-IN') : '—'}</td>
+                        <td class="actions">
+                            <button class="action-btn view" onclick="approveBook(${book.id}, true)" title="Approve">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                            <button class="action-btn delete" onclick="approveBook(${book.id}, false)" title="Reject">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+                setupCheckboxes('listingsTable', 'selectAllListings', 'listingsBulkBar', 'listingsBulkCount');
+            } catch (err) {
+                console.error('Listings error:', err);
+            }
+        }
+
+        document.getElementById('listingSearch')?.addEventListener('input', debounce(() => {
+            const q = (document.getElementById('listingSearch').value || '').toLowerCase();
+            document.querySelectorAll('#listingsTable tbody tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }, 300));
+
+        // ===== ACTIVITY LOG =====
+        async function loadLogs(page = 1) {
+            const resource = document.getElementById('logsResourceFilter')?.value || 'all';
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/logs?page=${page}&per_page=30&resource=${resource}`, {
+                    headers: getAuthHeaders()
+                });
+                if (!res.ok) return;
+                const data = await res.json();
+                const tbody = document.querySelector('#logsTable tbody');
+
+                const actionLabels = {
+                    add_book: '📗 Add Book', edit_book: '✏️ Edit Book', delete_book: '🗑️ Delete Book',
+                    approve_book: '✅ Approve Book', reject_book: '❌ Reject Book',
+                    delete_user: '🗑️ Delete User', update_role: '🔄 Update Role',
+                    update_order_status: '📦 Order Status',
+                    bulk_delete: '🗑️ Bulk Delete', bulk_approve: '✅ Bulk Approve',
+                    bulk_reject: '❌ Bulk Reject', bulk_status: '📦 Bulk Status',
+                };
+
+                if (!data.logs || data.logs.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#64748b;">No activity yet</td></tr>';
+                    renderPagination('logsPagination', null, 'loadLogs');
+                    return;
+                }
+
+                tbody.innerHTML = data.logs.map(log => {
+                    const timeAgo = formatTimeAgo(log.createdAt);
+                    const label = actionLabels[log.action] || log.action;
+                    return `
+                    <tr>
+                        <td><span style="color:#94a3b8;font-size:0.85rem">#${log.id}</span></td>
+                        <td><strong>${log.adminName || 'Admin'}</strong></td>
+                        <td><span class="log-action-badge">${label}</span></td>
+                        <td>${log.resource ? `<span class="type-badge ${log.resource}">${log.resource}${log.resourceId ? ' #'+log.resourceId : ''}</span>` : '—'}</td>
+                        <td style="max-width:300px;font-size:0.85rem;color:#475569">${log.detail || '—'}</td>
+                        <td style="font-size:0.8rem;color:#64748b;white-space:nowrap" title="${new Date(log.createdAt).toLocaleString()}">${timeAgo}</td>
+                    </tr>`;
+                }).join('');
+                renderPagination('logsPagination', data.pagination, 'loadLogs');
+            } catch (err) {
+                console.error('Logs error:', err);
+            }
+        }
+
+        function formatTimeAgo(isoStr) {
+            if (!isoStr) return '—';
+            const diff = Math.floor((Date.now() - new Date(isoStr)) / 1000);
+            if (diff < 60) return `${diff}s ago`;
+            if (diff < 3600) return `${Math.floor(diff/60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff/3600)}h ago`;
+            return new Date(isoStr).toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+        }
+
+        // ===== EDIT BOOK MODAL =====
+        const editBookModal  = document.getElementById('editBookModal');
+        const editBookForm   = document.getElementById('editBookForm');
+        const editImageInput = document.getElementById('editBookImage');
+        const editImgPreview = document.getElementById('editImagePreview');
+
+        function openEditBookModal(book) {
+            document.getElementById('editBookId').value        = book.id;
+            document.getElementById('editBookTitle').value     = book.title || '';
+            document.getElementById('editBookAuthor').value    = book.author || '';
+            document.getElementById('editBookPrice').value     = book.price || '';
+            document.getElementById('editBookOriginal').value  = book.original || '';
+            document.getElementById('editBookQuantity').value  = book.quantity ?? '';
+            document.getElementById('editBookPublisher').value = book.publisher || '';
+            document.getElementById('editBookYear').value      = book.year || '';
+            document.getElementById('editBookPages').value     = book.pages || '';
+            document.getElementById('editBookSynopsis').value  = book.synopsis || '';
+            document.getElementById('editBookImage').value     = book.image || '';
+
+            // Set selects
+            ['editBookCategory','editBookLanguage','editBookBinding','editBookType'].forEach(id => {
+                const el = document.getElementById(id);
+                const field = id.replace('editBook','').toLowerCase();
+                const val = book[field] || book.category || '';
+                if (el) {
+                    const map = { editbookcategory: book.category, editbooklanguage: book.language, editbookbinding: book.binding, editbooktype: book.type };
+                    const v = map[id.toLowerCase()];
+                    if (v) [...el.options].forEach(o => { if (o.value === v) o.selected = true; });
+                }
+            });
+
+            // Image preview
+            if (book.image) {
+                editImgPreview.innerHTML = `<img src="${book.image}" alt="Cover" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image\\'></i><span>Preview</span>'">`;
+            } else {
+                editImgPreview.innerHTML = '<i class="fa-solid fa-image"></i><span>Preview</span>';
+            }
+
+            editBookModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditBookModal() {
+            editBookModal.classList.add('hidden');
+            document.body.style.overflow = '';
+            editBookForm.reset();
+        }
+
+        editBookModal.addEventListener('click', e => { if (e.target === editBookModal) closeEditBookModal(); });
+
+        editImageInput.addEventListener('input', () => {
+            const url = editImageInput.value.trim();
+            editImgPreview.innerHTML = url
+                ? `<img src="${url}" alt="Cover preview" onerror="this.parentElement.innerHTML='<i class=\\'fa-solid fa-image-slash\\'></i><span>Invalid URL</span>'">`
+                : '<i class="fa-solid fa-image"></i><span>Preview</span>';
+        });
+
+        editBookForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const bookId = document.getElementById('editBookId').value;
+            const payload = {
+                title:     document.getElementById('editBookTitle').value.trim(),
+                author:    document.getElementById('editBookAuthor').value.trim(),
+                price:     parseFloat(document.getElementById('editBookPrice').value),
+                original:  parseFloat(document.getElementById('editBookOriginal').value) || null,
+                category:  document.getElementById('editBookCategory').value,
+                type:      document.getElementById('editBookType').value,
+                language:  document.getElementById('editBookLanguage').value,
+                publisher: document.getElementById('editBookPublisher').value.trim(),
+                year:      parseInt(document.getElementById('editBookYear').value) || null,
+                pages:     parseInt(document.getElementById('editBookPages').value) || null,
+                binding:   document.getElementById('editBookBinding').value,
+                quantity:  parseInt(document.getElementById('editBookQuantity').value) ?? 0,
+                image:     document.getElementById('editBookImage').value.trim(),
+                synopsis:  document.getElementById('editBookSynopsis').value.trim(),
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/books/${bookId}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed to update book');
+                showNotification('Book updated successfully', 'success');
+                closeEditBookModal();
+                loadBooks();
             } catch (err) {
                 showNotification(err.message, 'error');
             }

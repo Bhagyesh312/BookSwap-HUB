@@ -39,6 +39,7 @@ class Book(db.Model):
     description = db.Column(db.Text)
     listed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     listed_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_approved = db.Column(db.Boolean, default=False, nullable=False)  # seller listings need admin approval
     
     def to_dict(self):
         """Convert book to dictionary"""
@@ -67,7 +68,8 @@ class Book(db.Model):
             'paymentMode': self.payment_mode,
             'description': self.description,
             'listedBy': self.listed_by,
-            'listedAt': self.listed_at.isoformat() if self.listed_at else None
+            'listedAt': self.listed_at.isoformat() if self.listed_at else None,
+            'isApproved': self.is_approved,
         }
 
 
@@ -189,6 +191,59 @@ class Order(db.Model):
             'paymentMethod': self.payment_method,
             'notes': self.notes,
             'createdAt': self.created_at.isoformat() if self.created_at else None
+        }
+
+
+class WishlistItem(db.Model):
+    """Wishlist model — persists wishlisted books per user"""
+    __tablename__ = 'wishlist_items'
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), primary_key=True)
+    book_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.Numeric(10, 2))
+    price_when_added = db.Column(db.Numeric(10, 2))  # for price-drop detection
+    original = db.Column(db.Numeric(10, 2))
+    image = db.Column(db.Text)
+    author = db.Column(db.String(255))
+    added_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'bookId':        self.book_id,
+            'title':         self.title,
+            'author':        self.author,
+            'price':         float(self.price) if self.price else 0,
+            'priceWhenAdded': float(self.price_when_added) if self.price_when_added else float(self.price) if self.price else 0,
+            'original':      float(self.original) if self.original else 0,
+            'image':         self.image,
+            'addedAt':       self.added_at.isoformat() if self.added_at else None,
+        }
+
+
+class ActivityLog(db.Model):
+    """Audit trail — records admin and user actions."""
+    __tablename__ = 'activity_logs'
+
+    id         = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    admin_id   = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
+    admin_name = db.Column(db.String(255))          # snapshot in case user is deleted
+    action     = db.Column(db.String(100), nullable=False)   # e.g. 'delete_user', 'approve_book'
+    resource   = db.Column(db.String(50))            # 'user', 'book', 'order'
+    resource_id= db.Column(db.Integer)
+    detail     = db.Column(db.Text)                  # human-readable description
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'id':         self.id,
+            'adminId':    self.admin_id,
+            'adminName':  self.admin_name,
+            'action':     self.action,
+            'resource':   self.resource,
+            'resourceId': self.resource_id,
+            'detail':     self.detail,
+            'createdAt':  self.created_at.isoformat() if self.created_at else None,
         }
 
 

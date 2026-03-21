@@ -698,6 +698,16 @@
     color: #fff;
 }
 
+.action-btn.edit {
+    background: #fef9c3;
+    color: #ca8a04;
+}
+
+.action-btn.edit:hover:not(:disabled) {
+    background: #ca8a04;
+    color: #fff;
+}
+
 
 /* ── RESPONSIVE ─────────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -1284,4 +1294,117 @@
 .status-badge.cancelled {
     background: #fee2e2;
     color: #dc2626;
+}
+
+/* ── BULK ACTION BAR ─────────────────────────────────────── */
+.bulk-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.bulk-bar span {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0369a1;
+    margin-right: 4px;
+}
+
+.bulk-btn {
+    padding: 6px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: opacity 0.2s;
+}
+.bulk-btn:hover { opacity: 0.85; }
+.bulk-btn.approve { background: #dcfce7; color: #16a34a; }
+.bulk-btn.reject  { background: #fef9c3; color: #ca8a04; }
+.bulk-btn.danger  { background: #fee2e2; color: #dc2626; }
+
+/* ── APPROVAL BADGE ──────────────────────────────────────── */
+.approval-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.approval-badge.approved { background: #dcfce7; color: #16a34a; }
+.approval-badge.pending  { background: #fef9c3; color: #b45309; }
+
+/* ── PENDING LISTINGS BADGE ──────────────────────────────── */
+.badge-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+/* ── PAGINATION ──────────────────────────────────────────── */
+.pagination-bar {
+    padding: 8px 0 4px;
+}
+
+/* Admin pagination uses the shared .pagination-wrapper from enhancements.css */
+/* Keep legacy .page-btn for any inline uses */
+.page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #fff;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.page-btn:hover:not(:disabled) {
+    border-color: #f59e0b;
+    color: #f59e0b;
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 700;
+}
+
+.page-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ── ACTIVITY LOG ────────────────────────────────────────── */
+.log-action-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    background: #f1f5f9;
+    color: #475569;
+    white-space: nowrap;
 }

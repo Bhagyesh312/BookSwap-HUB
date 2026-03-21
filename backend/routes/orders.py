@@ -5,6 +5,7 @@ Handles order creation and retrieval for authenticated users
 from flask import Blueprint, request, jsonify, g
 from models import db, CartItem, Order, OrderItem, Book
 from middleware import require_auth
+from sanitize import clean, clean_email
 
 orders_bp = Blueprint('orders', __name__, url_prefix='/api/orders')
 
@@ -23,16 +24,16 @@ def create_order():
     user_id = g.user['id']
     data = request.get_json() or {}
     
-    full_name = data.get('fullName')
-    email = data.get('email')
-    phone = data.get('phone')
-    address = data.get('address')
-    city = data.get('city')
-    state = data.get('state')
-    zip_code = data.get('zip')
-    country = data.get('country')
-    payment_method = data.get('paymentMethod')
-    notes = data.get('notes')
+    full_name      = clean(data.get('fullName'), max_length=255)
+    email          = clean_email(data.get('email'))
+    phone          = clean(data.get('phone'), max_length=50)
+    address        = clean(data.get('address'), max_length=500)
+    city           = clean(data.get('city'), max_length=100)
+    state          = clean(data.get('state'), max_length=100)
+    zip_code       = clean(data.get('zip'), max_length=20)
+    country        = clean(data.get('country'), max_length=100)
+    payment_method = clean(data.get('paymentMethod'), max_length=50)
+    notes          = clean(data.get('notes'), max_length=1000)
     
     # Validation
     if not full_name or not email or not address or not country or not payment_method:
@@ -53,18 +54,18 @@ def create_order():
         # Create order
         order = Order(
             user_id=user_id,
-            full_name=full_name.strip(),
-            email=email.strip().lower(),
-            phone=phone.strip() if phone else None,
-            address=address.strip(),
-            city=city.strip() if city else None,
-            state=state.strip() if state else None,
-            zip=zip_code.strip() if zip_code else None,
-            country=country.strip() or 'India',
+            full_name=full_name,
+            email=email,
+            phone=phone,
+            address=address,
+            city=city,
+            state=state,
+            zip=zip_code,
+            country=country or 'India',
             total_amount=total_amount,
             status='Pending',
-            payment_method=payment_method.strip(),
-            notes=notes.strip() if notes else None
+            payment_method=payment_method,
+            notes=notes
         )
         db.session.add(order)
         db.session.flush()  # Get order ID before committing

@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="orders.css?v=2">
     <link rel="stylesheet" href="animations.css?v=2">
     <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="skeleton.css">
+    <link rel="stylesheet" href="chat-support.css">
 
     <!-- Page Transition Loader -->
     <link rel="stylesheet" href="page-transition.css">
@@ -34,6 +36,19 @@
             </div>
             <div class="nav-auth">
                 <span id="userGreeting" class="user-greeting">Welcome!</span>
+                <div class="notif-bell-wrap">
+                    <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge"></span>
+                    </button>
+                    <div id="notifPanel" class="notif-panel">
+                        <div class="notif-panel-header">
+                            <strong>Notifications</strong>
+                            <span>Real-time updates</span>
+                        </div>
+                        <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+                    </div>
+                </div>
                 <div class="nav-menu">
                     <a href="profile.html" class="nav-btn nav-icon" title="Profile">Profile</a>
                     <a href="orders.html" class="nav-btn nav-icon active" title="Orders">Orders</a>
@@ -250,6 +265,16 @@
          * Fetch all orders for authenticated user
          */
         const loadOrders = async () => {
+            // Show skeleton
+            document.getElementById('ordersContainer').innerHTML = Array(3).fill(0).map(() => `
+                <div class="order-card-skeleton">
+                    <div class="sk-order-header">
+                        <div><div class="sk-line" style="width:120px;height:18px;margin-bottom:8px"></div><div class="sk-line" style="width:80px"></div></div>
+                        <div class="sk-badge"></div>
+                    </div>
+                    <div class="sk-line" style="width:100%;height:80px;border-radius:12px;margin-bottom:12px"></div>
+                    <div class="sk-line" style="width:60%;height:14px"></div>
+                </div>`).join('');
             try {
                 const headers = getAuthHeader();
                 const res = await fetch(`${API_BASE}/api/orders/`, { headers });
@@ -349,9 +374,23 @@
                             </div>
                         </div>
                         
-                        ${statusClass !== 'cancelled' && typeof window.OrderTracking !== 'undefined' 
-                            ? window.OrderTracking.create(statusClass) 
-                            : ''}
+                        ${statusClass !== 'cancelled' ? `
+                        <div class="order-timeline">
+                            ${['pending','confirmed','shipped','delivered'].map((step, i) => {
+                                const steps = ['pending','confirmed','shipped','delivered'];
+                                const currentIdx = steps.indexOf(statusClass);
+                                const stepIdx = i;
+                                const isDone = stepIdx <= currentIdx;
+                                const isActive = stepIdx === currentIdx;
+                                const icons = ['fa-clock','fa-circle-check','fa-truck','fa-house-circle-check'];
+                                const labels = ['Placed','Confirmed','Shipped','Delivered'];
+                                return `<div class="tl-step ${isDone ? 'done' : ''} ${isActive ? 'active' : ''}">
+                                    <div class="tl-icon"><i class="fa-solid ${icons[i]}"></i></div>
+                                    <span class="tl-label">${labels[i]}</span>
+                                    ${i < 3 ? '<div class="tl-line"></div>' : ''}
+                                </div>`;
+                            }).join('')}
+                        </div>` : `<div class="order-cancelled-bar"><i class="fa-solid fa-ban"></i> This order was cancelled</div>`}
 
                         <div class="order-card-footer">
                             <div class="shipping-info" style="font-size:13px;color:#666;">
@@ -477,6 +516,8 @@
 
     <script src="animations.js"></script>
     <script src="enhancements.js"></script>
+    <script src="notifications.js"></script>
+    <script src="chat-support.js"></script>
 
 </body>
 

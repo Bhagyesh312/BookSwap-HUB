@@ -1,3 +1,15 @@
 node_modules/
 .env
 data/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Uploaded files — keep folder structure, ignore actual uploads
+uploads/images/*
+uploads/videos/*
+!uploads/images/.gitkeep
+!uploads/videos/.gitkeep

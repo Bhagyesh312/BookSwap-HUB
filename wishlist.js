@@ -1,98 +1,161 @@
 /**
- * wishlist.js — Shared wishlist functionality using localStorage
- * Include on every page that shows book cards or the navbar wishlist icon.
+ * wishlist.js — Wishlist functionality
+ * - Logged-in users: persisted to DB via /api/wishlist
+ * - Guests: localStorage fallback (migrated to DB on login)
  */
 (function () {
     const STORAGE_KEY = 'wishlist';
-    const BOOKS_STORAGE_KEY = 'wishlist_books'; // Store book details
+    const BOOKS_STORAGE_KEY = 'wishlist_books';
 
-    /* ── Helpers ─────────────────────────────────────────── */
+    /* ── Auth helper ─────────────────────────────────────── */
+    const getToken = () => localStorage.getItem('token') || sessionStorage.getItem('token');
 
-    /** Get current wishlist array of book IDs from localStorage */
+    /* ── API helpers ─────────────────────────────────────── */
+    const apiHeaders = () => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${getToken()}` });
+
+    const apiFetch = (url, options = {}) =>
+        fetch(url, { ...options, headers: { ...apiHeaders(), ...(options.headers || {}) } });
+
+    /* ── localStorage helpers (guest fallback) ───────────── */
+    const getWishlistLocal = () => {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+    };
+    const getWishlistBooksLocal = () => {
+        try { return JSON.parse(localStorage.getItem(BOOKS_STORAGE_KEY) || '{}'); } catch { return {}; }
+    };
+    const saveWishlistLocal = (list) => localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    const saveWishlistBooksLocal = (books) => localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(books));
+
+    /* ── In-memory cache for logged-in users ─────────────── */
+    let _dbCache = null; // array of item dicts from API, null = not loaded
+
+    const loadFromDB = async () => {
+        if (!getToken()) return null;
+        try {
+            const res = await apiFetch('/api/wishlist/');
+            if (!res.ok) return null;
+            const data = await res.json();
+            _dbCache = data.items || [];
+            return _dbCache;
+        } catch { return null; }
+    };
+
+    /* ── Migrate localStorage wishlist to DB on login ────── */
+    const migrateLocalToDB = async () => {
+        if (!getToken()) return;
+        const localIds = getWishlistLocal();
+        const localBooks = getWishlistBooksLocal();
+        if (localIds.length === 0) return;
+
+        for (const id of localIds) {
+            const book = localBooks[id] || { id };
+            try {
+                await apiFetch('/api/wishlist/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        bookId: id,
+                        title: book.title,
+                        author: book.author,
+                        price: book.price,
+                        original: book.original,
+                        image: book.image,
+                    })
+                });
+            } catch { /* skip failed items */ }
+        }
+        // Clear local storage after migration
+        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(BOOKS_STORAGE_KEY);
+        _dbCache = null;
+    };
+
+    /* ── Core API ────────────────────────────────────────── */
+
     const getWishlist = () => {
-        try {
-            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-        } catch (_e) {
-            return [];
-        }
+        if (getToken() && _dbCache) return _dbCache.map(i => i.bookId);
+        return getWishlistLocal();
     };
 
-    /** Get stored book details */
     const getWishlistBooks = () => {
-        try {
-            return JSON.parse(localStorage.getItem(BOOKS_STORAGE_KEY) || '{}');
-        } catch (_e) {
-            return {};
+        if (getToken() && _dbCache) {
+            return _dbCache.reduce((acc, i) => { acc[i.bookId] = i; return acc; }, {});
         }
+        return getWishlistBooksLocal();
     };
 
-    /** Save wishlist array to localStorage */
-    const saveWishlist = (list) => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    };
-
-    /** Save book details to localStorage */
-    const saveWishlistBooks = (books) => {
-        localStorage.setItem(BOOKS_STORAGE_KEY, JSON.stringify(books));
-    };
-
-    /** Check if a book ID is in the wishlist */
     const isInWishlist = (bookId) => getWishlist().includes(Number(bookId));
 
-    /** Add a book to the wishlist (with details) */
-    const addToWishlist = (bookId, bookData = null) => {
-        const list = getWishlist();
+    const addToWishlist = async (bookId, bookData = null) => {
         const id = Number(bookId);
-        if (!list.includes(id)) {
-            list.push(id);
-            saveWishlist(list);
-            
-            // Store book details if provided
-            if (bookData) {
-                const books = getWishlistBooks();
-                const currentPrice = Number(bookData.price) || 0;
-                books[id] = {
-                    id: id,
-                    title: bookData.title || 'Untitled',
-                    author: bookData.author || 'Unknown',
-                    price: currentPrice,
-                    priceWhenAdded: currentPrice, // Store price at time of adding
-                    original: bookData.original || bookData.price || 0,
-                    image: bookData.image || '',
-                    addedAt: Date.now()
-                };
-                saveWishlistBooks(books);
+        if (getToken()) {
+            try {
+                const res = await apiFetch('/api/wishlist/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        bookId: id,
+                        title: bookData?.title,
+                        author: bookData?.author,
+                        price: bookData?.price,
+                        original: bookData?.original,
+                        image: bookData?.image,
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (!_dbCache) _dbCache = [];
+                    if (!_dbCache.find(i => i.bookId === id)) _dbCache.push(data.item);
+                }
+            } catch { /* fall through to local */ }
+        } else {
+            const list = getWishlistLocal();
+            if (!list.includes(id)) {
+                list.push(id);
+                saveWishlistLocal(list);
+                if (bookData) {
+                    const books = getWishlistBooksLocal();
+                    books[id] = { id, ...bookData, priceWhenAdded: bookData.price, addedAt: Date.now() };
+                    saveWishlistBooksLocal(books);
+                }
             }
         }
     };
 
-    /** Remove a book ID from the wishlist */
-    const removeFromWishlist = (bookId) => {
-        const list = getWishlist().filter(id => id !== Number(bookId));
-        saveWishlist(list);
-        
-        // Also remove from books storage
-        const books = getWishlistBooks();
-        delete books[Number(bookId)];
-        saveWishlistBooks(books);
+    const removeFromWishlist = async (bookId) => {
+        const id = Number(bookId);
+        if (getToken()) {
+            try {
+                await apiFetch(`/api/wishlist/${id}`, { method: 'DELETE' });
+                if (_dbCache) _dbCache = _dbCache.filter(i => i.bookId !== id);
+            } catch { /* ignore */ }
+        } else {
+            saveWishlistLocal(getWishlistLocal().filter(x => x !== id));
+            const books = getWishlistBooksLocal();
+            delete books[id];
+            saveWishlistBooksLocal(books);
+        }
     };
 
-    /** Toggle a book's wishlist state and return new state */
-    const toggleWishlist = (bookId, bookData = null) => {
+    const toggleWishlist = async (bookId, bookData = null) => {
         const id = Number(bookId);
         if (isInWishlist(id)) {
-            removeFromWishlist(id);
+            await removeFromWishlist(id);
             return false;
         } else {
-            addToWishlist(id, bookData);
+            await addToWishlist(id, bookData);
             return true;
         }
     };
 
-    /** Clear entire wishlist */
-    const clearWishlist = () => {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(BOOKS_STORAGE_KEY);
+    const clearWishlist = async () => {
+        if (getToken()) {
+            try {
+                await apiFetch('/api/wishlist/', { method: 'DELETE' });
+                _dbCache = [];
+            } catch { /* ignore */ }
+        } else {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(BOOKS_STORAGE_KEY);
+        }
     };
 
     /** Check for price drops and update stored prices */
@@ -364,7 +427,7 @@
     };
 
     /** Delegate click handler for wishlist hearts */
-    document.addEventListener('click', (e) => {
+    document.addEventListener('click', async (e) => {
         const heartBtn = e.target.closest('.wishlist-heart');
         if (!heartBtn) return;
 
@@ -386,18 +449,16 @@
             bookData = { id: bookId, title, author, price, image: img };
         }
 
-        const added = toggleWishlist(bookId, bookData);
+        const added = await toggleWishlist(bookId, bookData);
 
         // Update this button immediately
         const icon = heartBtn.querySelector('i');
         if (added) {
             heartBtn.classList.add('wishlisted');
             icon.className = 'fa-solid fa-heart';
-            // Pulse animation
             heartBtn.classList.remove('wishlist-pulse');
-            void heartBtn.offsetWidth; // trigger reflow
+            void heartBtn.offsetWidth;
             heartBtn.classList.add('wishlist-pulse');
-            
             if (typeof showToast === 'function' && bookData?.title) {
                 showToast({ type: 'success', title: 'Added to Wishlist', message: `"${bookData.title}" saved to your wishlist.` });
             }
@@ -419,7 +480,13 @@
     });
 
     /* ── Init ────────────────────────────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (getToken()) {
+            // Migrate any local wishlist items to DB first
+            await migrateLocalToDB();
+            // Load wishlist from DB into cache
+            await loadFromDB();
+        }
         updateWishlistCount();
         syncHearts();
     });
@@ -438,6 +505,8 @@
         openWishlistSidebar,
         closeWishlistSidebar,
         checkPriceDrops,
-        getPriceDropCount
+        getPriceDropCount,
+        loadFromDB,
+        migrateLocalToDB,
     };
 })();

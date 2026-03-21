@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Details | BookSwap Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="wishlist.css">
+    <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="book.css">
+    <link rel="stylesheet" href="chat-support.css">
+    <link rel="stylesheet" href="page-transition.css">
+    <script src="page-transition.js"></script>
+</head>
+<body>
+<div id="notification" class="notification"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="buy.html" class="active">Buy Book</a>
+            <a href="sell.html">Sell Book</a>
+            <a href="about.html">About us</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-auth">
+            <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
+            <div id="userProfile" class="user-profile hidden">
+                <button id="profileToggle" class="profile-btn" aria-label="User menu">
+                    <span class="profile-avatar">👤</span>
+                    <span class="profile-name"></span>
+                </button>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a href="profile.html" class="profile-menu-item">Profile Settings</a>
+                    <a href="orders.html" class="profile-menu-item">My Orders</a>
+                    <a href="seller-dashboard.html" class="profile-menu-item">My Listings</a>
+                    <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+                </div>
+            </div>
+            <button class="wishlist-icon-btn" aria-label="Open Wishlist">
+                <span class="wishlist-ico"><i class="fa-regular fa-heart"></i></span>
+                <span class="wishlist-label">WISHLIST</span>
+                <span class="wishlist-count" aria-live="polite">0</span>
+            </button>
+            <!-- Notification Bell -->
+            <div class="notif-bell-wrap">
+                <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="notifBadge" class="notif-badge"></span>
+                </button>
+                <div id="notifPanel" class="notif-panel">
+                    <div class="notif-panel-header">
+                        <strong>Notifications</strong>
+                        <span>Real-time updates</span>
+                    </div>
+                    <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+                </div>
+            </div>
+            <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
+                <span class="cart-ico"><i class="fa-solid fa-cart-shopping"></i></span>
+                <span class="cart-label">CART</span>
+                <span id="cartCount" class="cart-count" aria-live="polite">0</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- BREADCRUMB -->
+<div class="book-breadcrumb">
+    <a href="home.html"><i class="fa-solid fa-house"></i> Home</a>
+    <span>/</span>
+    <a href="buy.html">Buy Books</a>
+    <span>/</span>
+    <span id="breadcrumbTitle">Loading...</span>
+</div>
+
+<!-- SKELETON LOADER -->
+<div id="bookSkeleton" class="book-detail-container">
+    <div class="book-detail-grid">
+        <div class="book-gallery-col">
+            <div class="skeleton skeleton-img"></div>
+        </div>
+        <div class="book-info-col">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-author"></div>
+            <div class="skeleton skeleton-price"></div>
+            <div class="skeleton skeleton-btn"></div>
+        </div>
+    </div>
+</div>
+
+<!-- BOOK DETAIL CONTENT -->
+<div id="bookDetail" class="book-detail-container hidden">
+    <div class="book-detail-grid">
+
+        <!-- LEFT: Gallery -->
+        <div class="book-gallery-col">
+            <div class="book-main-img-wrap">
+                <img id="mainBookImg" src="" alt="Book Cover" class="book-main-img">
+                <span id="conditionBadge" class="condition-badge"></span>
+                <span id="discountBadge" class="discount-badge hidden"></span>
+            </div>
+            <div id="thumbGallery" class="thumb-gallery"></div>
+            <!-- Wishlist + Share -->
+            <div class="book-quick-actions">
+                <button id="wishlistBtn" class="quick-action-btn wishlist-toggle" onclick="toggleWishlistDetail()">
+                    <i class="fa-regular fa-heart"></i> Add to Wishlist
+                </button>
+                <button class="quick-action-btn" onclick="shareBook()">
+                    <i class="fa-solid fa-share-nodes"></i> Share
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT: Info -->
+        <div class="book-info-col">
+            <div class="book-badges-row">
+                <span id="typeBadge" class="type-pill"></span>
+                <span id="categoryBadge" class="category-pill"></span>
+            </div>
+            <h1 id="bookTitle" class="book-detail-title"></h1>
+            <p id="bookAuthor" class="book-detail-author"></p>
+
+            <div class="book-price-row">
+                <span id="bookPrice" class="book-detail-price"></span>
+                <span id="bookOriginal" class="book-detail-original hidden"></span>
+                <span id="bookSaving" class="book-detail-saving hidden"></span>
+            </div>
+
+            <div id="stockStatus" class="stock-status"></div>
+
+            <!-- Add to Cart -->
+            <div class="book-cart-row">
+                <div class="qty-control">
+                    <button onclick="changeQty(-1)" class="qty-btn">−</button>
+                    <span id="qtyDisplay">1</span>
+                    <button onclick="changeQty(1)" class="qty-btn">+</button>
+                </div>
+                <button id="addToCartBtn" class="btn-add-cart" onclick="addToCartDetail()">
+                    <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                </button>
+                <a href="checkout.html" class="btn-buy-now" id="buyNowBtn">
+                    <i class="fa-solid fa-bolt"></i> Buy Now
+                </a>
+            </div>
+
+            <!-- Book Meta -->
+            <div class="book-meta-grid">
+                <div class="meta-item"><span class="meta-label">Publisher</span><span id="metaPublisher" class="meta-val">—</span></div>
+                <div class="meta-item"><span class="meta-label">Year</span><span id="metaYear" class="meta-val">—</span></div>
+                <div class="meta-item"><span class="meta-label">Pages</span><span id="metaPages" class="meta-val">—</span></div>
+                <div class="meta-item"><span class="meta-label">Language</span><span id="metaLanguage" class="meta-val">—</span></div>
+                <div class="meta-item"><span class="meta-label">Binding</span><span id="metaBinding" class="meta-val">—</span></div>
+                <div class="meta-item"><span class="meta-label">Edition</span><span id="metaEdition" class="meta-val">—</span></div>
+            </div>
+
+            <!-- Delivery Info -->
+            <div class="delivery-info-box">
+                <div class="delivery-row"><i class="fa-solid fa-truck-fast"></i><span>Free delivery on orders above ₹999</span></div>
+                <div class="delivery-row"><i class="fa-solid fa-rotate-left"></i><span>7-day return policy</span></div>
+                <div class="delivery-row"><i class="fa-solid fa-shield-halved"></i><span>Secure payment guaranteed</span></div>
+            </div>
+
+            <!-- Seller Info (for old/used books) -->
+            <div id="sellerInfoBox" class="seller-info-box hidden">
+                <h4><i class="fa-solid fa-store"></i> Seller Information</h4>
+                <div class="seller-grid">
+                    <div><span class="meta-label">Seller</span><span id="sellerName">—</span></div>
+                    <div><span class="meta-label">City</span><span id="sellerCity">—</span></div>
+                    <div><span class="meta-label">Delivery</span><span id="sellerDelivery">—</span></div>
+                    <div><span class="meta-label">Payment</span><span id="sellerPayment">—</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SYNOPSIS -->
+    <div id="synopsisSection" class="synopsis-section hidden">
+        <h3><i class="fa-solid fa-book-open"></i> About this Book</h3>
+        <p id="synopsisText" class="synopsis-text"></p>
+    </div>
+
+    <!-- RELATED BOOKS -->
+    <div class="related-section">
+        <h3><i class="fa-solid fa-layer-group"></i> You Might Also Like</h3>
+        <div id="relatedBooks" class="related-grid"></div>
+    </div>
+</div>
+
+
+<!-- FOOTER -->
+<footer class="footer"><p class="footer-bottom">© 2026 BookSwap Hub</p></footer>
+
+<!-- SCRIPTS -->
+<script src="enhancements.js"></script>
+<script src="auth-ui.js"></script>
+<script src="cart-ui.js"></script>
+<script src="wishlist.js"></script>
+<script src="notifications.js"></script>
+<script src="chat-support.js"></script>
+<script>
+const API_BASE = '';
+let currentBook = null;
+let selectedQty = 1;
+
+function getAuthHeaders() {
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+}
+
+function showNotification(msg, type = 'info') {
+    const n = document.getElementById('notification');
+    n.textContent = msg;
+    n.className = `notification ${type} show`;
+    setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+// Get book ID from URL
+function getBookId() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('id');
+}
+
+async function loadBook() {
+    const id = getBookId();
+    if (!id) { window.location.href = 'buy.html'; return; }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/books/${id}`);
+        if (!res.ok) throw new Error('Not found');
+        const book = await res.json();
+        currentBook = book;
+        renderBook(book);
+        loadRelated(book.category, book.id);
+    } catch (e) {
+        showNotification('Book not found', 'error');
+        setTimeout(() => window.location.href = 'buy.html', 1500);
+    }
+}
+
+function renderBook(book) {
+    document.title = `${book.title} | BookSwap Hub`;
+    document.getElementById('breadcrumbTitle').textContent = book.title;
+
+    // Image
+    const img = document.getElementById('mainBookImg');
+    img.src = book.image || '';
+    img.alt = book.title;
+    if (!book.image) {
+        img.style.display = 'none';
+        const wrap = img.parentElement;
+        const ph = document.createElement('div');
+        ph.className = 'no-cover-placeholder';
+        ph.innerHTML = `<i class="fa-solid fa-book-open"></i><span>${book.title}</span>`;
+        ph.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;color:#94a3b8;padding:24px;text-align:center;';
+        ph.querySelector('i').style.cssText = 'font-size:48px;color:#f97316;';
+        ph.querySelector('span').style.cssText = 'font-size:14px;font-weight:600;color:#cbd5e1;line-height:1.4;';
+        wrap.insertBefore(ph, img);
+    } else {
+        img.onerror = function() {
+            this.style.display = 'none';
+            const wrap = this.parentElement;
+            const ph = document.createElement('div');
+            ph.innerHTML = `<i class="fa-solid fa-book-open" style="font-size:48px;color:#f97316;"></i><span style="font-size:14px;font-weight:600;color:#cbd5e1;margin-top:12px;">${book.title}</span>`;
+            ph.style.cssText = 'width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;padding:24px;text-align:center;';
+            wrap.insertBefore(ph, this);
+        };
+    }
+
+    // Condition badge
+    const cond = document.getElementById('conditionBadge');
+    if (book.condition) { cond.textContent = book.condition; cond.className = `condition-badge cond-${book.condition.toLowerCase().replace(' ','-')}`; }
+
+    // Discount badge
+    const price = parseFloat(book.price);
+    const original = parseFloat(book.original);
+    if (original && original > price) {
+        const pct = Math.round((1 - price/original) * 100);
+        const db = document.getElementById('discountBadge');
+        db.textContent = `-${pct}%`;
+        db.classList.remove('hidden');
+    }
+
+    // Thumb gallery (just main image for now, plus placeholder slots)
+    const gallery = document.getElementById('thumbGallery');
+    gallery.innerHTML = `<img src="${book.image || 'media/books.png'}" class="thumb active" onclick="setMainImg(this)" alt="Cover">`;
+
+    // Badges
+    document.getElementById('typeBadge').textContent = book.type === 'new' ? '✨ New' : '📖 Used';
+    document.getElementById('typeBadge').className = `type-pill ${book.type}`;
+    if (book.category) {
+        document.getElementById('categoryBadge').textContent = book.category;
+        document.getElementById('categoryBadge').className = 'category-pill';
+    }
+
+    // Title / Author
+    document.getElementById('bookTitle').textContent = book.title;
+    document.getElementById('bookAuthor').textContent = `by ${book.author}`;
+
+    // Price
+    document.getElementById('bookPrice').textContent = `₹${parseFloat(book.price).toLocaleString('en-IN')}`;
+    if (original && original > price) {
+        const origEl = document.getElementById('bookOriginal');
+        origEl.textContent = `₹${original.toLocaleString('en-IN')}`;
+        origEl.classList.remove('hidden');
+        const saving = document.getElementById('bookSaving');
+        saving.textContent = `Save ₹${(original - price).toLocaleString('en-IN')}`;
+        saving.classList.remove('hidden');
+    }
+
+    // Stock
+    const stock = document.getElementById('stockStatus');
+    if (book.quantity > 5) stock.innerHTML = `<span class="in-stock"><i class="fa-solid fa-circle-check"></i> In Stock (${book.quantity} available)</span>`;
+    else if (book.quantity > 0) stock.innerHTML = `<span class="low-stock"><i class="fa-solid fa-triangle-exclamation"></i> Only ${book.quantity} left!</span>`;
+    else { stock.innerHTML = `<span class="out-stock"><i class="fa-solid fa-circle-xmark"></i> Out of Stock</span>`; document.getElementById('addToCartBtn').disabled = true; }
+
+    // Meta
+    const set = (id, val) => { if (val) document.getElementById(id).textContent = val; };
+    set('metaPublisher', book.publisher);
+    set('metaYear', book.year);
+    set('metaPages', book.pages ? `${book.pages} pages` : null);
+    set('metaLanguage', book.language);
+    set('metaBinding', book.binding);
+    set('metaEdition', book.edition);
+
+    // Synopsis
+    if (book.synopsis || book.description) {
+        const sec = document.getElementById('synopsisSection');
+        sec.classList.remove('hidden');
+        document.getElementById('synopsisText').textContent = book.synopsis || book.description;
+    }
+
+    // Seller info for used books
+    if (book.type === 'old' && book.sellerName) {
+        const box = document.getElementById('sellerInfoBox');
+        box.classList.remove('hidden');
+        set('sellerName', book.sellerName);
+        set('sellerCity', book.sellerCity);
+        set('sellerDelivery', book.deliveryOption);
+        set('sellerPayment', book.paymentMode);
+    }
+
+    // Show content, hide skeleton
+    document.getElementById('bookSkeleton').classList.add('hidden');
+    document.getElementById('bookDetail').classList.remove('hidden');
+
+    // Wishlist state
+    updateWishlistBtn(book.id);
+}
+
+function setMainImg(thumb) {
+    document.getElementById('mainBookImg').src = thumb.src;
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+}
+
+function changeQty(delta) {
+    const max = currentBook?.quantity || 10;
+    selectedQty = Math.max(1, Math.min(max, selectedQty + delta));
+    document.getElementById('qtyDisplay').textContent = selectedQty;
+}
+
+async function addToCartDetail() {
+    if (!currentBook) return;
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    const item = { bookId: currentBook.id, quantity: selectedQty, title: currentBook.title, price: parseFloat(currentBook.price), original: parseFloat(currentBook.original || currentBook.price), image: currentBook.image };
+
+    if (token) {
+        try {
+            const res = await fetch(`${API_BASE}/api/cart`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(item) });
+            if (!res.ok) throw new Error();
+        } catch { saveToLocalCart(item); }
+    } else { saveToLocalCart(item); }
+
+    showNotification(`"${currentBook.title}" added to cart!`, 'success');
+    if (window.updateCount) window.updateCount();
+}
+
+function saveToLocalCart(item) {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existing = cart.find(c => c.id === item.bookId);
+    if (existing) existing.qty += item.quantity;
+    else cart.push({ id: item.bookId, qty: item.quantity, title: item.title, price: item.price, original: item.original, image: item.image });
+    localStorage.setItem('cart', JSON.stringify(cart));
+}
+
+function updateWishlistBtn(bookId) {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const btn = document.getElementById('wishlistBtn');
+    const inList = wishlist.some(w => (w.id || w.bookId) === bookId);
+    btn.innerHTML = inList ? '<i class="fa-solid fa-heart"></i> Wishlisted' : '<i class="fa-regular fa-heart"></i> Add to Wishlist';
+    btn.classList.toggle('wishlisted', inList);
+}
+
+function toggleWishlistDetail() {
+    if (!currentBook) return;
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    const idx = wishlist.findIndex(w => (w.id || w.bookId) === currentBook.id);
+    if (idx > -1) { wishlist.splice(idx, 1); showNotification('Removed from wishlist', 'info'); }
+    else { wishlist.push({ id: currentBook.id, bookId: currentBook.id, title: currentBook.title, price: parseFloat(currentBook.price), original: parseFloat(currentBook.original || currentBook.price), image: currentBook.image, author: currentBook.author }); showNotification('Added to wishlist!', 'success'); }
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    updateWishlistBtn(currentBook.id);
+}
+
+function shareBook() {
+    if (navigator.share) { navigator.share({ title: currentBook?.title, url: window.location.href }); }
+    else { navigator.clipboard.writeText(window.location.href); showNotification('Link copied!', 'success'); }
+}
+
+async function loadRelated(category, excludeId) {
+    try {
+        const res = await fetch(`${API_BASE}/api/books/?per_page=50`);
+        const data = await res.json();
+        const related = (data.items || []).filter(b => b.category === category && b.id !== excludeId).slice(0, 4);
+        const grid = document.getElementById('relatedBooks');
+        if (!related.length) { grid.closest('.related-section').style.display = 'none'; return; }
+        grid.innerHTML = related.map(b => `
+            <a href="book.html?id=${b.id}" class="related-card">
+                <img src="${b.image || ''}" alt="${b.title}" 
+                     onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+                     ${!b.image ? 'style="display:none"' : ''}>
+                <div class="no-cover-placeholder" style="display:${b.image ? 'none' : 'flex'};width:100%;height:120px;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:10px;gap:6px;">
+                    <i class="fa-solid fa-book-open" style="color:#f97316;font-size:22px;"></i>
+                    <span style="font-size:10px;color:#cbd5e1;text-align:center;padding:0 6px;">${b.title.split(' ').slice(0,3).join(' ')}</span>
+                </div>
+                <div class="related-info">
+                    <p class="related-title">${b.title}</p>
+                    <p class="related-author">${b.author}</p>
+                    <p class="related-price">₹${parseFloat(b.price).toLocaleString('en-IN')}</p>
+                </div>
+            </a>`).join('');
+    } catch(e) {}
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadBook(); if (window.initAuthUI) initAuthUI(); });
+</script>
+</body>
+</html>

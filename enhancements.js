@@ -675,63 +675,59 @@ window.OrderTracking = {
    ═══════════════════════════════════════════════════════ */
 window.Pagination = {
     /**
-     * Create pagination HTML
+     * Create pagination HTML with wrapper, results info, and jump-to-page
      * @param {number} currentPage - Current page (1-indexed)
      * @param {number} totalPages - Total number of pages
      * @param {number} totalItems - Total number of items
+     * @param {number} startItem - First item index on this page (1-indexed)
+     * @param {number} endItem - Last item index on this page
      * @returns {string} HTML string
      */
-    create(currentPage, totalPages, totalItems) {
-        if (totalPages <= 1) return '';
-        
+    create(currentPage, totalPages, totalItems, startItem = 1, endItem = totalItems) {
+        if (totalItems === 0) return '';
+
         let pagesHTML = '';
-        
-        // Previous button
-        pagesHTML += `
-            <button class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>
-                <i class="fa-solid fa-chevron-left"></i> Prev
-            </button>
-        `;
-        
-        // Page numbers with ellipsis logic
-        const maxVisible = 5;
-        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
-        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-        
-        if (endPage - startPage < maxVisible - 1) {
-            startPage = Math.max(1, endPage - maxVisible + 1);
-        }
-        
-        if (startPage > 1) {
-            pagesHTML += `<button class="pagination-btn" data-page="1">1</button>`;
-            if (startPage > 2) {
-                pagesHTML += `<span class="pagination-info">...</span>`;
+
+        if (totalPages > 1) {
+            // Previous button
+            pagesHTML += `<button class="pagination-btn prev-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i> Prev</button>`;
+
+            // Page numbers with ellipsis
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+
+            if (startPage > 1) {
+                pagesHTML += `<button class="pagination-btn" data-page="1">1</button>`;
+                if (startPage > 2) pagesHTML += `<span class="pagination-ellipsis">…</span>`;
             }
-        }
-        
-        for (let i = startPage; i <= endPage; i++) {
-            pagesHTML += `
-                <button class="pagination-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>
-            `;
-        }
-        
-        if (endPage < totalPages) {
-            if (endPage < totalPages - 1) {
-                pagesHTML += `<span class="pagination-info">...</span>`;
+
+            for (let i = startPage; i <= endPage; i++) {
+                pagesHTML += `<button class="pagination-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
             }
-            pagesHTML += `<button class="pagination-btn" data-page="${totalPages}">${totalPages}</button>`;
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) pagesHTML += `<span class="pagination-ellipsis">…</span>`;
+                pagesHTML += `<button class="pagination-btn" data-page="${totalPages}">${totalPages}</button>`;
+            }
+
+            // Next button
+            pagesHTML += `<button class="pagination-btn next-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>Next <i class="fa-solid fa-chevron-right"></i></button>`;
         }
-        
-        // Next button
-        pagesHTML += `
-            <button class="pagination-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>
-                Next <i class="fa-solid fa-chevron-right"></i>
-            </button>
-        `;
-        
+
+        const jumpHTML = totalPages > 1 ? `
+            <div class="pagination-jump">
+                <span>Go to page</span>
+                <input type="number" min="1" max="${totalPages}" placeholder="${currentPage}">
+                <button>Go</button>
+            </div>` : '';
+
         return `
-            <div class="pagination-container" data-current="${currentPage}" data-total="${totalPages}">
-                ${pagesHTML}
+            <div class="pagination-wrapper">
+                <div class="pagination-results-info">Showing ${startItem}–${endItem} of <strong>${totalItems} books</strong></div>
+                ${totalPages > 1 ? `<div class="pagination-container" data-current="${currentPage}" data-total="${totalPages}">${pagesHTML}</div>` : ''}
+                ${jumpHTML}
             </div>
         `;
     },

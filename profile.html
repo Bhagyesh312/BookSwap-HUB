@@ -41,8 +41,24 @@
         <!-- PROFILE SIDEBAR -->
         <aside class="profile-sidebar">
             <div class="profile-avatar">
-                <div class="avatar-circle"></div>
+                <div class="avatar-circle" id="avatarPreview">
+                    <!-- Image preview will be shown here -->
+                </div>
                 <div class="avatar-label">My Account</div>
+                <form id="avatarUploadForm" style="margin-top: 16px;">
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('avatarInput').click()">Select Image</button>
+                    <button type="button" class="btn btn-primary" id="cropSaveBtn" style="display:none;">Save Image</button>
+                </form>
+                    <div id="cropperModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.98);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+                    <div style="background:#fff;padding:24px;border-radius:16px;max-width:400px;max-height:90vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);">
+                        <img id="cropperImage" style="max-width:350px;max-height:350px;border-radius:50%;" />
+                        <div style="margin-top:16px;display:flex;gap:8px;">
+                            <button type="button" class="btn btn-secondary" id="cropCancelBtn">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="cropConfirmBtn">Crop & Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="profile-name" id="profileName">Loading...</div>
             <div class="profile-email" id="profileEmail">Email</div>
@@ -809,4 +825,66 @@
     </script>
     <script src="enhancements.js"></script>
 </body>
+    <!-- Cropper.js CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script>
+    let cropper;
+    const avatarInput = document.getElementById('avatarInput');
+    const cropperModal = document.getElementById('cropperModal');
+    const cropperImage = document.getElementById('cropperImage');
+    const cropSaveBtn = document.getElementById('cropSaveBtn');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const cropCancelBtn = document.getElementById('cropCancelBtn');
+    const cropConfirmBtn = document.getElementById('cropConfirmBtn');
+    const tabsNav = document.querySelector('.tabs-nav');
+
+    avatarInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            cropperImage.src = event.target.result;
+            cropperModal.style.display = 'flex';
+            if (tabsNav) tabsNav.style.display = 'none';
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(cropperImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                dragMode: 'move',
+                background: false,
+                guides: false,
+                autoCropArea: 1,
+                cropBoxResizable: false,
+                cropBoxMovable: false,
+                minContainerWidth: 350,
+                minContainerHeight: 350,
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    cropCancelBtn.addEventListener('click', function() {
+        cropperModal.style.display = 'none';
+        if (tabsNav) tabsNav.style.display = '';
+        if (cropper) cropper.destroy();
+        avatarInput.value = '';
+    });
+
+    cropConfirmBtn.addEventListener('click', function() {
+        if (!cropper) return;
+        const canvas = cropper.getCroppedCanvas({
+            width: 200,
+            height: 200,
+            imageSmoothingQuality: 'high',
+        });
+        const dataUrl = canvas.toDataURL('image/png');
+        avatarPreview.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" />`;
+        cropperModal.style.display = 'none';
+        if (tabsNav) tabsNav.style.display = '';
+        if (cropper) cropper.destroy();
+        avatarInput.value = '';
+        // Here you can send dataUrl to your backend via AJAX for saving
+    });
+    </script>
 </html>

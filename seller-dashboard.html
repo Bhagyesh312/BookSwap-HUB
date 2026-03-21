@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Seller Dashboard | BookSwap Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="skeleton.css">
+    <link rel="stylesheet" href="seller-dashboard.css">
+    <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="chat-support.css">
+    <link rel="stylesheet" href="page-transition.css">
+    <script src="page-transition.js"></script>
+</head>
+<body>
+<div id="notification" class="notification"></div>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="buy.html">Buy Book</a>
+            <a href="sell.html">Sell Book</a>
+            <a href="about.html">About us</a>
+            <a href="contact.html">Contact</a>
+        </div>
+        <div class="nav-auth">
+            <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
+            <div id="userProfile" class="user-profile hidden">
+                <button id="profileToggle" class="profile-btn" aria-label="User menu">
+                    <span class="profile-avatar">👤</span>
+                    <span class="profile-name"></span>
+                </button>
+                <div id="profileMenu" class="profile-menu hidden">
+                    <a href="profile.html" class="profile-menu-item">Profile Settings</a>
+                    <a href="orders.html" class="profile-menu-item">My Orders</a>
+                    <a href="seller-dashboard.html" class="profile-menu-item">My Listings</a>
+                    <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
+                </div>
+            </div>
+            <!-- Notification Bell -->
+            <div class="notif-bell-wrap">
+                <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span id="notifBadge" class="notif-badge"></span>
+                </button>
+                <div id="notifPanel" class="notif-panel">
+                    <div class="notif-panel-header">
+                        <strong>Notifications</strong>
+                        <span>Real-time updates</span>
+                    </div>
+                    <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<header class="seller-header">
+    <div class="seller-header-content">
+        <h1><i class="fa-solid fa-store"></i> Seller Dashboard</h1>
+        <p>Manage your book listings and track their status</p>
+    </div>
+    <a href="sell.html" class="btn-new-listing"><i class="fa-solid fa-plus"></i> New Listing</a>
+</header>
+
+<!-- STATS ROW -->
+<section class="seller-stats">
+    <div class="seller-stat-card">
+        <div class="ss-icon total"><i class="fa-solid fa-book"></i></div>
+        <div><span class="ss-val" id="statTotal">—</span><span class="ss-label">Total Listings</span></div>
+    </div>
+    <div class="seller-stat-card">
+        <div class="ss-icon live"><i class="fa-solid fa-circle-check"></i></div>
+        <div><span class="ss-val" id="statLive">—</span><span class="ss-label">Live / Approved</span></div>
+    </div>
+    <div class="seller-stat-card">
+        <div class="ss-icon pending"><i class="fa-solid fa-clock"></i></div>
+        <div><span class="ss-val" id="statPending">—</span><span class="ss-label">Pending Review</span></div>
+    </div>
+    <div class="seller-stat-card">
+        <div class="ss-icon rejected"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div><span class="ss-val" id="statRejected">—</span><span class="ss-label">Rejected</span></div>
+    </div>
+</section>
+
+<!-- LISTINGS TABLE -->
+<section class="seller-listings-section">
+    <div class="seller-listings-header">
+        <h2>My Listings</h2>
+        <div class="seller-filter-row">
+            <select id="statusFilterSeller" class="seller-filter-select" aria-label="Filter by status">
+                <option value="all">All Status</option>
+                <option value="live">Live</option>
+                <option value="pending">Pending</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+    </div>
+
+    <div id="listingsContainer" class="listings-grid">
+        <!-- Skeleton -->
+        <div class="sk-listing-card"><div class="sk-img" style="height:160px;border-radius:12px"></div><div class="sk-body"><div class="sk-line title"></div><div class="sk-line author"></div><div class="sk-line" style="width:50%;height:20px;margin-top:10px"></div></div></div>
+        <div class="sk-listing-card"><div class="sk-img" style="height:160px;border-radius:12px"></div><div class="sk-body"><div class="sk-line title"></div><div class="sk-line author"></div><div class="sk-line" style="width:50%;height:20px;margin-top:10px"></div></div></div>
+        <div class="sk-listing-card"><div class="sk-img" style="height:160px;border-radius:12px"></div><div class="sk-body"><div class="sk-line title"></div><div class="sk-line author"></div><div class="sk-line" style="width:50%;height:20px;margin-top:10px"></div></div></div>
+    </div>
+
+    <div id="emptyListings" class="empty-listings hidden">
+        <i class="fa-solid fa-book-open"></i>
+        <h3>No listings yet</h3>
+        <p>Start selling your books and they'll appear here.</p>
+        <a href="sell.html" class="btn-new-listing">List a Book</a>
+    </div>
+</section>
+
+<footer class="footer"><p class="footer-bottom">© 2026 BookSwap Hub</p></footer>
+
+<script src="auth-ui.js"></script>
+<script src="notifications.js"></script>
+<script src="chat-support.js"></script>
+<script>
+const API_BASE = '';
+
+function getAuthHeaders() {
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    return { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+}
+
+function showNotification(msg, type = 'info') {
+    const n = document.getElementById('notification');
+    n.textContent = msg;
+    n.className = `notification ${type} show`;
+    setTimeout(() => n.classList.remove('show'), 3000);
+}
+
+function getStatusInfo(book) {
+    if (book.isApproved) return { label: 'Live', cls: 'live', icon: 'fa-circle-check' };
+    return { label: 'Pending Review', cls: 'pending', icon: 'fa-clock' };
+}
+
+async function loadMyListings() {
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    if (!token) { window.location.href = 'login.html'; return; }
+
+    try {
+        // Fetch all books and filter by listed_by current user
+        const user = JSON.parse(localStorage.getItem('authUser') || localStorage.getItem('user') || '{}');
+        const res = await fetch(`${API_BASE}/api/books/my`, { headers: getAuthHeaders() });
+        let books = [];
+        if (res.ok) {
+            const data = await res.json();
+            books = data.books || data.items || [];
+        }
+
+        renderStats(books);
+        renderListings(books);
+    } catch(e) {
+        showNotification('Failed to load listings', 'error');
+        document.getElementById('listingsContainer').innerHTML = '<p style="padding:40px;color:#64748b;text-align:center">Could not load listings. Make sure the server is running.</p>';
+    }
+}
+
+function renderStats(books) {
+    const live = books.filter(b => b.isApproved).length;
+    const pending = books.filter(b => !b.isApproved).length;
+    document.getElementById('statTotal').textContent = books.length;
+    document.getElementById('statLive').textContent = live;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statRejected').textContent = 0;
+}
+
+function renderListings(books) {
+    const filter = document.getElementById('statusFilterSeller').value;
+    let filtered = books;
+    if (filter === 'live') filtered = books.filter(b => b.isApproved);
+    if (filter === 'pending') filtered = books.filter(b => !b.isApproved);
+
+    const container = document.getElementById('listingsContainer');
+    const empty = document.getElementById('emptyListings');
+
+    if (!filtered.length) {
+        container.innerHTML = '';
+        empty.classList.remove('hidden');
+        return;
+    }
+    empty.classList.add('hidden');
+
+    container.innerHTML = filtered.map(book => {
+        const status = getStatusInfo(book);
+        const price = parseFloat(book.price || 0);
+        const original = parseFloat(book.original || book.price || 0);
+        const discount = original > price ? Math.round((1 - price/original)*100) : 0;
+        const date = book.listedAt ? new Date(book.listedAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—';
+
+        return `
+        <div class="listing-card">
+            <div class="listing-img-wrap">
+                <img src="${book.image || 'media/books.png'}" alt="${book.title}" onerror="this.src='media/books.png'">
+                <span class="listing-status-badge ${status.cls}"><i class="fa-solid ${status.icon}"></i> ${status.label}</span>
+                ${discount > 0 ? `<span class="listing-discount">-${discount}%</span>` : ''}
+            </div>
+            <div class="listing-body">
+                <h4 class="listing-title">${book.title}</h4>
+                <p class="listing-author">by ${book.author}</p>
+                <div class="listing-price-row">
+                    <span class="listing-price">₹${price.toLocaleString('en-IN')}</span>
+                    ${original > price ? `<span class="listing-original">₹${original.toLocaleString('en-IN')}</span>` : ''}
+                </div>
+                <div class="listing-meta-row">
+                    <span><i class="fa-solid fa-boxes-stacked"></i> Qty: ${book.quantity || 0}</span>
+                    <span><i class="fa-solid fa-calendar"></i> ${date}</span>
+                </div>
+                <div class="listing-actions">
+                    <a href="book.html?id=${book.id}" class="listing-btn view"><i class="fa-solid fa-eye"></i> View</a>
+                    <button class="listing-btn delete" onclick="deleteListing(${book.id}, '${book.title.replace(/'/g,"\\'")}')"><i class="fa-solid fa-trash"></i> Remove</button>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+async function deleteListing(bookId, title) {
+    if (!confirm(`Remove "${title}" from your listings?`)) return;
+    try {
+        const res = await fetch(`${API_BASE}/api/books/${bookId}`, { method: 'DELETE', headers: getAuthHeaders() });
+        if (!res.ok) throw new Error();
+        showNotification('Listing removed', 'success');
+        loadMyListings();
+    } catch(e) {
+        showNotification('Failed to remove listing', 'error');
+    }
+}
+
+document.getElementById('statusFilterSeller').addEventListener('change', loadMyListings);
+document.addEventListener('DOMContentLoaded', () => { if (window.initAuthUI) initAuthUI(); loadMyListings(); });
+</script>
+</body>
+</html>

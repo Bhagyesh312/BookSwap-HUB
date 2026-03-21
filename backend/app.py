@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 from config import config
 from models import db
+from extensions import limiter
 
 
 def create_app(config_name=None):
@@ -38,6 +39,7 @@ def create_app(config_name=None):
     
     # Initialize extensions
     db.init_app(app)
+    limiter.init_app(app)
     
     # Enable CORS for frontend requests
     CORS(app, resources={
@@ -54,13 +56,23 @@ def create_app(config_name=None):
     from routes.cart import cart_bp
     from routes.orders import orders_bp
     from routes.admin import admin_bp
-    
+    from routes.wishlist import wishlist_bp
+    from routes.notifications import notifications_bp
+
     app.register_blueprint(auth_bp)
     app.register_blueprint(books_bp)
     app.register_blueprint(cart_bp)
     app.register_blueprint(orders_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(wishlist_bp)
+    app.register_blueprint(notifications_bp)
     
+    # Serve uploaded files
+    @app.route('/uploads/<path:filename>')
+    def uploaded_file(filename):
+        upload_folder = app.config.get('UPLOAD_FOLDER', os.path.join(os.path.dirname(__file__), 'uploads'))
+        return send_from_directory(upload_folder, filename)
+
     # Health check endpoint
     @app.route('/health')
     def health_check():
@@ -87,6 +99,11 @@ def create_app(config_name=None):
         # Try to serve HTML file for other routes
         return jsonify({'error': 'Page not found'}), 404
     
+    # Rate limit exceeded handler
+    @app.errorhandler(429)
+    def rate_limit_exceeded(e):
+        return jsonify({'error': 'Too many requests. Please wait and try again.'}), 429
+
     # Global error handler
     @app.errorhandler(Exception)
     def handle_exception(error):

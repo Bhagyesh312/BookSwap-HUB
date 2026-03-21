@@ -16,9 +16,10 @@
     <link rel="stylesheet" href="wishlist.css">
     <link rel="stylesheet" href="animations.css">
     <link rel="stylesheet" href="enhancements.css">
+    <link rel="stylesheet" href="skeleton.css">
+    <link rel="stylesheet" href="chat-support.css">
 
-    <!-- Page Transition Loader -->
-    <link rel="stylesheet" href="page-transition.css">
+    <!-- Page Transition Loader -->    <link rel="stylesheet" href="page-transition.css">
     <script src="page-transition.js"></script>
 </head>
 
@@ -52,6 +53,7 @@
                     <div id="profileMenu" class="profile-menu hidden">
                         <a href="profile.html" class="profile-menu-item">Profile Settings</a>
                         <a href="orders.html" class="profile-menu-item">My Orders</a>
+                        <a href="seller-dashboard.html" class="profile-menu-item">My Listings</a>
                         <button id="logoutBtn" class="profile-menu-item logout-item">Sign Out</button>
                     </div>
                 </div>
@@ -62,6 +64,21 @@
                     <span class="wishlist-label">WISHLIST</span>
                     <span class="wishlist-count" aria-live="polite">0</span>
                 </button>
+
+                <!-- Notification Bell -->
+                <div class="notif-bell-wrap">
+                    <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <span id="notifBadge" class="notif-badge"></span>
+                    </button>
+                    <div id="notifPanel" class="notif-panel">
+                        <div class="notif-panel-header">
+                            <strong>Notifications</strong>
+                            <span>Real-time updates</span>
+                        </div>
+                        <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+                    </div>
+                </div>
 
                 <!-- Cart Icon -->
                 <button id="cartBtn" class="cart-icon-btn" aria-label="Open cart">
@@ -442,11 +459,17 @@
                 const wishlisted = window.wishlistAPI && window.wishlistAPI.isInWishlist(b.id);
                 return `
             <div class="book-card" data-id="${b.id}" style="--stagger:${index % 12}">
-                <div class="card-image">${img ? `<img src="${img}" alt="${b.title}" loading="lazy">` : '<div class="no-cover-text">No cover</div>'}
+                <div class="card-image">${img
+                    ? `<img src="${img}" alt="${b.title}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                    : ''}
+                    <div class="no-cover-placeholder" style="display:${img ? 'none' : 'flex'}">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>${b.title.split(' ').slice(0,3).join(' ')}</span>
+                    </div>
                     <button class="wishlist-heart ${wishlisted ? 'wishlisted' : ''}" data-book-id="${b.id}" title="Add to wishlist">
                         <i class="${wishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                     </button>
-                    <span class="discount-badge">-${d}%</span>
+                    ${d > 0 ? `<span class="discount-badge">-${d}%</span>` : ''}
                 </div>
                 <h4>${b.title}</h4>
                 <p class="author">By ${b.author}</p>
@@ -529,33 +552,44 @@
 
                 const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
                 const startIdx = (page - 1) * ITEMS_PER_PAGE;
-                const pageItems = items.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+                const endIdx = Math.min(startIdx + ITEMS_PER_PAGE, items.length);
+                const pageItems = items.slice(startIdx, endIdx);
 
                 grid.innerHTML = pageItems.length
                     ? pageItems.map((book, idx) => render(book, startIdx + idx)).join('')
                     : '<div class="no-results">📭 No books found. Try adjusting your filters.</div>';
 
-                // Add pagination controls
-                const existingPagination = document.querySelector('.pagination-container');
-                if (existingPagination) existingPagination.remove();
+                // Remove old pagination wrapper
+                const existingWrapper = document.querySelector('.pagination-wrapper');
+                if (existingWrapper) existingWrapper.remove();
 
-                if (totalPages > 1 && typeof window.Pagination !== 'undefined') {
-                    const paginationHTML = window.Pagination.create(page, totalPages, items.length);
+                if (items.length > 0 && typeof window.Pagination !== 'undefined') {
+                    const paginationHTML = window.Pagination.create(page, totalPages, items.length, startIdx + 1, endIdx);
                     grid.insertAdjacentHTML('afterend', paginationHTML);
 
-                    // Initialize pagination click handler
-                    const paginationEl = document.querySelector('.pagination-container');
-                    if (paginationEl) {
-                        paginationEl.addEventListener('click', (e) => {
+                    // Pagination page buttons
+                    const wrapper = document.querySelector('.pagination-wrapper');
+                    if (wrapper) {
+                        wrapper.addEventListener('click', (e) => {
                             const btn = e.target.closest('.pagination-btn');
                             if (!btn || btn.disabled || btn.classList.contains('active')) return;
-
                             const newPage = parseInt(btn.dataset.page, 10);
                             display(filteredItems, newPage);
-
-                            // Scroll to top of book grid
                             grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
                         });
+
+                        // Jump-to-page
+                        const jumpInput = wrapper.querySelector('.pagination-jump input');
+                        const jumpBtn = wrapper.querySelector('.pagination-jump button');
+                        const doJump = () => {
+                            const val = parseInt(jumpInput.value, 10);
+                            if (val >= 1 && val <= totalPages) {
+                                display(filteredItems, val);
+                                grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        };
+                        if (jumpBtn) jumpBtn.addEventListener('click', doJump);
+                        if (jumpInput) jumpInput.addEventListener('keypress', e => { if (e.key === 'Enter') doJump(); });
                     }
                 }
 
@@ -929,14 +963,30 @@
 
             const loadBooks = async () => {
                 // Show skeleton loading while fetching
-                if (typeof BookSkeleton !== 'undefined') {
-                    BookSkeleton.show('bookGrid', 8);
-                }
+                grid.innerHTML = Array(8).fill(0).map(() => `
+                    <div class="book-card-skeleton">
+                        <div class="sk-img"></div>
+                        <div class="sk-body">
+                            <div class="sk-line title"></div>
+                            <div class="sk-line author"></div>
+                            <div class="sk-line price"></div>
+                            <div class="sk-line btn"></div>
+                        </div>
+                    </div>`).join('');
                 try {
-                    const res = await fetch(`${API_BASE}/api/books`);
-                    if (!res.ok) throw new Error('Failed to load books');
-                    const data = await res.json();
-                    allBooks = (data.items || []).map(normalizeBook);
+                    // Fetch all books across all pages
+                    let allFetched = [];
+                    let page = 1;
+                    while (true) {
+                        const res = await fetch(`${API_BASE}/api/books/?page=${page}&per_page=100`);
+                        if (!res.ok) throw new Error('Failed to load books');
+                        const data = await res.json();
+                        const items = data.items || [];
+                        allFetched = allFetched.concat(items);
+                        if (!data.pagination || !data.pagination.has_next) break;
+                        page++;
+                    }
+                    allBooks = allFetched.map(normalizeBook);
                 } catch (_error) {
                     allBooks = [];
                     showNotification('Backend not reachable. Start server to load books.');
@@ -956,26 +1006,7 @@
                 if (action === 'buy') {
                     await addToCart(id);
                 } else if (action === 'view-details') {
-                    const book = allBooks.find(b => b.id === Number(id));
-                    if (book) {
-                        // Use the enhanced quick-view modal if available
-                        if (typeof openQuickView === 'function') {
-                            openQuickView({
-                                id: book.id,
-                                title: book.title,
-                                author: book.author,
-                                price: book.price,
-                                original: book.original,
-                                image: book.image,
-                                condition: book.binding || 'New',
-                                language: book.language,
-                                edition: book.edition,
-                                description: book.synopsis || 'No description available.'
-                            });
-                        } else {
-                            openDetailsModal(book);
-                        }
-                    }
+                    window.location.href = `book.html?id=${id}`;
                 }
             });
 
@@ -1163,6 +1194,8 @@
     <script src="wishlist.js"></script>
     <script src="animations.js"></script>
     <script src="enhancements.js"></script>
+    <script src="notifications.js"></script>
+    <script src="chat-support.js"></script>
 
 </body>
 

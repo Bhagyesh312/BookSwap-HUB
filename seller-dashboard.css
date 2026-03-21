@@ -1,0 +1,244 @@
+/* ═══════════════════════════════════════
+   SELLER DASHBOARD — BookSwap Hub
+   ═══════════════════════════════════════ */
+
+.seller-header {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);
+    padding: 70px 24px 50px;
+    margin-top: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 100%;
+}
+
+.seller-header-content h1 {
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.seller-header-content h1 i { color: #f59e0b; }
+.seller-header-content p { color: #94a3b8; margin-top: 6px; }
+
+.btn-new-listing {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+    white-space: nowrap;
+}
+.btn-new-listing:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(249,115,22,0.4); }
+
+/* ── STATS ── */
+.seller-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: -30px auto 40px;
+    padding: 0 24px;
+    position: relative;
+    z-index: 10;
+}
+
+.seller-stat-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 30px rgba(15,23,42,0.06);
+    border: 1px solid #e2e8f0;
+    transition: transform 0.2s;
+}
+.seller-stat-card:hover { transform: translateY(-4px); }
+
+.ss-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+}
+.ss-icon.total   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.ss-icon.live    { background: linear-gradient(135deg, #10b981, #059669); }
+.ss-icon.pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.ss-icon.rejected{ background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+.ss-val {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1;
+}
+.ss-label {
+    display: block;
+    font-size: 0.82rem;
+    color: #64748b;
+    margin-top: 4px;
+}
+
+/* ── LISTINGS SECTION ── */
+.seller-listings-section {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+}
+
+.seller-listings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.seller-listings-header h2 { font-size: 1.3rem; font-weight: 700; color: #0f172a; }
+
+.seller-filter-select {
+    padding: 10px 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #475569;
+    background: #fff;
+    cursor: pointer;
+}
+.seller-filter-select:focus { outline: none; border-color: #f97316; }
+
+/* ── LISTINGS GRID ── */
+.listings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.listing-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(15,23,42,0.05);
+    transition: all 0.3s;
+}
+.listing-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(15,23,42,0.1); }
+
+.listing-img-wrap {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+    background: #f8fafc;
+}
+.listing-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+}
+.listing-card:hover .listing-img-wrap img { transform: scale(1.05); }
+
+.listing-status-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    backdrop-filter: blur(4px);
+}
+.listing-status-badge.live     { background: rgba(16,185,129,0.9); color: #fff; }
+.listing-status-badge.pending  { background: rgba(245,158,11,0.9); color: #fff; }
+.listing-status-badge.rejected { background: rgba(239,68,68,0.9);  color: #fff; }
+
+.listing-discount {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.listing-body { padding: 16px; }
+.listing-title { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.listing-author { font-size: 0.82rem; color: #64748b; margin-bottom: 10px; }
+
+.listing-price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.listing-price { font-size: 1.2rem; font-weight: 700; color: #f97316; }
+.listing-original { font-size: 0.85rem; color: #94a3b8; text-decoration: line-through; }
+
+.listing-meta-row {
+    display: flex;
+    gap: 14px;
+    font-size: 0.78rem;
+    color: #64748b;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+.listing-meta-row i { color: #94a3b8; margin-right: 3px; }
+
+.listing-actions { display: flex; gap: 8px; }
+.listing-btn {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+.listing-btn.view   { background: #f0fdf4; color: #16a34a; }
+.listing-btn.view:hover { background: #16a34a; color: #fff; }
+.listing-btn.delete { background: #fee2e2; color: #dc2626; }
+.listing-btn.delete:hover { background: #dc2626; color: #fff; }
+
+/* ── EMPTY STATE ── */
+.empty-listings {
+    text-align: center;
+    padding: 80px 20px;
+    color: #64748b;
+}
+.empty-listings i { font-size: 3rem; color: #cbd5e1; margin-bottom: 16px; display: block; }
+.empty-listings h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 8px; }
+.empty-listings p { margin-bottom: 24px; }
+
+.sk-listing-card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0; }
+
+@media (max-width: 768px) {
+    .seller-header { padding: 50px 16px 30px; }
+    .seller-header-content h1 { font-size: 1.5rem; }
+    .seller-stats { margin-top: -20px; }
+}
