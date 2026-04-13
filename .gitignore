@@ -8,3 +8,13 @@ __pycache__/
 *.pyc
 *.pyo
 .venv/
+
+# Environment and secrets
+backend/.env
+.env
+
+# Temporary and scratch files
+scratch/
+.deps_installed
+backend/patch_*.py
+backend/rewrite_js*.py

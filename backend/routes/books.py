@@ -184,7 +184,6 @@ def sell_book():
         seller_name=clean(data.get('sellerName'), max_length=255),
         seller_contact=clean(data.get('sellerContact'), max_length=50),
         seller_city=clean(data.get('sellerCity'), max_length=100),
-        seller_state=clean(data.get('sellerState'), max_length=100),
         payment_mode=clean(data.get('paymentMode'), max_length=50),
         description=clean(data.get('description'), max_length=2000),
         image=image_urls[0] if image_urls else None,

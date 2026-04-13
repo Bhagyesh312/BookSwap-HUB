@@ -15,7 +15,6 @@
     <!-- Page Transition Loader -->
     <link rel="stylesheet" href="page-transition.css">
     <script src="page-transition.js"></script>
-    <script src="locations.js"></script>
 </head>
 
 <body>
@@ -78,10 +77,8 @@
                     <input type="tel" placeholder="Phone Number" id="phone" required>
                     <textarea placeholder="Street Address" id="address" rows="2" required></textarea>
                     <div class="form-row">
-                        <select id="state" required></select>
-                        <select id="city" required disabled>
-                            <option value="">Select City</option>
-                        </select>
+                        <input type="text" placeholder="City" id="city" required>
+                        <input type="text" placeholder="State/Province" id="state" required>
                     </div>
                     <div class="form-row">
                         <input type="text" placeholder="ZIP Code" id="zip" required>
@@ -583,11 +580,6 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Auth UI is initialized by auth-ui.js
             document.body.classList.add('js-enhanced');
-            // Initialize City/State dropdowns
-            if (typeof initLocationDropdowns === 'function') {
-                initLocationDropdowns('state', 'city');
-            }
-
             if (checkAuth()) {
                 await loadOrderSummary();
             }

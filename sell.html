@@ -171,14 +171,8 @@
         </div>
 
         <div class="field">
-          <label>State</label>
-          <select id="stateSelect" name="sellerState" required></select>
-        </div>
-        <div class="field">
           <label>City / Location</label>
-          <select id="citySelect" name="sellerCity" required disabled>
-            <option value="">Select City</option>
-          </select>
+          <input name="sellerCity" type="text" placeholder="Eg: Ahmedabad" required>
         </div>
 
         <div class="field">
@@ -286,14 +280,6 @@
   <script src="enhancements.js"></script>
   <script src="notifications.js"></script>
   <script src="chat-support.js"></script>
-  <script>
-    /* ================= INITIALIZE DROPDOWNS ================= */
-    document.addEventListener('DOMContentLoaded', () => {
-      if (typeof initLocationDropdowns === 'function') {
-          initLocationDropdowns('stateSelect', 'citySelect');
-      }
-    });
-  </script>
 
   <script>
     /* ================= SELL FORM SUBMISSION ================= */

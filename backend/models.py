@@ -35,7 +35,6 @@ class Book(db.Model):
     seller_name = db.Column(db.String(255))
     seller_contact = db.Column(db.String(50))
     seller_city = db.Column(db.String(100))
-    seller_state = db.Column(db.String(100))
     payment_mode = db.Column(db.String(50))
     description = db.Column(db.Text)
     listed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
@@ -66,7 +65,6 @@ class Book(db.Model):
             'sellerName': self.seller_name,
             'sellerContact': self.seller_contact,
             'sellerCity': self.seller_city,
-            'sellerState': self.seller_state,
             'paymentMode': self.payment_mode,
             'description': self.description,
             'listedBy': self.listed_by,

@@ -61,6 +61,7 @@ A full-stack book marketplace where users can buy, sell, and swap books. Built w
 - Live chat support widget with bot responses
 - Back-to-top button with circular scroll progress
 - Animated page transitions
+- Standardized Indian Location Selection (State/City dropdowns)
 - Responsive design
 
 ---
