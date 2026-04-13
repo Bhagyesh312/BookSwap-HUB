@@ -204,7 +204,7 @@ body {
     width: 0;
     height: 3px;
     border-radius: 2px;
-    background: linear-gradient(90deg, #f59e0b, #d97706, #facc15);
+    background: linear-gradient(90deg, #f97316, #d97706, #facc15);
     transition: width 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
 }
 
@@ -252,7 +252,7 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 14px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #f97316, #d97706);
     color: #0f172a;
     border: none;
     font-size: 22px;
@@ -303,7 +303,7 @@ body {
 
 /* ── Progress bar glow ──────────────────────────────── */
 .progress-bar {
-    background: linear-gradient(90deg, #f59e0b, #d97706, #facc15) !important;
+    background: linear-gradient(90deg, #f97316, #d97706, #facc15) !important;
     background-size: 200% 100% !important;
     animation: shimmerBar 2s linear infinite !important;
 }
@@ -533,7 +533,7 @@ select:focus {
     height: 100%;
     width: 3px;
     border-radius: 2px;
-    background: linear-gradient(180deg, #f59e0b, #d97706);
+    background: linear-gradient(180deg, #f97316, #d97706);
     animation: accentPulse 1.2s ease-in-out infinite;
 }
 

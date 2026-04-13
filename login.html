@@ -201,9 +201,16 @@
           body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
+        let data;
+        const ct = res.headers.get('content-type') || '';
+        if (ct.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(res.status === 404 ? 'API endpoint not found. Is the server running?' : `Server error (${res.status}). Is the backend running?`);
+        }
         console.log('[Login] Auth response - status:', res.status, 'data keys:', Object.keys(data));
-        
+
         if (!res.ok) {
           throw new Error(data.error || 'Authentication failed');
         }
@@ -320,7 +327,10 @@
           body: JSON.stringify({ email })
         });
 
-        const data = await res.json();
+        const ct2 = res.headers.get('content-type') || '';
+        const data = ct2.includes('application/json')
+          ? await res.json()
+          : (() => { throw new Error('Server error. Is the backend running?'); })();
 
         if (!res.ok) {
           throw new Error(data.error || 'Failed to send reset email');

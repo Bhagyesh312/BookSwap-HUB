@@ -140,7 +140,7 @@ body {
 .input-box input:focus,
 .input-box textarea:focus {
   outline: none;
-  border-color: #f59e0b;
+  border-color: #f97316;
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
 }
 

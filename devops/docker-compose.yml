@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: bookswap_db
+    environment:
+      POSTGRES_USER: bookswap
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookswap
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/data:/docker-seed-data:ro
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bookswap -d bookswap"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: bookswap_web
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - SECRET_KEY=bookswap-secret-docker-key-2026
+      - JWT_SECRET=bookswap-jwt-secret-docker-key-2026
+      # Database connection matches the db service
+      - DATABASE_URL=postgresql://bookswap:password@db:5432/bookswap
+      # Keep email config dummy or empty
+      - MAIL_USERNAME=dummy@gmail.com
+      - MAIL_PASSWORD=dummy
+      # Allows API access over localhost
+      - FRONTEND_ORIGIN=*
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

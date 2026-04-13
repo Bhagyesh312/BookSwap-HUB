@@ -80,6 +80,17 @@ def create_order():
                 return jsonify({'error': f'Not enough stock for {cart_item.title}'}), 400
             
             book.quantity -= cart_item.quantity
+
+            # Fire inventory alert if stock just hit zero
+            if book.quantity == 0:
+                try:
+                    from utils.email import send_inventory_alert
+                    from models import User
+                    admins = User.query.filter_by(role='admin').all()
+                    for admin in admins:
+                        send_inventory_alert(admin.email, book.title, book.id, book.author)
+                except Exception:
+                    pass
             
             order_item = OrderItem(
                 order_id=order.id,
@@ -96,7 +107,24 @@ def create_order():
         CartItem.query.filter_by(user_id=user_id).delete()
         
         db.session.commit()
-        
+
+        # Send order confirmation email
+        try:
+            from utils.email import send_order_confirmation_email
+            items_for_email = [{'title': i.title, 'quantity': i.quantity, 'price': float(i.price)} for i in order_items]
+            address_str = ', '.join(filter(None, [address, city, state, zip_code, country]))
+            send_order_confirmation_email(
+                to_email=email,
+                customer_name=full_name,
+                order_id=order.id,
+                items=items_for_email,
+                total=float(total_amount),
+                address=address_str,
+                payment_method=payment_method
+            )
+        except Exception:
+            pass  # never block order creation due to email failure
+
         return jsonify({
             'orderId': order.id,
             'order': order.to_dict(),

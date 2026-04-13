@@ -6,14 +6,11 @@ from flask import Blueprint, request, jsonify, g, current_app
 from datetime import datetime, timedelta
 import bcrypt
 import secrets
-import hashlib
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from models import db, User
 from middleware import require_auth, create_token
-from extensions import limiter
-from sanitize import clean, clean_email
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -102,7 +99,6 @@ BookSwap Hub Team
 
 
 @auth_bp.route('/register', methods=['POST'])
-@limiter.limit("5 per minute; 20 per hour")
 def register():
     """
     Register new user with email and password
@@ -146,7 +142,6 @@ def register():
 
 
 @auth_bp.route('/login', methods=['POST'])
-@limiter.limit("10 per minute; 50 per hour")
 def login():
     """
     Login user with email and password
@@ -211,36 +206,37 @@ def update_profile():
     if not user:
         return jsonify({'error': 'User not found'}), 404
     
-    name  = data.get('name')
+    name = data.get('name')
     email = data.get('email')
-
+    
     if name:
-        user.name = clean(name, max_length=255) or user.name
-
+        user.name = name.strip()
+    
     if email:
-        safe_email = clean_email(email)
-        if not safe_email or '@' not in safe_email:
+        safe_email = email.strip().lower()
+        if '@' not in safe_email:
             return jsonify({'error': 'A valid email is required'}), 400
-
+        
+        # Check if email is taken by another user
         existing = User.query.filter(User.email == safe_email, User.id != user_id).first()
         if existing:
             return jsonify({'error': 'Email already in use'}), 409
-
+        
         user.email = safe_email
-
+    
     # Update optional fields
     if 'phone' in data:
-        user.phone = clean(data['phone'], max_length=50)
+        user.phone = data['phone'].strip() if data['phone'] else None
     if 'address' in data:
-        user.address = clean(data['address'], max_length=500)
+        user.address = data['address'].strip() if data['address'] else None
     if 'city' in data:
-        user.city = clean(data['city'], max_length=100)
+        user.city = data['city'].strip() if data['city'] else None
     if 'state' in data:
-        user.state = clean(data['state'], max_length=100)
+        user.state = data['state'].strip() if data['state'] else None
     if 'zip' in data:
-        user.zip = clean(data['zip'], max_length=20)
+        user.zip = data['zip'].strip() if data['zip'] else None
     if 'country' in data:
-        user.country = clean(data['country'], max_length=100) or user.country
+        user.country = data['country'].strip() if data['country'] else user.country
     
     db.session.commit()
     
@@ -310,7 +306,6 @@ def delete_account():
 
 
 @auth_bp.route('/forgot-password', methods=['POST'])
-@limiter.limit("3 per minute; 10 per hour")
 def forgot_password():
     """
     Request password reset email
@@ -331,23 +326,21 @@ def forgot_password():
     if not user:
         return jsonify({'message': 'If an account exists with this email, you will receive a password reset link.'})
     
-    # Generate secure token (raw sent in email, hash stored in DB)
+    # Generate secure token
     token = secrets.token_urlsafe(32)
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
-
-    # Save hashed token with expiration (1 hour)
-    user.reset_token = token_hash
+    
+    # Save token with expiration (1 hour)
+    user.reset_token = token
     user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
     db.session.commit()
-
-    # Send raw token in email link
+    
+    # Send email
     send_reset_email(user.email, user.name, token)
     
     return jsonify({'message': 'If an account exists with this email, you will receive a password reset link.'})
 
 
 @auth_bp.route('/reset-password', methods=['POST'])
-@limiter.limit("5 per minute; 10 per hour")
 def reset_password():
     """
     Reset password using token from email
@@ -365,9 +358,8 @@ def reset_password():
     if not new_password or len(new_password) < 6:
         return jsonify({'error': 'Password must be at least 6 characters'}), 400
     
-    # Hash the incoming token and look up by hash
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
-    user = User.query.filter_by(reset_token=token_hash).first()
+    # Find user by token
+    user = User.query.filter_by(reset_token=token).first()
     
     if not user:
         return jsonify({'error': 'Invalid or expired reset link'}), 400
@@ -400,8 +392,7 @@ def verify_reset_token():
     if not token:
         return jsonify({'valid': False, 'error': 'Token is required'}), 400
     
-    token_hash = hashlib.sha256(token.encode()).hexdigest()
-    user = User.query.filter_by(reset_token=token_hash).first()
+    user = User.query.filter_by(reset_token=token).first()
     
     if not user:
         return jsonify({'valid': False, 'error': 'Invalid reset link'}), 400

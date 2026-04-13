@@ -175,8 +175,15 @@
         const container = document.getElementById('quickReplies');
         if (!container) return;
         container.innerHTML = quickReplies.map(r =>
-            `<button class="quick-reply-btn" onclick="window.ChatSupport.send('${r}')">${r}</button>`
+            `<button class="quick-reply-btn" data-reply="${r}">${r}</button>`
         ).join('');
+        container.querySelectorAll('.quick-reply-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const input = document.getElementById('chatInput');
+                if (input) input.value = btn.dataset.reply;
+                handleSend();
+            });
+        });
     }
 
     /* ── TOGGLE ── */
@@ -206,34 +213,46 @@
                         <span class="chat-status"><span class="status-dot"></span> Online</span>
                     </div>
                 </div>
-                <button class="chat-header-close" onclick="window.ChatSupport.toggle()"><i class="fa-solid fa-xmark"></i></button>
+                <button class="chat-header-close" id="chatCloseBtn"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="chatMessages" class="chat-messages"></div>
             <div id="quickReplies" class="quick-replies"></div>
             <div class="chat-input-row">
-                <input id="chatInput" type="text" placeholder="Type your message..." autocomplete="off"
-                    onkeydown="if(event.key==='Enter') window.ChatSupport.send()">
-                <button class="chat-send-btn" onclick="window.ChatSupport.send()">
+                <input id="chatInput" type="text" placeholder="Type your message..." autocomplete="off">
+                <button class="chat-send-btn" id="chatSendBtn" aria-label="Send message">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
         </div>
-        <button id="chatToggleBtn" class="chat-toggle-btn" onclick="window.ChatSupport.toggle()" aria-label="Open chat support">
+        <button id="chatToggleBtn" class="chat-toggle-btn" aria-label="Open chat support">
             <i class="fa-solid fa-comment-dots"></i>
             <span class="chat-unread-badge" id="chatUnreadBadge" style="display:none">1</span>
         </button>`;
         document.body.insertAdjacentHTML('beforeend', html);
+
+        // Wire events after injection
+        document.getElementById('chatToggleBtn').addEventListener('click', toggleChat);
+        document.getElementById('chatCloseBtn').addEventListener('click', toggleChat);
+        document.getElementById('chatSendBtn').addEventListener('click', () => handleSend());
+        document.getElementById('chatInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); handleSend(); }
+        });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectChatWidget);
+    } else {
         injectChatWidget();
-    });
+    }
 
     window.ChatSupport = {
         toggle: toggleChat,
-        send: async (preset) => {
-            if (preset) { document.getElementById('chatInput').value = preset; }
-            await handleSend();
+        send: (preset) => {
+            if (preset) {
+                const input = document.getElementById('chatInput');
+                if (input) input.value = preset;
+            }
+            handleSend();
         }
     };
 })();

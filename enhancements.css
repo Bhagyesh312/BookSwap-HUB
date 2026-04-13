@@ -31,7 +31,7 @@ html, body {
     max-width: 420px;
     padding: 16px 20px;
     border-radius: 14px;
-    background: #fff;
+    background: #ffffff;
     box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.04);
     font-family: 'Poppins', sans-serif;
     font-size: 14px;
@@ -128,16 +128,16 @@ html, body {
 }
 
 .toast.toast-warning .toast-icon {
-    background: #fffbeb;
-    color: #f59e0b;
+    background: #ffffffbeb;
+    color: #f97316;
 }
 
 .toast.toast-warning .toast-progress {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    background: linear-gradient(90deg, #f97316, #f97316);
 }
 
 .toast.toast-cart .toast-icon {
-    background: linear-gradient(135deg, #fff7ed, #fef3c7);
+    background: linear-gradient(135deg, #ffffff7ed, #fef3c7);
     color: #f97316;
 }
 
@@ -195,7 +195,7 @@ html, body {
     background: rgba(15, 23, 42, 0.8);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    color: white;
+    color: #ffffff;
     border: none;
     font-size: 18px;
     cursor: pointer;
@@ -255,14 +255,14 @@ html, body {
 
 #scrollTopBtn:hover {
     transform: translateY(-3px) scale(1.1);
-    box-shadow: 0 14px 40px rgba(249, 115, 22, 0.5);
+    box-shadow: 0 14px 40px rgba(245, 158, 11, 0.5);
     background: linear-gradient(135deg, #f97316, #ef4444);
 }
 
 
 /* ── 4. SKELETON LOADING CARDS ────────────────────────── */
 .skeleton-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 16px;
     padding: 0;
     overflow: hidden;
@@ -338,7 +338,7 @@ html, body {
 }
 
 .quickview-modal {
-    background: #fff;
+    background: #ffffff;
     border-radius: 24px;
     width: 90%;
     max-width: 750px;
@@ -377,7 +377,7 @@ html, body {
 
 .quickview-close:hover {
     background: linear-gradient(135deg, #f97316, #ef4444);
-    color: #fff;
+    color: #ffffff;
     transform: rotate(90deg);
 }
 
@@ -452,7 +452,7 @@ html, body {
 
 .quickview-price .discount-tag {
     background: linear-gradient(135deg, #10b981, #059669);
-    color: #fff;
+    color: #ffffff;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
@@ -495,18 +495,18 @@ html, body {
     border: none;
     border-radius: 14px;
     background: linear-gradient(135deg, #f97316, #ef4444);
-    color: #fff;
+    color: #ffffff;
     font-weight: 700;
     font-size: 15px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 8px 24px rgba(249, 115, 22, 0.3);
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
     font-family: 'Poppins', sans-serif;
 }
 
 .quickview-actions .btn-add-cart:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5);
+    box-shadow: 0 12px 32px rgba(245, 158, 11, 0.5);
 }
 
 .quickview-actions .btn-wishlist-qv {
@@ -514,7 +514,7 @@ html, body {
     height: 52px;
     border: 2px solid #e2e8f0;
     border-radius: 14px;
-    background: #fff;
+    background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -594,7 +594,7 @@ body.page-enter {
     height: 28px;
     border: none;
     border-radius: 8px;
-    background: #fff;
+    background: #ffffff;
     color: #1e293b;
     font-size: 16px;
     font-weight: 700;
@@ -608,7 +608,7 @@ body.page-enter {
 
 .qty-selector button:hover {
     background: #f97316;
-    color: #fff;
+    color: #ffffff;
     transform: scale(1.1);
 }
 
@@ -673,7 +673,7 @@ body.page-enter {
     background: linear-gradient(135deg, #f97316, #ef4444);
     border: none;
     border-radius: 10px;
-    color: #fff;
+    color: #ffffff;
     font-weight: 700;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -681,7 +681,7 @@ body.page-enter {
 
 .coupon-input-wrap button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
 .coupon-applied {
@@ -723,7 +723,7 @@ body.page-enter {
     width: 100%;
     padding: 12px 16px;
     background: linear-gradient(135deg, #fef3c7, #fde68a);
-    border: 1px dashed #f59e0b;
+    border: 1px dashed #f97316;
     border-radius: 10px;
     color: #92400e;
     font-size: 13px;
@@ -764,7 +764,7 @@ body.page-enter {
 .coupon-card {
     display: flex;
     align-items: center;
-    background: #fff;
+    background: #ffffff;
     border-radius: 12px;
     overflow: visible;
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
@@ -775,7 +775,7 @@ body.page-enter {
 }
 
 .coupon-card:hover {
-    box-shadow: 0 4px 16px rgba(249, 115, 22, 0.15);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
     border-color: #fdba74;
     transform: translateY(-2px);
 }
@@ -784,7 +784,7 @@ body.page-enter {
     flex-shrink: 0;
     width: 90px;
     padding: 16px 12px;
-    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    background: linear-gradient(135deg, #ffffff7ed, #ffedd5);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -802,7 +802,7 @@ body.page-enter {
     right: -9px;
     width: 16px;
     height: 16px;
-    background: linear-gradient(135deg, #fff8f3, #fff);
+    background: linear-gradient(135deg, #ffffff8f3, #ffffff);
     border-radius: 50%;
     border: 1px solid #e2e8f0;
 }
@@ -881,7 +881,7 @@ body.page-enter {
 .use-coupon-btn {
     padding: 8px 18px;
     background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 11px;
@@ -895,7 +895,7 @@ body.page-enter {
 
 .use-coupon-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
 }
 
 .coupon-card.applied {
@@ -1017,18 +1017,18 @@ body.page-enter {
     justify-content: center;
     font-size: 16px;
     transition: all 0.3s ease;
-    border: 3px solid #fff;
+    border: 3px solid #ffffff;
 }
 
 .tracking-step.completed .step-icon {
     background: #10b981;
-    color: #fff;
+    color: #ffffff;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 .tracking-step.current .step-icon {
     background: #3b82f6;
-    color: #fff;
+    color: #ffffff;
     animation: pulseStep 1.5s infinite;
 }
 
@@ -1085,7 +1085,7 @@ body.page-enter {
     padding: 0 14px;
     border: 2px solid #e2e8f0;
     border-radius: 10px;
-    background: #fff;
+    background: #ffffff;
     color: #475569;
     font-weight: 600;
     font-size: 14px;
@@ -1100,7 +1100,7 @@ body.page-enter {
 
 .pagination-btn:hover:not(:disabled):not(.active) {
     border-color: #f97316;
-    background: #fff7ed;
+    background: #ffffff7ed;
     color: #f97316;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(249,115,22,0.15);
@@ -1109,7 +1109,7 @@ body.page-enter {
 .pagination-btn.active {
     background: linear-gradient(135deg, #f97316, #ea580c);
     border-color: transparent;
-    color: #fff;
+    color: #ffffff;
     box-shadow: 0 6px 18px rgba(249,115,22,0.4);
     transform: translateY(-1px);
 }
@@ -1163,7 +1163,7 @@ body.page-enter {
     height: 36px;
     padding: 0 14px;
     background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 8px;
     font-size: 12px;
@@ -1195,14 +1195,14 @@ body.page-enter {
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    color: #fff;
-    box-shadow: 0 8px 30px rgba(249, 115, 22, 0.5);
+    color: #ffffff;
+    box-shadow: 0 8px 30px rgba(245, 158, 11, 0.5);
     transition: all 0.3s ease;
 }
 
 .chat-toggle:hover {
     transform: scale(1.1);
-    box-shadow: 0 12px 40px rgba(249, 115, 22, 0.6);
+    box-shadow: 0 12px 40px rgba(245, 158, 11, 0.6);
 }
 
 .chat-toggle .chat-badge {
@@ -1218,7 +1218,7 @@ body.page-enter {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid #fff;
+    border: 2px solid #ffffff;
 }
 
 .chat-panel {
@@ -1227,7 +1227,7 @@ body.page-enter {
     right: 0;
     width: 360px;
     max-height: 520px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
     display: flex;
@@ -1248,7 +1248,7 @@ body.page-enter {
 .chat-header {
     padding: 18px 20px;
     background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #fff;
+    color: #ffffff;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -1263,7 +1263,7 @@ body.page-enter {
     align-items: center;
     justify-content: center;
     font-size: 20px;
-    color: #fff;
+    color: #ffffff;
 }
 
 .chat-header-info h4 {
@@ -1297,7 +1297,7 @@ body.page-enter {
     margin-left: auto;
     background: none;
     border: none;
-    color: #fff;
+    color: #ffffff;
     font-size: 20px;
     cursor: pointer;
     opacity: 0.8;
@@ -1341,7 +1341,7 @@ body.page-enter {
 }
 
 .chat-message.bot {
-    background: #fff;
+    background: #ffffff;
     color: #1e293b;
     align-self: flex-start;
     border: 1px solid #e2e8f0;
@@ -1350,7 +1350,7 @@ body.page-enter {
 
 .chat-message.user {
     background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #fff;
+    color: #ffffff;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
@@ -1360,7 +1360,7 @@ body.page-enter {
     gap: 4px;
     align-items: center;
     padding: 12px 16px;
-    background: #fff;
+    background: #ffffff;
     border-radius: 16px;
     border: 1px solid #e2e8f0;
     align-self: flex-start;
@@ -1385,7 +1385,7 @@ body.page-enter {
 
 .chat-input-area {
     padding: 16px;
-    background: #fff;
+    background: #ffffff;
     border-top: 1px solid #e2e8f0;
     display: flex;
     gap: 10px;
@@ -1411,7 +1411,7 @@ body.page-enter {
     border: none;
     border-radius: 12px;
     background: linear-gradient(135deg, #f97316, #ea580c);
-    color: #fff;
+    color: #ffffff;
     font-size: 18px;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
@@ -1419,7 +1419,7 @@ body.page-enter {
 
 .chat-input-area button:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
 }
 
 .chat-quick-actions {
@@ -1433,7 +1433,7 @@ body.page-enter {
     padding: 8px 14px;
     border: 1px solid #e2e8f0;
     border-radius: 20px;
-    background: #fff;
+    background: #ffffff;
     color: #64748b;
     font-size: 12px;
     cursor: pointer;
@@ -1442,7 +1442,7 @@ body.page-enter {
 
 .chat-quick-btn:hover {
     border-color: #f97316;
-    background: #fff7ed;
+    background: #ffffff7ed;
     color: #f97316;
 }
 
@@ -1462,4 +1462,36 @@ body.page-enter {
         width: 54px;
         height: 54px;
     }
+}
+
+/* ── 13. PREMIUM HOVER CARD GLOW ── */
+.book-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.book-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(249, 115, 22, 0.15), 0 0 20px rgba(249, 115, 22, 0.08);
+}
+
+/* Shine effect on buttons */
+.btn-add-cart, .add-to-cart-btn, .checkout, .action-btn {
+    position: relative;
+    overflow: hidden;
+}
+.btn-add-cart::after, .add-to-cart-btn::after, .checkout::after, .action-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    transform: skewX(-25deg);
+    transition: none;
+}
+.btn-add-cart:hover::after, .add-to-cart-btn:hover::after, .checkout:hover::after, .action-btn:hover::after {
+    animation: button-shine 0.6s ease;
+}
+@keyframes button-shine {
+    100% { left: 200%; }
 }

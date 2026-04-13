@@ -754,167 +754,70 @@ window.Pagination = {
 };
 
 
+// Chat widget is handled by chat-support.js
+
 /* ═══════════════════════════════════════════════════════
-   11. LIVE CHAT WIDGET
+   12. FLY-TO-CART ANIMATION
    ═══════════════════════════════════════════════════════ */
-(function () {
-    // Create chat widget
-    const widget = document.createElement('div');
-    widget.className = 'chat-widget';
-    widget.innerHTML = `
-        <button class="chat-toggle" aria-label="Open chat">
-            <i class="fa-solid fa-comments"></i>
-        </button>
-        <div class="chat-panel">
-            <div class="chat-header">
-                <div class="chat-header-avatar"><i class="fa-solid fa-headset"></i></div>
-                <div class="chat-header-info">
-                    <h4>BookSwap Support</h4>
-                    <span><span class="chat-online-dot"></span> Online now</span>
-                </div>
-                <button class="chat-header-close" aria-label="Close chat"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="chat-quick-actions">
-                <button class="chat-quick-btn" data-msg="Track my order">Track Order</button>
-                <button class="chat-quick-btn" data-msg="I need help with returns">Returns Help</button>
-                <button class="chat-quick-btn" data-msg="Payment issues">Payment Help</button>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="chat-message bot">
-                    Hi there! Welcome to BookSwap Hub. How can I help you today?
-                </div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Type your message..." maxlength="500">
-                <button id="chatSendBtn" aria-label="Send message">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-        </div>
-    `;
+window.animateFlyToCart = function(visualElement) {
+    if (!visualElement) return;
     
-    document.body.appendChild(widget);
+    const cartIcon = document.querySelector('.cart-icon-btn, .navbar .nav-links a[href="cart.html"], .navbar .nav-links a[title="Cart"], .cart-toggle-btn, #cartBtn');
+    if (!cartIcon) return;
     
-    const toggle = widget.querySelector('.chat-toggle');
-    const panel = widget.querySelector('.chat-panel');
-    const closeBtn = widget.querySelector('.chat-header-close');
-    const messagesEl = document.getElementById('chatMessages');
-    const input = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('chatSendBtn');
+    const rect = visualElement.getBoundingClientRect();
+    const targetRect = cartIcon.getBoundingClientRect();
     
-    // Bot responses
-    const botResponses = {
-        'track': 'To track your order, please go to your Profile → Orders section. You can see the status of all your orders there.',
-        'order': 'You can view your orders by clicking on the user icon and selecting "My Orders". Each order shows a tracking timeline!',
-        'return': 'For returns, please contact us within 7 days of delivery. Go to Orders → Select Order → Request Return.',
-        'refund': 'Refunds are processed within 5-7 business days after we receive the returned item. Contact support if delayed.',
-        'payment': 'We accept COD, UPI, and Credit/Debit cards. If you faced a payment issue, please check your bank statement and contact us.',
-        'sell': 'Want to sell books? Click on "Sell Book" in the navigation. Fill out the form with book details and we\'ll list it for you!',
-        'buy': 'Browse our collection on the "Buy Book" page. Use filters to find exactly what you need!',
-        'discount': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
-        'coupon': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
-        'code': 'Try these coupon codes: SAVE10 (10% off), SAVE20 (20% off), FLAT50 (₹50 off), FLAT100 (₹100 off), FIRSTBUY (15% for first order), BOOKWORM (25% on ₹1000+)!',
-        'hello': 'Hello! Nice to meet you. How can I assist you with your book shopping today?',
-        'hi': 'Hi there! What can I help you with?',
-        'hey': 'Hey! Welcome to BookSwap Hub. What can I help you with today?',
-        'thanks': 'You\'re welcome! Feel free to ask if you need anything else. Happy reading! 📚',
-        'thank': 'You\'re welcome! Feel free to ask if you need anything else. Happy reading! 📚',
-        'help': 'I can help you with: tracking orders, returns, payments, buying/selling books, coupon codes, delivery info, and account questions. Just ask!',
-        'delivery': 'Free delivery on orders above ₹999! Otherwise, delivery charges are ₹49 (under ₹499) or ₹29 (₹499-₹999). Delivery takes 3-7 business days.',
-        'shipping': 'Free shipping on orders above ₹999! Standard delivery takes 3-7 business days depending on your location.',
-        'price': 'Book prices vary based on condition and rarity. You can sort by price on the Buy page to find books in your budget!',
-        'account': 'To manage your account, click on the profile icon and select "Profile Settings". You can update your info, change password, and more.',
-        'password': 'To change your password, go to Profile Settings → Security section. Enter your current password and set a new one.',
-        'login': 'Having trouble logging in? Try resetting your password using the "Forgot Password" link on the login page.',
-        'register': 'To create an account, click "Login/Register" and fill out the registration form. It only takes a minute!',
-        'contact': 'You can reach us at bookswaphub@gmail.com or use the Contact page. We typically respond within 24 hours.',
-        'email': 'Reach us at bookswaphub@gmail.com for any queries. We respond within 24 hours!',
-        'cart': 'Your cart items are saved! Go to the cart icon in the navbar to view, update quantities, or checkout.',
-        'wishlist': 'Click the heart icon on any book to add it to your wishlist. Access your wishlist from the navbar.',
-        'quiz': 'Try our Book Matchmaker quiz to discover books tailored to your preferences! Find it in the navigation.',
-        'recommend': 'Try our Book Matchmaker quiz for personalized book recommendations based on your reading preferences!',
-        'cancel': 'To cancel an order, go to My Orders and click "Cancel Order" if it hasn\'t shipped yet. Already shipped orders cannot be cancelled.',
-        'status': 'Check your order status in Profile → My Orders. You\'ll see: Pending, Processing, Shipped, or Delivered.',
-        'time': 'Typical delivery time is 3-7 business days. You can track your order in the Orders section.',
-        'book': 'Looking for a specific book? Use the search bar on the Buy page, or filter by genre, author, or condition.',
-        'genre': 'We have fiction, non-fiction, academic, romance, thriller, sci-fi, biography, and more! Use filters on the Buy page.',
-        'condition': 'Books come in various conditions: New, Like New, Good, Acceptable. Descriptions include details about any wear.',
-        'good': 'Glad I could help! Is there anything else you\'d like to know?',
-        'great': 'Awesome! Let me know if you need anything else!',
-        'bye': 'Goodbye! Happy reading and come back soon! 📖',
-        'ok': 'Great! Let me know if you have any other questions.',
-        'okay': 'Perfect! Feel free to ask if you need more help.'
-    };
+    const clone = visualElement.cloneNode(true);
+    clone.style.position = 'fixed';
+    clone.style.zIndex = '999999';
+    clone.style.top = `${rect.top}px`;
+    clone.style.left = `${rect.left}px`;
+    clone.style.width = `${rect.width}px`;
+    clone.style.height = `${rect.height}px`;
+    clone.style.objectFit = 'cover';
+    clone.style.borderRadius = '10px';
+    clone.style.pointerEvents = 'none';
+    clone.style.margin = '0';
     
-    function addMessage(text, isUser = false) {
-        const msg = document.createElement('div');
-        msg.className = `chat-message ${isUser ? 'user' : 'bot'}`;
-        msg.textContent = text;
-        messagesEl.appendChild(msg);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+    document.body.appendChild(clone);
     
-    function showTyping() {
-        const typing = document.createElement('div');
-        typing.className = 'chat-typing';
-        typing.id = 'chatTyping';
-        typing.innerHTML = '<span></span><span></span><span></span>';
-        messagesEl.appendChild(typing);
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
+    // Force a browser reflow or the transition won't happen
+    clone.offsetHeight;
     
-    function hideTyping() {
-        const typing = document.getElementById('chatTyping');
-        if (typing) typing.remove();
-    }
+    clone.style.transition = 'all 0.6s cubic-bezier(0.2, 1, 0.4, 1)';
+    clone.style.top = `${targetRect.top + targetRect.height/2 - 10}px`;
+    clone.style.left = `${targetRect.left + targetRect.width/2 - 10}px`;
+    clone.style.width = '20px';
+    clone.style.height = '20px';
+    clone.style.opacity = '0.3';
+    clone.style.transform = 'scale(0.1) rotate(15deg)';
     
-    function getBotResponse(userMsg) {
-        const lower = userMsg.toLowerCase();
-        
-        for (const [key, response] of Object.entries(botResponses)) {
-            if (lower.includes(key)) {
-                return response;
+    setTimeout(() => {
+        cartIcon.style.transition = 'transform 0.2s cubic-bezier(0.3, 2, 0.4, 1)';
+        cartIcon.style.transform = 'scale(1.25) rotate(-5deg)';
+        setTimeout(() => cartIcon.style.transform = '', 200);
+    }, 550);
+    
+    setTimeout(() => clone.remove(), 700);
+};
+
+document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-add-cart, .add-to-cart-btn, .add-to-cart, .buy, .details-add-btn');
+    if (btn) {
+        const card = btn.closest('.book-card, .quickview-modal, .book-detail-main, .wi-body, .book-detail-container, .book-details-wrapper');
+        if (card) {
+            // Find either the book image, or the no-cover placeholder if missing
+            let visual = card.querySelector('img.book-cover, .card-image img, .book-image img, #qvImage, img');
+            if (!visual) {
+                visual = card.querySelector('.no-cover-placeholder');
+            }
+            if (!visual && card.classList.contains('wi-body') && card.previousElementSibling) {
+                visual = card.previousElementSibling.querySelector('img, .no-cover-placeholder');
+            }
+            if (visual) {
+                window.animateFlyToCart(visual);
             }
         }
-        
-        return "Thanks for your message! For specific queries, please email us at bookswaphub@gmail.com or check our FAQ section. Is there anything else I can help with?";
     }
-    
-    function sendMessage() {
-        const text = input.value.trim();
-        if (!text) return;
-        
-        addMessage(text, true);
-        input.value = '';
-        
-        showTyping();
-        
-        setTimeout(() => {
-            hideTyping();
-            addMessage(getBotResponse(text));
-        }, 800 + Math.random() * 700);
-    }
-    
-    toggle.onclick = () => {
-        panel.classList.toggle('open');
-        if (panel.classList.contains('open')) {
-            input.focus();
-        }
-    };
-    
-    closeBtn.onclick = () => panel.classList.remove('open');
-    
-    sendBtn.onclick = sendMessage;
-    input.onkeypress = (e) => {
-        if (e.key === 'Enter') sendMessage();
-    };
-    
-    // Quick action buttons
-    widget.querySelectorAll('.chat-quick-btn').forEach(btn => {
-        btn.onclick = () => {
-            const msg = btn.dataset.msg;
-            input.value = msg;
-            sendMessage();
-        };
-    });
-})();
+});

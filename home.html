@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
     <!-- Site Stylesheets -->
-    <link rel="stylesheet" href="home.css?v=3">
+    <link rel="stylesheet" href="home.css">
     <link rel="stylesheet" href="cart.css">
     <link rel="stylesheet" href="wishlist.css">
     <link rel="stylesheet" href="animations.css">
@@ -37,9 +37,11 @@
         <img src="media/Saraswatiji.png" alt="Left Image" class="corner-img left-corner no-float">
 
         <div class="title-text">
-            <h1>BookSwap Hub</h1>
-            <h1 class="sub-title">Buy • Sell • Exchange</h1>
-            <p class="tagline">smart way for people to buy & sell books easily</p>
+            <h1 class="main-title"><span class="title-word">Book</span><span class="title-word">Swap</span> <span class="title-word">Hub</span></h1>
+            <h1 class="sub-title">
+                <span class="typing-text" id="typingText"></span><span class="typing-cursor">|</span>
+            </h1>
+            <p class="tagline"><span class="tagline-inner">smart way for people to buy &amp; sell books easily</span></p>
         </div>
 
         <!-- RIGHT CORNER IMAGE -->
@@ -326,6 +328,42 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
+        /* ── Typing Animation ─────────────────────── */
+        (function () {
+            const phrases = ['Buy • Sell • Exchange', 'Find Your Next Read', 'Great Deals Await', 'Buy • Sell • Exchange'];
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let deleting = false;
+            const el = document.getElementById('typingText');
+            const cursor = document.querySelector('.typing-cursor');
+
+            function type() {
+                const current = phrases[phraseIndex];
+                if (!deleting) {
+                    el.textContent = current.slice(0, charIndex + 1);
+                    charIndex++;
+                    if (charIndex === current.length) {
+                        // Pause at end before deleting
+                        if (phraseIndex === phrases.length - 1) return; // last phrase — stay forever
+                        setTimeout(() => { deleting = true; type(); }, 2200);
+                        return;
+                    }
+                    setTimeout(type, 80);
+                } else {
+                    el.textContent = current.slice(0, charIndex - 1);
+                    charIndex--;
+                    if (charIndex === 0) {
+                        deleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        setTimeout(type, 400);
+                        return;
+                    }
+                    setTimeout(type, 45);
+                }
+            }
+            setTimeout(type, 900);
+        })();
+
         /* ── Hero Slider Initialization ─────────────────────── */
         const heroSwiper = new Swiper('.heroSwiper', {
             loop: true,
@@ -441,13 +479,11 @@
          * @param {number} bookId 
          */
         function viewBookDetails(bookId) {
-            localStorage.setItem('viewBookId', bookId);
-            window.location.href = 'buy.html';
+            window.location.href = `book.html?id=${bookId}`;
         }
 
         function goToBuy(bookId) {
-            localStorage.setItem('viewBookId', bookId);
-            window.location.href = 'buy.html';
+            window.location.href = `book.html?id=${bookId}`;
         }
     </script>
 

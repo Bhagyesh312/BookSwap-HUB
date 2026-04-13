@@ -16,9 +16,9 @@
   <link rel="stylesheet" href="enhancements.css">
   <link rel="stylesheet" href="chat-support.css">
 
-    <!-- Page Transition Loader -->
-    <link rel="stylesheet" href="page-transition.css">
-    <script src="page-transition.js"></script>
+  <!-- Page Transition Loader -->
+  <link rel="stylesheet" href="page-transition.css">
+  <script src="page-transition.js"></script>
 </head>
 
 <body>
@@ -61,17 +61,19 @@
 
         <!-- Notification Bell -->
         <div class="notif-bell-wrap">
-            <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
-                <i class="fa-solid fa-bell"></i>
-                <span id="notifBadge" class="notif-badge"></span>
-            </button>
-            <div id="notifPanel" class="notif-panel">
-                <div class="notif-panel-header">
-                    <strong>Notifications</strong>
-                    <span>Real-time updates</span>
-                </div>
-                <div id="notifList"><p class="notif-empty">No notifications yet</p></div>
+          <button id="notifBell" class="notif-bell-btn" aria-label="Notifications" title="Notifications">
+            <i class="fa-solid fa-bell"></i>
+            <span id="notifBadge" class="notif-badge"></span>
+          </button>
+          <div id="notifPanel" class="notif-panel">
+            <div class="notif-panel-header">
+              <strong>Notifications</strong>
+              <span>Real-time updates</span>
             </div>
+            <div id="notifList">
+              <p class="notif-empty">No notifications yet</p>
+            </div>
+          </div>
         </div>
 
         <!-- Cart Icon -->
@@ -169,8 +171,14 @@
         </div>
 
         <div class="field">
+          <label>State</label>
+          <select id="stateSelect" name="sellerState" required></select>
+        </div>
+        <div class="field">
           <label>City / Location</label>
-          <input name="sellerCity" type="text" placeholder="Eg: Ahmedabad" required>
+          <select id="citySelect" name="sellerCity" required disabled>
+            <option value="">Select City</option>
+          </select>
         </div>
 
         <div class="field">
@@ -278,6 +286,14 @@
   <script src="enhancements.js"></script>
   <script src="notifications.js"></script>
   <script src="chat-support.js"></script>
+  <script>
+    /* ================= INITIALIZE DROPDOWNS ================= */
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof initLocationDropdowns === 'function') {
+          initLocationDropdowns('stateSelect', 'citySelect');
+      }
+    });
+  </script>
 
   <script>
     /* ================= SELL FORM SUBMISSION ================= */

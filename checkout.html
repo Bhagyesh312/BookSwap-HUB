@@ -15,6 +15,7 @@
     <!-- Page Transition Loader -->
     <link rel="stylesheet" href="page-transition.css">
     <script src="page-transition.js"></script>
+    <script src="locations.js"></script>
 </head>
 
 <body>
@@ -34,10 +35,10 @@
             </div>
             <div class="nav-auth">
                 <span id="userGreeting" class="user-greeting">Welcome!</span>
-                
+
                 <!-- Login Button (shown when not logged in) -->
                 <a id="loginBtn" href="login.html" class="nav-btn nav-login">Login/Register</a>
-                
+
                 <!-- User Profile (shown when logged in) -->
                 <div id="userProfile" class="user-profile hidden">
                     <button id="profileToggle" class="profile-btn" aria-label="User menu">
@@ -77,8 +78,10 @@
                     <input type="tel" placeholder="Phone Number" id="phone" required>
                     <textarea placeholder="Street Address" id="address" rows="2" required></textarea>
                     <div class="form-row">
-                        <input type="text" placeholder="City" id="city" required>
-                        <input type="text" placeholder="State/Province" id="state" required>
+                        <select id="state" required></select>
+                        <select id="city" required disabled>
+                            <option value="">Select City</option>
+                        </select>
                     </div>
                     <div class="form-row">
                         <input type="text" placeholder="ZIP Code" id="zip" required>
@@ -122,7 +125,8 @@
                 <div class="card-header">
                     <h2>📝 Additional Notes (Optional)</h2>
                 </div>
-                <textarea id="notes" placeholder="Any special instructions for delivery..." rows="3" class="full-width"></textarea>
+                <textarea id="notes" placeholder="Any special instructions for delivery..." rows="3"
+                    class="full-width"></textarea>
             </div>
 
         </div>
@@ -174,7 +178,7 @@
                         <button type="button" id="applyCouponBtn">Apply</button>
                     </div>
                     <div id="couponStatus"></div>
-                    
+
                     <!-- Available Coupons -->
                     <div class="available-coupons" id="availableCoupons">
                         <button type="button" class="toggle-coupons" id="toggleCouponsBtn">
@@ -341,11 +345,11 @@
                 document.getElementById('subtotalPrice').textContent = '₹' + formatIN(subtotal);
                 document.getElementById('totalPrice').textContent = '₹' + formatIN(subtotal);
                 document.getElementById('savingPrice').textContent = '₹' + formatIN(Math.max(0, originalTotal - subtotal));
-                
+
                 // Store subtotal for coupon calculations
                 window.checkoutSubtotal = subtotal;
                 window.checkoutTotal = subtotal;
-                
+
                 // Initialize coupon system
                 initCouponSystem();
 
@@ -354,26 +358,26 @@
                 showNotification('Error loading cart', 'error');
             }
         };
-        
+
         /**
          * Initialize coupon code functionality
          */
         const initCouponSystem = () => {
             if (typeof window.CouponSystem === 'undefined') return;
-            
+
             const input = document.getElementById('couponInput');
             const applyBtn = document.getElementById('applyCouponBtn');
             const statusEl = document.getElementById('couponStatus');
             const discountRow = document.getElementById('couponDiscountRow');
             const discountPrice = document.getElementById('couponDiscountPrice');
-            
+
             if (!input || !applyBtn) return;
-            
+
             const updateTotal = (discount = 0) => {
                 const newTotal = window.checkoutSubtotal - discount;
                 document.getElementById('totalPrice').textContent = '₹' + formatIN(newTotal);
                 window.checkoutTotal = newTotal;
-                
+
                 if (discount > 0) {
                     discountRow.style.display = 'flex';
                     discountPrice.textContent = '-₹' + formatIN(discount);
@@ -381,10 +385,10 @@
                     discountRow.style.display = 'none';
                 }
             };
-            
+
             const applyCoupon = () => {
                 const result = window.CouponSystem.apply(input.value, window.checkoutSubtotal);
-                
+
                 if (result.valid) {
                     statusEl.innerHTML = `
                         <div class="coupon-applied">
@@ -396,7 +400,7 @@
                     input.disabled = true;
                     applyBtn.disabled = true;
                     updateTotal(result.discount);
-                    
+
                     statusEl.querySelector('.remove-coupon').onclick = () => {
                         window.CouponSystem.remove();
                         statusEl.innerHTML = '';
@@ -405,37 +409,37 @@
                         applyBtn.disabled = false;
                         updateTotal(0);
                     };
-                    
+
                     showToast({ type: 'success', title: 'Coupon Applied!', message: `You save ₹${result.discount}` });
                 } else {
                     showToast({ type: 'error', title: 'Invalid Code', message: result.message });
                 }
             };
-            
+
             applyBtn.onclick = applyCoupon;
             input.onkeypress = (e) => {
                 if (e.key === 'Enter') applyCoupon();
             };
-            
+
             // Initialize available coupons toggle
             initAvailableCoupons(input);
         };
-        
+
         /**
          * Initialize the available coupons dropdown
          */
         const initAvailableCoupons = (inputEl) => {
             const toggleBtn = document.getElementById('toggleCouponsBtn');
             const couponsList = document.getElementById('couponsList');
-            
+
             if (!toggleBtn || !couponsList || typeof window.CouponSystem === 'undefined') return;
-            
+
             // Build coupons HTML
             const coupons = window.CouponSystem.coupons;
             const couponsHTML = Object.entries(coupons).map(([code, coupon]) => {
                 const minText = coupon.minOrder > 0 ? `Min. order ₹${coupon.minOrder}` : 'No minimum order';
                 const valueText = coupon.type === 'percent' ? `${coupon.value}%<br>OFF` : `₹${coupon.value}<br>OFF`;
-                
+
                 return `
                     <div class="coupon-card" data-code="${code}">
                         <div class="coupon-left">
@@ -452,15 +456,15 @@
                     </div>
                 `;
             }).join('');
-            
+
             couponsList.innerHTML = couponsHTML;
-            
+
             // Toggle visibility
             toggleBtn.onclick = () => {
                 couponsList.classList.toggle('hidden');
                 toggleBtn.querySelector('.toggle-icon').classList.toggle('rotated');
             };
-            
+
             // Click to use coupon - works on button or whole card
             couponsList.addEventListener('click', (e) => {
                 const card = e.target.closest('.coupon-card');
@@ -469,17 +473,17 @@
                     if (inputEl) {
                         // Remove applied state from all cards
                         couponsList.querySelectorAll('.coupon-card').forEach(c => c.classList.remove('applied'));
-                        
+
                         // Set code in input
                         inputEl.value = code;
                         inputEl.focus();
-                        
+
                         // Auto-apply the coupon
                         document.getElementById('applyCouponBtn')?.click();
-                        
+
                         // Mark this card as applied
                         card.classList.add('applied');
-                        
+
                         // Collapse the list after short delay
                         setTimeout(() => {
                             couponsList.classList.add('hidden');
@@ -553,7 +557,7 @@
                 } else {
                     showNotification('Order placed successfully!', 'success');
                 }
-                
+
                 // Redirect to order confirmation
                 setTimeout(() => {
                     window.location.href = `orders.html?orderId=${result.orderId}`;
@@ -579,6 +583,11 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Auth UI is initialized by auth-ui.js
             document.body.classList.add('js-enhanced');
+            // Initialize City/State dropdowns
+            if (typeof initLocationDropdowns === 'function') {
+                initLocationDropdowns('state', 'city');
+            }
+
             if (checkAuth()) {
                 await loadOrderSummary();
             }

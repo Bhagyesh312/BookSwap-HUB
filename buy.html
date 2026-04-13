@@ -21,6 +21,13 @@
 
     <!-- Page Transition Loader -->    <link rel="stylesheet" href="page-transition.css">
     <script src="page-transition.js"></script>
+    <script src="cart-ui.js"></script>
+    <script src="wishlist.js"></script>
+    <script src="animations.js"></script>
+    <script src="enhancements.js"></script>
+    <script src="notifications.js"></script>
+    <script src="chat-support.js"></script>
+    <script src="trade.js"></script>
 </head>
 
 <body>
@@ -92,11 +99,6 @@
     </nav>
 
 
-    <!-- ================= HEADER ================= -->
-    <header class="buy-header" data-animate="fade-down">
-        <h1> Browse Books</h1>
-        <p>Find affordable new & used books instantly</p>
-    </header>
 
 
     <!-- ================= SEARCH BAR ================= -->
@@ -295,7 +297,31 @@
                         <span class="detail-original" id="detailsOriginalValue"></span>
                     </div>
 
-                    <button id="detailsAddToCart" class="details-add-btn">🛒 Add to Cart</button>
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button id="detailsAddToCart" class="details-add-btn" style="flex: 1;">🛒 Add to Cart</button>
+                        <button id="proposeTradeBtn" class="propose-trade-btn" style="flex: 1; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; padding: 0 14px; font-family: 'Poppins', sans-serif; font-size: 15px; transition: transform 0.2s, box-shadow 0.2s;">🤝 Propose Trade</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- TRADE PROPOSAL MODAL -->
+    <div id="tradeModal" class="details-modal hidden" role="dialog" aria-modal="true" aria-label="Propose Trade">
+        <div class="details-panel" style="max-width: 600px;">
+            <button id="closeTradeModalBtn" class="close-details-btn" aria-label="Close trade modal">✕</button>
+            <div class="details-content" style="flex-direction: column;">
+                <h2 style="font-size: 22px; color: #1e293b; margin-bottom: 5px;">Propose a Trade</h2>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Select one of your listed books to offer in exchange for <strong id="tradeTargetBookName">this book</strong>.</p>
+                
+                <div id="userListingsContainer" style="display:flex; flex-direction:column; gap:10px; max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                    <!-- user listings will be injected here -->
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="cancelTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-family:'Poppins', sans-serif;">Cancel</button>
+                    <button id="submitTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: bold; cursor: pointer; font-family:'Poppins', sans-serif;" disabled>Send Proposal</button>
                 </div>
             </div>
         </div>
@@ -436,8 +462,20 @@
                 language: book.language || 'N/A',
                 binding: book.binding || 'N/A',
                 quantity: Number(book.quantity !== undefined ? book.quantity : 1),
-                synopsis: book.synopsis || 'No synopsis available'
+                synopsis: book.synopsis || 'No synopsis available',
+                avgRating: Number(book.avgRating || 0),
+                reviewCount: Number(book.reviewCount || 0),
             });
+
+            const renderStars = (avg) => {
+                let html = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (avg >= i) html += '<i class="fa-solid fa-star"></i>';
+                    else if (avg >= i - 0.5) html += '<i class="fa-solid fa-star-half-stroke"></i>';
+                    else html += '<i class="fa-regular fa-star"></i>';
+                }
+                return html;
+            };
 
             const normalizeCartItems = (items = []) => items.map(item => ({
                 id: Number(item.id ?? item.bookId),
@@ -457,6 +495,10 @@
                 const d = b.original > 0 ? Math.round(((b.original - b.price) / b.original) * 100) : 0;
                 const img = b.image || '';
                 const wishlisted = window.wishlistAPI && window.wishlistAPI.isInWishlist(b.id);
+                const stars = b.avgRating ? renderStars(b.avgRating) : '';
+                const ratingHtml = b.reviewCount > 0
+                    ? `<div class="card-rating">${stars}<span class="rating-count">(${b.reviewCount})</span></div>`
+                    : '';
                 return `
             <div class="book-card" data-id="${b.id}" style="--stagger:${index % 12}">
                 <div class="card-image">${img
@@ -473,6 +515,7 @@
                 </div>
                 <h4>${b.title}</h4>
                 <p class="author">By ${b.author}</p>
+                ${ratingHtml}
                 <p class="price">₹${b.price} <span>₹${b.original}</span></p>
                 <div class="card-btns">
                     <button class="buy" data-action="buy" ${b.quantity <= 0 ? 'disabled style="background:#cbd5e1;cursor:not-allowed;" title="Out of Stock"' : ''}>
@@ -961,6 +1004,25 @@
                 currentDetailBookId = null;
             };
 
+            // Fetch ratings for all books in one bulk request and update allBooks in-place
+            const fetchRatingsForBooks = async (books) => {
+                if (!books.length) return;
+                try {
+                    const ids = books.map(b => b.id).join(',');
+                    const res = await fetch(`${API_BASE}/api/reviews/bulk-ratings?ids=${ids}`);
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const ratings = data.ratings || {};
+                    books.forEach(book => {
+                        const r = ratings[book.id] || ratings[String(book.id)];
+                        if (r) {
+                            book.avgRating = r.avgRating;
+                            book.reviewCount = r.reviewCount;
+                        }
+                    });
+                } catch(_) {}
+            };
+
             const loadBooks = async () => {
                 // Show skeleton loading while fetching
                 grid.innerHTML = Array(8).fill(0).map(() => `
@@ -987,6 +1049,9 @@
                         page++;
                     }
                     allBooks = allFetched.map(normalizeBook);
+
+                    // Fetch ratings in background and re-render when ready
+                    fetchRatingsForBooks(allBooks).then(() => apply());
                 } catch (_error) {
                     allBooks = [];
                     showNotification('Backend not reachable. Start server to load books.');
@@ -1196,6 +1261,7 @@
     <script src="enhancements.js"></script>
     <script src="notifications.js"></script>
     <script src="chat-support.js"></script>
+    <script src="trade.js"></script>
 
 </body>
 

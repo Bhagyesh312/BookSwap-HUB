@@ -44,8 +44,8 @@ body {
   cursor: pointer;
   font-weight: 800;
   font-size: 16px;
-  color: #fff;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  background: linear-gradient(135deg, #f97316, #d97706);
   box-shadow: 0 16px 35px rgba(245, 158, 11, 0.25);
   transform: translateY(-2px);
   box-shadow: 0 16px 35px rgba(245, 158, 11, 0.4);
@@ -183,8 +183,8 @@ form {
   cursor: pointer;
   font-weight: 800;
   font-size: 16px;
-  color: #fff;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+  background: linear-gradient(135deg, #f97316, #d97706);
   box-shadow: 0 18px 30px rgba(245, 158, 11, 0.25);
   transform: translateY(-2px);
   box-shadow: 0 18px 30px rgba(245, 158, 11, 0.4);
@@ -266,7 +266,7 @@ form {
 }
 
 .forgot-modal {
-  background: #fff;
+  background: #ffffff;
   border-radius: 20px;
   padding: 32px;
   width: 90%;
@@ -309,7 +309,7 @@ form {
 }
 
 .forgot-modal h2 i {
-  color: #f59e0b;
+  color: #f97316;
 }
 
 .forgot-modal > p {
@@ -354,7 +354,7 @@ form {
 }
 
 .forgot-back a:hover {
-  color: #f59e0b;
+  color: #f97316;
 }
 
 @media (max-width: 480px) {

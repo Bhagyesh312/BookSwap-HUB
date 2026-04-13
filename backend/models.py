@@ -35,6 +35,7 @@ class Book(db.Model):
     seller_name = db.Column(db.String(255))
     seller_contact = db.Column(db.String(50))
     seller_city = db.Column(db.String(100))
+    seller_state = db.Column(db.String(100))
     payment_mode = db.Column(db.String(50))
     description = db.Column(db.Text)
     listed_by = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
@@ -65,6 +66,7 @@ class Book(db.Model):
             'sellerName': self.seller_name,
             'sellerContact': self.seller_contact,
             'sellerCity': self.seller_city,
+            'sellerState': self.seller_state,
             'paymentMode': self.payment_mode,
             'description': self.description,
             'listedBy': self.listed_by,
@@ -88,6 +90,8 @@ class User(db.Model):
     zip = db.Column(db.String(20))
     country = db.Column(db.String(100), default='India')
     role = db.Column(db.String(20), default='user')  # 'user' or 'admin'
+    is_suspended = db.Column(db.Boolean, default=False, nullable=False)
+    suspended_reason = db.Column(db.String(500), nullable=True)
     last_login_at = db.Column(db.DateTime)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     
@@ -121,6 +125,8 @@ class User(db.Model):
             'zip': self.zip,
             'country': self.country,
             'role': self.role,
+            'isSuspended': self.is_suspended,
+            'suspendedReason': self.suspended_reason,
             'createdAt': self.created_at.isoformat() if self.created_at else None,
             'lastLogin': self.last_login_at.isoformat() if self.last_login_at else None
         }
@@ -247,6 +253,31 @@ class ActivityLog(db.Model):
         }
 
 
+class Review(db.Model):
+    """Book review and rating model — one review per user per book, only for buyers."""
+    __tablename__ = 'reviews'
+
+    id         = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    book_id    = db.Column(db.Integer, db.ForeignKey('books.id', ondelete='CASCADE'), nullable=False)
+    user_id    = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    rating     = db.Column(db.Integer, nullable=False)   # 1–5
+    review_text= db.Column(db.Text)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    __table_args__ = (db.UniqueConstraint('book_id', 'user_id', name='uq_review_book_user'),)
+
+    def to_dict(self, reviewer_name=None):
+        return {
+            'id':         self.id,
+            'bookId':     self.book_id,
+            'userId':     self.user_id,
+            'reviewerName': reviewer_name or 'Anonymous',
+            'rating':     self.rating,
+            'reviewText': self.review_text,
+            'createdAt':  self.created_at.isoformat() if self.created_at else None,
+        }
+
+
 class OrderItem(db.Model):
     """Order item model for individual items in an order"""
     __tablename__ = 'order_items'
@@ -269,3 +300,40 @@ class OrderItem(db.Model):
             'quantity': self.quantity,
             'image': self.image
         }
+
+
+class TradeRequest(db.Model):
+    """Peer-to-Peer Trade Request Model"""
+    __tablename__ = 'trade_requests'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    requester_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    offered_book_id = db.Column(db.Integer, db.ForeignKey('books.id', ondelete='CASCADE'), nullable=False)
+    target_book_id = db.Column(db.Integer, db.ForeignKey('books.id', ondelete='CASCADE'), nullable=False)
+    status = db.Column(db.String(20), default='pending')  # 'pending', 'accepted', 'declined', 'completed'
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    # Relationships
+    requester = db.relationship('User', foreign_keys=[requester_id])
+    receiver = db.relationship('User', foreign_keys=[receiver_id])
+    offered_book = db.relationship('Book', foreign_keys=[offered_book_id])
+    target_book = db.relationship('Book', foreign_keys=[target_book_id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'requesterId': self.requester_id,
+            'requesterName': self.requester.name if self.requester else 'Unknown',
+            'receiverId': self.receiver_id,
+            'receiverName': self.receiver.name if self.receiver else 'Unknown',
+            'offeredBookId': self.offered_book_id,
+            'offeredBookTitle': self.offered_book.title if self.offered_book else 'Deleted Book',
+            'offeredBookImage': self.offered_book.image if self.offered_book else None,
+            'targetBookId': self.target_book_id,
+            'targetBookTitle': self.target_book.title if self.target_book else 'Deleted Book',
+            'targetBookImage': self.target_book.image if self.target_book else None,
+            'status': self.status,
+            'createdAt': self.created_at.isoformat() if self.created_at else None
+        }
+

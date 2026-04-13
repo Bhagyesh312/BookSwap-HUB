@@ -15,14 +15,14 @@
 }
 
 .seller-header-content h1 {
-    color: #fff;
+    color: #ffffff;
     font-size: 2rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     gap: 12px;
 }
-.seller-header-content h1 i { color: #f59e0b; }
+.seller-header-content h1 i { color: #f97316; }
 .seller-header-content p { color: #94a3b8; margin-top: 6px; }
 
 .btn-new-listing {
@@ -31,7 +31,7 @@
     gap: 8px;
     padding: 12px 24px;
     background: linear-gradient(135deg, #f97316, #ef4444);
-    color: #fff;
+    color: #ffffff;
     border: none;
     border-radius: 12px;
     font-size: 0.95rem;
@@ -57,7 +57,7 @@
 }
 
 .seller-stat-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 18px;
     padding: 22px;
     display: flex;
@@ -77,11 +77,11 @@
     align-items: center;
     justify-content: center;
     font-size: 1.3rem;
-    color: #fff;
+    color: #ffffff;
 }
 .ss-icon.total   { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
 .ss-icon.live    { background: linear-gradient(135deg, #10b981, #059669); }
-.ss-icon.pending { background: linear-gradient(135deg, #f59e0b, #d97706); }
+.ss-icon.pending { background: linear-gradient(135deg, #f97316, #d97706); }
 .ss-icon.rejected{ background: linear-gradient(135deg, #ef4444, #dc2626); }
 
 .ss-val {
@@ -121,7 +121,7 @@
     border-radius: 10px;
     font-size: 0.9rem;
     color: #475569;
-    background: #fff;
+    background: #ffffff;
     cursor: pointer;
 }
 .seller-filter-select:focus { outline: none; border-color: #f97316; }
@@ -134,7 +134,7 @@
 }
 
 .listing-card {
-    background: #fff;
+    background: #ffffff;
     border-radius: 18px;
     overflow: hidden;
     border: 1px solid #e2e8f0;
@@ -170,16 +170,16 @@
     gap: 5px;
     backdrop-filter: blur(4px);
 }
-.listing-status-badge.live     { background: rgba(16,185,129,0.9); color: #fff; }
-.listing-status-badge.pending  { background: rgba(245,158,11,0.9); color: #fff; }
-.listing-status-badge.rejected { background: rgba(239,68,68,0.9);  color: #fff; }
+.listing-status-badge.live     { background: rgba(16,185,129,0.9); color: #ffffff; }
+.listing-status-badge.pending  { background: rgba(245,158,11,0.9); color: #ffffff; }
+.listing-status-badge.rejected { background: rgba(239,68,68,0.9);  color: #ffffff; }
 
 .listing-discount {
     position: absolute;
     top: 12px;
     right: 12px;
     background: linear-gradient(135deg, #f97316, #ef4444);
-    color: #fff;
+    color: #ffffff;
     padding: 4px 10px;
     border-radius: 20px;
     font-size: 0.75rem;
@@ -221,9 +221,9 @@
     transition: all 0.2s;
 }
 .listing-btn.view   { background: #f0fdf4; color: #16a34a; }
-.listing-btn.view:hover { background: #16a34a; color: #fff; }
+.listing-btn.view:hover { background: #16a34a; color: #ffffff; }
 .listing-btn.delete { background: #fee2e2; color: #dc2626; }
-.listing-btn.delete:hover { background: #dc2626; color: #fff; }
+.listing-btn.delete:hover { background: #dc2626; color: #ffffff; }
 
 /* ── EMPTY STATE ── */
 .empty-listings {
@@ -235,7 +235,7 @@
 .empty-listings h3 { font-size: 1.3rem; color: #1e293b; margin-bottom: 8px; }
 .empty-listings p { margin-bottom: 24px; }
 
-.sk-listing-card { background: #fff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0; }
+.sk-listing-card { background: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0; }
 
 @media (max-width: 768px) {
     .seller-header { padding: 50px 16px 30px; }

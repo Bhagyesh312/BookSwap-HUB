@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,9 @@
     <!-- Page Transition Loader -->
     <link rel="stylesheet" href="page-transition.css">
     <script src="page-transition.js"></script>
+    <script src="locations.js"></script>
 </head>
+
 <body>
     <!-- NAVBAR -->
     <nav class="navbar">
@@ -47,11 +50,15 @@
                 <div class="avatar-label">My Account</div>
                 <form id="avatarUploadForm" style="margin-top: 16px;">
                     <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('avatarInput').click()">Select Image</button>
-                    <button type="button" class="btn btn-primary" id="cropSaveBtn" style="display:none;">Save Image</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="document.getElementById('avatarInput').click()">Select Image</button>
+                    <button type="button" class="btn btn-primary" id="cropSaveBtn" style="display:none;">Save
+                        Image</button>
                 </form>
-                    <div id="cropperModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.98);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
-                    <div style="background:#fff;padding:24px;border-radius:16px;max-width:400px;max-height:90vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);">
+                <div id="cropperModal"
+                    style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(30,41,59,0.98);z-index:10000;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+                    <div
+                        style="background:#ffffff;padding:24px;border-radius:16px;max-width:400px;max-height:90vh;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 40px rgba(0,0,0,0.3);">
                         <img id="cropperImage" style="max-width:350px;max-height:350px;border-radius:50%;" />
                         <div style="margin-top:16px;display:flex;gap:8px;">
                             <button type="button" class="btn btn-secondary" id="cropCancelBtn">Cancel</button>
@@ -94,90 +101,49 @@
                 <form class="profile-form" id="editProfileForm">
                     <div class="form-group">
                         <label for="fullName">Full Name</label>
-                        <input 
-                            type="text" 
-                            id="fullName" 
-                            name="fullName" 
-                            placeholder="Enter your full name"
-                            required
-                        >
+                        <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
                         <span class="form-error" data-error="fullName"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            placeholder="your@email.com"
-                            required
-                        >
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
                         <span class="form-error" data-error="email"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
-                        <input 
-                            type="tel" 
-                            id="phone" 
-                            name="phone" 
-                            placeholder="+91 XXXXX XXXXX"
-                        >
+                        <input type="tel" id="phone" name="phone" placeholder="+91 XXXXX XXXXX">
                         <span class="form-help">Optional - Used for order updates</span>
                     </div>
 
                     <div class="form-group">
                         <label for="address">Address</label>
-                        <textarea 
-                            id="address" 
-                            name="address" 
-                            placeholder="Enter your address"
-                            rows="3"
-                        ></textarea>
+                        <textarea id="address" name="address" placeholder="Enter your address" rows="3"></textarea>
                         <span class="form-help">Optional - Your default shipping address</span>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="city">City</label>
-                            <input 
-                                type="text" 
-                                id="city" 
-                                name="city" 
-                                placeholder="City"
-                            >
+                            <label for="state">State</label>
+                            <select id="state" name="state"></select>
                         </div>
                         <div class="form-group">
-                            <label for="state">State</label>
-                            <input 
-                                type="text" 
-                                id="state" 
-                                name="state" 
-                                placeholder="State"
-                            >
+                            <label for="city">City</label>
+                            <select id="city" name="city" disabled>
+                                <option value="">Select City</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
                             <label for="zip">ZIP Code</label>
-                            <input 
-                                type="text" 
-                                id="zip" 
-                                name="zip" 
-                                placeholder="PIN Code"
-                            >
+                            <input type="text" id="zip" name="zip" placeholder="PIN Code">
                         </div>
                         <div class="form-group">
                             <label for="country">Country</label>
-                            <input 
-                                type="text" 
-                                id="country" 
-                                name="country" 
-                                placeholder="Country"
-                                value="India"
-                            >
+                            <input type="text" id="country" name="country" placeholder="Country" value="India">
                         </div>
                     </div>
 
@@ -214,25 +180,15 @@
 
                     <div class="form-group">
                         <label for="currentPassword">Current Password</label>
-                        <input 
-                            type="password" 
-                            id="currentPassword" 
-                            name="currentPassword" 
-                            placeholder="Enter your current password"
-                            required
-                        >
+                        <input type="password" id="currentPassword" name="currentPassword"
+                            placeholder="Enter your current password" required>
                         <span class="form-error" data-error="currentPassword"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="newPassword">New Password</label>
-                        <input 
-                            type="password" 
-                            id="newPassword" 
-                            name="newPassword" 
-                            placeholder="Enter new password"
-                            required
-                        >
+                        <input type="password" id="newPassword" name="newPassword" placeholder="Enter new password"
+                            required>
                         <div class="password-strength" id="passwordStrength">
                             <div class="strength-bar"></div>
                         </div>
@@ -242,13 +198,8 @@
 
                     <div class="form-group">
                         <label for="confirmPassword">Confirm Password</label>
-                        <input 
-                            type="password" 
-                            id="confirmPassword" 
-                            name="confirmPassword" 
-                            placeholder="Re-enter new password"
-                            required
-                        >
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                            placeholder="Re-enter new password" required>
                         <span class="form-error" data-error="confirmPassword"></span>
                     </div>
 
@@ -360,12 +311,7 @@
                 </ul>
                 <p class="warning-text">will be permanently deleted.</p>
                 <p class="warning-text">Type your email to confirm:</p>
-                <input 
-                    type="email" 
-                    id="confirmEmail" 
-                    placeholder="Enter your email"
-                    class="modal-input"
-                >
+                <input type="email" id="confirmEmail" placeholder="Enter your email" class="modal-input">
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" id="cancelDeleteBtn">Cancel</button>
@@ -473,7 +419,7 @@
         async function loadProfile() {
             let user = null;
             const authUserStr = localStorage.getItem('authUser');
-            
+
             if (authUserStr) {
                 try {
                     user = JSON.parse(authUserStr);
@@ -481,7 +427,7 @@
                     console.error('Failed to parse authUser:', e);
                 }
             }
-            
+
             // If no user data, try to fetch from server
             if (!user) {
                 const token = localStorage.getItem('authToken');
@@ -490,7 +436,7 @@
                     setTimeout(() => window.location.href = 'login.html', 1200);
                     return;
                 }
-                
+
                 try {
                     const response = await fetch('/api/auth/me', {
                         headers: getAuthHeader()
@@ -532,6 +478,11 @@
             document.getElementById('state').value = user.state || '';
             document.getElementById('zip').value = user.zip || '';
             document.getElementById('country').value = user.country || 'India';
+
+            // Initialize City/State dropdowns with user data
+            if (typeof initLocationDropdowns === 'function') {
+                initLocationDropdowns('state', 'city', user.state || '', user.city || '');
+            }
         }
 
         // ===== TAB SWITCHING =====
@@ -811,7 +762,7 @@
         async function initProfile() {
             // Initialize tabs first - should always work
             initTabs();
-            
+
             if (checkAuth()) {
                 await loadProfile();
             }
@@ -819,16 +770,16 @@
 
         // Initialize tabs immediately when DOM is ready
         document.addEventListener('DOMContentLoaded', initTabs);
-        
+
         // Full initialization on window load
         window.addEventListener('load', initProfile);
     </script>
     <script src="enhancements.js"></script>
 </body>
-    <!-- Cropper.js CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
-    <script>
+<!-- Cropper.js CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
     let cropper;
     const avatarInput = document.getElementById('avatarInput');
     const cropperModal = document.getElementById('cropperModal');
@@ -839,11 +790,11 @@
     const cropConfirmBtn = document.getElementById('cropConfirmBtn');
     const tabsNav = document.querySelector('.tabs-nav');
 
-    avatarInput.addEventListener('change', function(e) {
+    avatarInput.addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             cropperImage.src = event.target.result;
             cropperModal.style.display = 'flex';
             if (tabsNav) tabsNav.style.display = 'none';
@@ -864,14 +815,14 @@
         reader.readAsDataURL(file);
     });
 
-    cropCancelBtn.addEventListener('click', function() {
+    cropCancelBtn.addEventListener('click', function () {
         cropperModal.style.display = 'none';
         if (tabsNav) tabsNav.style.display = '';
         if (cropper) cropper.destroy();
         avatarInput.value = '';
     });
 
-    cropConfirmBtn.addEventListener('click', function() {
+    cropConfirmBtn.addEventListener('click', function () {
         if (!cropper) return;
         const canvas = cropper.getCroppedCanvas({
             width: 200,
@@ -886,5 +837,6 @@
         avatarInput.value = '';
         // Here you can send dataUrl to your backend via AJAX for saving
     });
-    </script>
+</script>
+
 </html>

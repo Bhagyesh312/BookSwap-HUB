@@ -7,7 +7,7 @@
 
 /* ================= BODY & CORE ================= */
 body {
-    background: linear-gradient(180deg, #f8fafc 0%, #faf5ff 55%, #f8fafc 100%);
+    background: linear-gradient(180deg, #f8fafc 0%, #f8fafc 55%, #f8fafc 100%);
     min-height: 100vh;
 }
 
@@ -72,7 +72,7 @@ body {
     justify-content: center;
     padding: 16px 16px 8px;
     background: transparent;
-    margin: 8px 20px 14px;
+    margin: 32px 20px 14px;
 }
 
 .search-container {
@@ -101,14 +101,14 @@ body {
 
 .search-bar input:focus {
     outline: none;
-    border-color: #f59e0b;
+    border-color: #f97316;
     box-shadow: none;
 }
 
 .search-bar button {
     padding: 13px 24px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
+    background: linear-gradient(135deg, #f97316, #d97706);
+    color: #ffffff;
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -232,7 +232,7 @@ body {
 }
 
 .section-btn:hover {
-    border-color: #f59e0b;
+    border-color: #f97316;
     transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15);
     color: #0f172a;
@@ -244,7 +244,7 @@ body {
 
 .section-btn.active {
     background: linear-gradient(135deg, #0f172a, #1e293b);
-    color: #fff;
+    color: #ffffff;
     border-color: transparent;
     box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
     transform: translateY(-2px);
@@ -256,8 +256,8 @@ body {
 
 /* Special styling for "All" button */
 .section-btn[data-section="all"] {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
+    background: linear-gradient(135deg, #f97316, #d97706);
+    color: #ffffff;
     border-color: transparent;
     font-weight: 700;
 }
@@ -351,7 +351,7 @@ body {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f97316' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300A19B' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 14px center;
     background-size: 16px;
@@ -374,8 +374,8 @@ body {
 }
 
 .filters select option:checked {
-    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
-    color: white;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #ffffff;
     font-weight: 600;
 }
 
@@ -384,13 +384,13 @@ body {
 }
 
 .filters select:hover {
-    border-color: #f59e0b;
+    border-color: #f97316;
     box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300827D' stroke-width='2.5'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
 }
 
 .filters select:focus {
-    border-color: #f59e0b;
+    border-color: #f97316;
     outline: none;
     box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 6px 20px rgba(245, 158, 11, 0.1);
 }
@@ -428,18 +428,18 @@ body {
 }
 
 .select-trigger:hover {
-    border-color: #f59e0b;
+    border-color: #f97316;
     box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .select-trigger:focus {
-    border-color: #f59e0b;
+    border-color: #f97316;
     outline: none;
     box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15), 0 6px 20px rgba(245, 158, 11, 0.1);
 }
 
 .custom-select.open .select-trigger {
-    border-color: #f59e0b;
+    border-color: #f97316;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     box-shadow: 0 -4px 20px rgba(245, 158, 11, 0.1);
@@ -447,7 +447,7 @@ body {
 
 .select-arrow {
     font-size: 12px;
-    color: #f59e0b;
+    color: #f97316;
     transition: transform 0.3s ease;
 }
 
@@ -464,7 +464,7 @@ body {
     margin: 0;
     padding: 0;
     background: #ffffff;
-    border: 2px solid #f59e0b;
+    border: 2px solid #f97316;
     border-top: none;
     border-radius: 0 0 12px 12px;
     box-shadow: 0 12px 32px rgba(245, 158, 11, 0.2);
@@ -510,16 +510,16 @@ body {
 }
 
 .select-options li:hover {
-    background: linear-gradient(135deg, #fef7ed 0%, #fff1e6 100%);
-    color: #f59e0b;
+    background: linear-gradient(135deg, #fef7ed 0%, #ffffff1e6 100%);
+    color: #f97316;
 }
 
 .select-options li:hover i {
-    color: #f59e0b;
+    color: #f97316;
 }
 
 .select-options li.selected {
-    background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
     color: #ffffff;
     font-weight: 700;
 }
@@ -539,7 +539,7 @@ body {
 }
 
 .select-options::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #f59e0b, #ea580c);
+    background: linear-gradient(180deg, #f97316, #ea580c);
     border-radius: 3px;
 }
 
@@ -704,7 +704,7 @@ body {
     position: absolute;
     top: 12px;
     left: 12px;
-    background: linear-gradient(135deg, #f59e0b, #facc15);
+    background: linear-gradient(135deg, #f97316, #facc15);
     color: #000;
     padding: 5px 12px;
     border-radius: 8px;
@@ -752,7 +752,7 @@ body {
 
 .price {
     font-weight: 800;
-    color: #f59e0b;
+    color: #f97316;
     font-size: 19px;
     padding: 4px 16px 0;
     margin: 0;
@@ -801,7 +801,7 @@ body {
 .wishlist-heart:hover,
 .wishlist-heart.wishlisted {
     color: #ef4444;
-    background: #fff;
+    background: #ffffff;
     transform: scale(1.12);
 }
 
@@ -819,7 +819,7 @@ body {
 
 .cart {
     background: linear-gradient(135deg, #ea580c, #dc2626);
-    color: #fff;
+    color: #ffffff;
     box-shadow: none;
 }
 
@@ -829,8 +829,8 @@ body {
 }
 
 .buy {
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
+    background: linear-gradient(135deg, #f97316, #d97706);
+    color: #ffffff;
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.24);
 }
 
@@ -842,7 +842,7 @@ body {
 .view-details {
     flex: 1;
     padding: 10px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #f97316, #d97706);
     border: none;
     border-radius: 10px;
     cursor: pointer;
@@ -853,7 +853,7 @@ body {
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.28);
-    color: #fff;
+    color: #ffffff;
 }
 
 .view-details:hover {
@@ -906,7 +906,7 @@ body {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #f59e0b, #d97706, #facc15, #f59e0b);
+    background: linear-gradient(90deg, #f97316, #d97706, #facc15, #f97316);
     background-size: 300% 100%;
     animation: shimmer 4s ease-in-out infinite;
 }
@@ -933,7 +933,7 @@ body {
 .footer-box h3 {
     margin-bottom: 14px;
     font-size: 18px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
+    background: linear-gradient(135deg, #f97316, #d97706);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -1045,7 +1045,7 @@ body {
 .details-panel {
     width: 100%;
     max-width: 700px;
-    background: white;
+    background: #ffffff;
     border-radius: 20px;
     padding: 40px;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
@@ -1123,7 +1123,7 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 16px;
     padding: 20px;
-    background: #fffafa;
+    background: #ffffffafa;
     border-radius: 12px;
 }
 
@@ -1152,7 +1152,7 @@ body {
     padding: 20px;
     background: #f8fafc;
     border-radius: 12px;
-    border-left: 4px solid #f59e0b;
+    border-left: 4px solid #f97316;
 }
 
 .details-synopsis h3 {
@@ -1192,8 +1192,8 @@ body {
 /* Add to Cart Button */
 .details-add-btn {
     padding: 14px 24px;
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #fff;
+    background: linear-gradient(135deg, #f97316, #d97706);
+    color: #ffffff;
     border: none;
     border-radius: 12px;
     cursor: pointer;
@@ -1255,7 +1255,7 @@ body {
     top: 20px;
     right: 20px;
     background: #d97706;
-    color: white;
+    color: #ffffff;
     padding: 16px 24px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
@@ -1270,4 +1270,18 @@ body {
 .notification.show {
     opacity: 1;
     transform: translateX(0);
+}
+
+/* ===== CARD RATING STARS ===== */
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 2px 0 4px;
+    font-size: 12px;
+    color: #f97316;
+}
+.card-rating .rating-count {
+    color: #94a3b8;
+    font-size: 11px;
 }

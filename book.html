@@ -134,6 +134,7 @@
 
             <div id="stockStatus" class="stock-status"></div>
 
+
             <!-- Add to Cart -->
             <div class="book-cart-row">
                 <div class="qty-control">
@@ -144,10 +145,18 @@
                 <button id="addToCartBtn" class="btn-add-cart" onclick="addToCartDetail()">
                     <i class="fa-solid fa-cart-plus"></i> Add to Cart
                 </button>
-                <a href="checkout.html" class="btn-buy-now" id="buyNowBtn">
+                <button class="btn-buy-now" id="buyNowBtn" onclick="buyNow()">
                     <i class="fa-solid fa-bolt"></i> Buy Now
-                </a>
+                </button>
             </div>
+            
+            <!-- Propose Trade -->
+            <div style="margin-top: 15px;">
+                <button id="proposeTradeBtn" class="propose-trade-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 16px; transition: transform 0.2s, box-shadow 0.2s;">
+                    🤝 Propose Trade
+                </button>
+            </div>
+
 
             <!-- Book Meta -->
             <div class="book-meta-grid">
@@ -185,6 +194,38 @@
         <p id="synopsisText" class="synopsis-text"></p>
     </div>
 
+    <!-- REVIEWS SECTION -->
+    <div id="reviewsSection" class="reviews-section">
+        <h3><i class="fa-solid fa-star"></i> Ratings & Reviews</h3>
+
+        <!-- Average rating summary -->
+        <div class="rating-summary" id="ratingSummary">
+            <div class="rating-big" id="ratingBig">—</div>
+            <div class="rating-stars-big" id="ratingStarsBig"></div>
+            <div class="rating-count-label" id="ratingCountLabel">No reviews yet</div>
+        </div>
+
+        <!-- Write a review (shown only to verified buyers) -->
+        <div id="writeReviewBox" class="write-review-box hidden">
+            <h4>Write a Review</h4>
+            <div class="star-input" id="starInput">
+                <i class="fa-regular fa-star" data-val="1"></i>
+                <i class="fa-regular fa-star" data-val="2"></i>
+                <i class="fa-regular fa-star" data-val="3"></i>
+                <i class="fa-regular fa-star" data-val="4"></i>
+                <i class="fa-regular fa-star" data-val="5"></i>
+            </div>
+            <textarea id="reviewTextInput" placeholder="Share your thoughts about this book..." rows="3"></textarea>
+            <button id="submitReviewBtn" class="btn-submit-review" onclick="submitReview()">Submit Review</button>
+        </div>
+        <p id="reviewLoginPrompt" class="review-login-prompt hidden">
+            <a href="login.html">Login</a> and purchase this book to leave a review.
+        </p>
+
+        <!-- Existing reviews list -->
+        <div id="reviewsList" class="reviews-list"></div>
+    </div>
+
     <!-- RELATED BOOKS -->
     <div class="related-section">
         <h3><i class="fa-solid fa-layer-group"></i> You Might Also Like</h3>
@@ -192,6 +233,27 @@
     </div>
 </div>
 
+
+
+    <!-- TRADE PROPOSAL MODAL -->
+    <div id="tradeModal" class="details-modal hidden" role="dialog" aria-modal="true" aria-label="Propose Trade">
+        <div class="details-panel" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
+            <button id="closeTradeModalBtn" class="close-details-btn" aria-label="Close trade modal">✕</button>
+            <div class="details-content" style="flex-direction: column;">
+                <h2 style="font-size: 22px; color: #1e293b; margin-bottom: 5px;">Propose a Trade</h2>
+                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Select one of your listed books to offer in exchange for <strong id="tradeTargetBookName">this book</strong>.</p>
+                
+                <div id="userListingsContainer" style="display:flex; flex-direction:column; gap:10px; max-height: 300px; overflow-y: auto; padding-right: 10px;">
+                    <!-- user listings will be injected here -->
+                </div>
+                
+                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                    <button id="cancelTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-family:'Poppins', sans-serif;">Cancel</button>
+                    <button id="submitTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: bold; cursor: pointer; font-family:'Poppins', sans-serif;" disabled>Send Proposal</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <!-- FOOTER -->
 <footer class="footer"><p class="footer-bottom">© 2026 BookSwap Hub</p></footer>
@@ -203,6 +265,7 @@
 <script src="wishlist.js"></script>
 <script src="notifications.js"></script>
 <script src="chat-support.js"></script>
+<script src="trade.js"></script>
 <script>
 const API_BASE = '';
 let currentBook = null;
@@ -237,6 +300,7 @@ async function loadBook() {
         currentBook = book;
         renderBook(book);
         loadRelated(book.category, book.id);
+        loadReviews(book.id);
     } catch (e) {
         showNotification('Book not found', 'error');
         setTimeout(() => window.location.href = 'buy.html', 1500);
@@ -381,6 +445,29 @@ async function addToCartDetail() {
     if (window.updateCount) window.updateCount();
 }
 
+async function buyNow() {
+    if (!currentBook) return;
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    if (!token) {
+        showNotification('Please login to continue', 'error');
+        setTimeout(() => window.location.href = 'login.html', 1200);
+        return;
+    }
+    const btn = document.getElementById('buyNowBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
+    const item = { bookId: currentBook.id, quantity: selectedQty, title: currentBook.title, price: parseFloat(currentBook.price), original: parseFloat(currentBook.original || currentBook.price), image: currentBook.image };
+    try {
+        await fetch(`${API_BASE}/api/cart`, { method: 'DELETE', headers: getAuthHeaders() });
+        const res = await fetch(`${API_BASE}/api/cart`, { method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(item) });
+        if (!res.ok) throw new Error();
+    } catch {
+        localStorage.setItem('cart', JSON.stringify([{ id: item.bookId, qty: item.quantity, title: item.title, price: item.price, original: item.original, image: item.image }]));
+    }
+    if (window.updateCount) window.updateCount();
+    window.location.href = 'checkout.html';
+}
+
 function saveToLocalCart(item) {
     const cart = JSON.parse(localStorage.getItem('cart') || '[]');
     const existing = cart.find(c => c.id === item.bookId);
@@ -438,6 +525,113 @@ async function loadRelated(category, excludeId) {
 }
 
 document.addEventListener('DOMContentLoaded', () => { loadBook(); if (window.initAuthUI) initAuthUI(); });
+
+// ===== REVIEWS =====
+let selectedRating = 0;
+
+function renderStars(avg, size = 'sm') {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (avg >= i) html += `<i class="fa-solid fa-star"></i>`;
+        else if (avg >= i - 0.5) html += `<i class="fa-solid fa-star-half-stroke"></i>`;
+        else html += `<i class="fa-regular fa-star"></i>`;
+    }
+    return html;
+}
+
+async function loadReviews(bookId) {
+    try {
+        const res = await fetch(`${API_BASE}/api/books/${bookId}/reviews`);
+        const data = await res.json();
+        renderReviewSummary(data.avgRating, data.reviewCount);
+        renderReviewsList(data.reviews || []);
+        if (currentBook) { currentBook.avgRating = data.avgRating; currentBook.reviewCount = data.reviewCount; }
+    } catch(e) {}
+
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    if (token) {
+        // Check if user purchased this book — show write box if yes
+        try {
+            const res = await fetch(`${API_BASE}/api/orders/`, { headers: { 'Authorization': `Bearer ${token}` } });
+            const data = await res.json();
+            const bid = Number(bookId);
+            const purchased = (data.orders || []).some(o =>
+                (o.items || []).some(i => Number(i.bookId) === bid)
+            );
+            if (purchased) {
+                document.getElementById('writeReviewBox').classList.remove('hidden');
+                document.getElementById('reviewLoginPrompt').classList.add('hidden');
+                setupStarInput();
+            } else {
+                document.getElementById('reviewLoginPrompt').classList.remove('hidden');
+                document.getElementById('reviewLoginPrompt').innerHTML = 'Purchase this book to leave a review.';
+            }
+        } catch(e) {
+            document.getElementById('reviewLoginPrompt').classList.remove('hidden');
+            document.getElementById('reviewLoginPrompt').innerHTML = 'Purchase this book to leave a review.';
+        }
+    } else {
+        document.getElementById('reviewLoginPrompt').classList.remove('hidden');
+    }
+}
+
+function renderReviewSummary(avg, count) {
+    document.getElementById('ratingBig').textContent = avg > 0 ? avg.toFixed(1) : '—';
+    document.getElementById('ratingStarsBig').innerHTML = avg > 0 ? renderStars(avg) : '';
+    document.getElementById('ratingCountLabel').textContent = count > 0 ? `${count} review${count !== 1 ? 's' : ''}` : 'No reviews yet';
+}
+
+function renderReviewsList(reviews) {
+    const list = document.getElementById('reviewsList');
+    if (!reviews.length) { list.innerHTML = '<p class="no-reviews">Be the first to review this book!</p>'; return; }
+    list.innerHTML = reviews.map(r => `
+        <div class="review-card">
+            <div class="review-header">
+                <span class="reviewer-name">${r.reviewerName}</span>
+                <span class="review-stars">${renderStars(r.rating)}</span>
+                <span class="review-date">${new Date(r.createdAt).toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'})}</span>
+            </div>
+            ${r.reviewText ? `<p class="review-text">${r.reviewText}</p>` : ''}
+        </div>`).join('');
+}
+
+function setupStarInput() {
+    const stars = document.querySelectorAll('#starInput i');
+    stars.forEach(star => {
+        star.addEventListener('mouseover', () => highlightStars(+star.dataset.val));
+        star.addEventListener('mouseout', () => highlightStars(selectedRating));
+        star.addEventListener('click', () => { selectedRating = +star.dataset.val; highlightStars(selectedRating); });
+    });
+}
+
+function highlightStars(val) {
+    document.querySelectorAll('#starInput i').forEach((s, idx) => {
+        s.className = idx < val ? 'fa-solid fa-star' : 'fa-regular fa-star';
+    });
+}
+
+async function submitReview() {
+    if (!selectedRating) { showNotification('Please select a star rating', 'error'); return; }
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    const reviewText = document.getElementById('reviewTextInput').value.trim();
+    const btn = document.getElementById('submitReviewBtn');
+    btn.disabled = true;
+    try {
+        const res = await fetch(`${API_BASE}/api/books/${currentBook.id}/reviews`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify({ rating: selectedRating, reviewText })
+        });
+        const data = await res.json();
+        if (!res.ok) { showNotification(data.error || 'Failed to submit review', 'error'); btn.disabled = false; return; }
+        showNotification('Review submitted!', 'success');
+        document.getElementById('reviewTextInput').value = '';
+        selectedRating = 0;
+        highlightStars(0);
+        loadReviews(currentBook.id);
+    } catch(e) { showNotification('Failed to submit review', 'error'); }
+    btn.disabled = false;
+}
 </script>
 </body>
 </html>

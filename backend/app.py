@@ -58,6 +58,8 @@ def create_app(config_name=None):
     from routes.admin import admin_bp
     from routes.wishlist import wishlist_bp
     from routes.notifications import notifications_bp
+    from routes.reviews import reviews_bp
+    from routes.trades import trades_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(books_bp)
@@ -66,10 +68,12 @@ def create_app(config_name=None):
     app.register_blueprint(admin_bp)
     app.register_blueprint(wishlist_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(reviews_bp)
+    app.register_blueprint(trades_bp)
     
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')
-    def uploaded_file(filename):
+    def serve_uploads(filename):
         upload_folder = app.config.get('UPLOAD_FOLDER', os.path.join(os.path.dirname(__file__), 'uploads'))
         return send_from_directory(upload_folder, filename)
 

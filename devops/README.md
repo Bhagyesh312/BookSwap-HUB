@@ -107,14 +107,28 @@ BookSwap Hub/
 
 ## Quick Start
 
-### 1. Clone the repo
+### Option 1: Run with Docker (Recommended)
 
-```bash
-git clone https://github.com/Bhagyesh312/BookSwap-HUB.git
-cd BookSwap-HUB
-```
+The easiest way to run the full application (PostgreSQL + Flask Backend + Frontend) is using Docker.
 
-### 2. Set up the backend
+1. Ensure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is installed and running.
+2. Clone the repo and navigate to the project directory:
+   ```bash
+   git clone https://github.com/Bhagyesh312/BookSwap-HUB.git
+   cd BookSwap-HUB
+   ```
+3. Run the containers:
+   ```bash
+   docker-compose up --build
+   ```
+4. *That's it!* Docker will build the Flask app, configure the PostgreSQL database, and run all required SQL migrations automatically.
+5. Once started, open **`http://localhost:5000`** in your browser to view the application.
+
+> Note: To log in as an Admin, use `Bhagyesh312@gmail.com` (password: `test@123`) which is seeded in the default database, or run `docker exec -it bookswap_web python backend/make_admin.py your@email.com`.
+
+---
+
+### Option 2: Manual Setup
 
 ```bash
 cd backend

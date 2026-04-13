@@ -43,8 +43,10 @@ def get_stats():
         total_books = Book.query.count()
         total_orders = Order.query.count()
         
-        # Revenue calculation (using correct column name)
-        total_revenue = db.session.query(func.sum(Order.total_amount)).scalar() or 0
+        # Revenue calculation (exclude cancelled orders)
+        total_revenue = db.session.query(func.sum(Order.total_amount)).filter(
+            ~Order.status.ilike('cancelled')
+        ).scalar() or 0
         
         # Order status breakdown
         pending_orders = Order.query.filter(Order.status.ilike('pending')).count()
@@ -58,12 +60,18 @@ def get_stats():
         
         new_users = User.query.filter(User.created_at >= week_ago).count()
         new_orders = Order.query.filter(Order.created_at >= week_ago).count()
-        week_revenue = db.session.query(func.sum(Order.total_amount)).filter(Order.created_at >= week_ago).scalar() or 0
+        week_revenue = db.session.query(func.sum(Order.total_amount)).filter(
+            Order.created_at >= week_ago,
+            ~Order.status.ilike('cancelled')
+        ).scalar() or 0
         
         # Today's stats
         today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
         today_orders = Order.query.filter(Order.created_at >= today_start).count()
-        today_revenue = db.session.query(func.sum(Order.total_amount)).filter(Order.created_at >= today_start).scalar() or 0
+        today_revenue = db.session.query(func.sum(Order.total_amount)).filter(
+            Order.created_at >= today_start,
+            ~Order.status.ilike('cancelled')
+        ).scalar() or 0
         
         return jsonify({
             'totalUsers': total_users,
@@ -105,7 +113,8 @@ def get_daily_stats():
 
             revenue = db.session.query(func.sum(Order.total_amount)).filter(
                 Order.created_at >= day_start,
-                Order.created_at <  day_end
+                Order.created_at <  day_end,
+                ~Order.status.ilike('cancelled')
             ).scalar() or 0
 
             orders = Order.query.filter(
@@ -188,6 +197,38 @@ def delete_user(user_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+
+
+@admin_bp.route('/users/<int:user_id>/suspend', methods=['PATCH'])
+@require_auth
+@require_admin
+def suspend_user(user_id):
+    """Suspend or unsuspend a user account."""
+    from flask import request
+    data = request.get_json() or {}
+    suspend = bool(data.get('suspend', True))
+    reason  = (data.get('reason') or '').strip()[:500]
+
+    if user_id == g.user['id']:
+        return jsonify({'error': 'Cannot suspend your own account'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    if user.role == 'admin':
+        return jsonify({'error': 'Cannot suspend admin accounts'}), 400
+
+    user.is_suspended = suspend
+    user.suspended_reason = reason if suspend else None
+    action_label = 'suspend_user' if suspend else 'unsuspend_user'
+    log_action(action_label, 'user', user_id,
+               f'{"Suspended" if suspend else "Unsuspended"} user {user.name} ({user.email})'
+               + (f' — reason: {reason}' if reason and suspend else ''))
+    db.session.commit()
+    return jsonify({
+        'message': f'User {"suspended" if suspend else "unsuspended"} successfully',
+        'user': user.to_full_dict()
+    })
 
 
 @admin_bp.route('/users/<int:user_id>/role', methods=['PATCH'])
@@ -475,7 +516,17 @@ def update_book_stock(book_id):
             
         book.quantity = int(new_quantity)
         db.session.commit()
-        
+
+        # Fire inventory alert if admin manually sets stock to zero
+        if book.quantity == 0:
+            try:
+                from utils.email import send_inventory_alert
+                admins = User.query.filter_by(role='admin').all()
+                for admin in admins:
+                    send_inventory_alert(admin.email, book.title, book.id, book.author)
+            except Exception:
+                pass
+
         return jsonify({
             'message': 'Book stock updated successfully',
             'book': book.to_dict()

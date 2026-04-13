@@ -110,24 +110,24 @@
         <!-- Order Status Breakdown -->
         <div class="order-status-bar" id="orderStatusBar">
             <div class="status-item pending" id="pendingBar" style="flex:1">
-                <span class="count" id="pendingCount">0</span>
-                <span class="label">Pending</span>
+                <span class="status-count" id="pendingCount">0</span>
+                <span class="status-label">Pending</span>
             </div>
             <div class="status-item processing" id="processingBar" style="flex:0">
-                <span class="count" id="processingCount">0</span>
-                <span class="label">Processing</span>
+                <span class="status-count" id="processingCount">0</span>
+                <span class="status-label">Processing</span>
             </div>
             <div class="status-item shipped" id="shippedBar" style="flex:0">
-                <span class="count" id="shippedCount">0</span>
-                <span class="label">Shipped</span>
+                <span class="status-count" id="shippedCount">0</span>
+                <span class="status-label">Shipped</span>
             </div>
             <div class="status-item delivered" id="deliveredBar" style="flex:0">
-                <span class="count" id="deliveredCount">0</span>
-                <span class="label">Delivered</span>
+                <span class="status-count" id="deliveredCount">0</span>
+                <span class="status-label">Delivered</span>
             </div>
             <div class="status-item cancelled" id="cancelledBar" style="flex:0">
-                <span class="count" id="cancelledCount">0</span>
-                <span class="label">Cancelled</span>
+                <span class="status-count" id="cancelledCount">0</span>
+                <span class="status-label">Cancelled</span>
             </div>
         </div>
 
@@ -656,7 +656,7 @@
                         labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
                         datasets: [{
                             data: [0, 0, 0, 0, 0],
-                            backgroundColor: ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#ef4444'],
+                            backgroundColor: ['#f97316', '#3b82f6', '#8b5cf6', '#10b981', '#ef4444'],
                             borderWidth: 0,
                             hoverOffset: 4
                         }]
@@ -689,11 +689,11 @@
                             label: 'Revenue (₹)',
                             data: [0, 0, 0, 0, 0, 0, 0], // Placeholders
                             borderColor: '#f97316',
-                            backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
                             borderWidth: 3,
                             fill: true,
                             tension: 0.4,
-                            pointBackgroundColor: '#fff',
+                            pointBackgroundColor: '#ffffff',
                             pointBorderColor: '#f97316',
                             pointBorderWidth: 2,
                             pointRadius: 4,
@@ -871,7 +871,7 @@
                         borderWidth: 2,
                         fill: false,
                         tension: 0.4,
-                        pointBackgroundColor: '#fff',
+                        pointBackgroundColor: '#ffffff',
                         pointBorderColor: '#3b82f6',
                         pointBorderWidth: 2,
                         pointRadius: 4,
@@ -994,13 +994,16 @@
                     <tr data-id="${user.id}">
                         <td><input type="checkbox" class="row-check" data-id="${user.id}"></td>
                         <td>${user.id}</td>
-                        <td>${user.name}</td>
+                        <td>${user.name}${user.isSuspended ? ' <span class="suspended-badge">Suspended</span>' : ''}</td>
                         <td>${user.email}</td>
                         <td><span class="role-badge ${user.role}">${user.role}</span></td>
                         <td>${new Date(user.createdAt || user.created_at).toLocaleDateString()}</td>
                         <td class="actions">
                             <button class="action-btn promote" onclick="toggleRole(${user.id}, '${user.role}')" title="${user.role === 'admin' ? 'Demote to User' : 'Promote to Admin'}">
                                 <i class="fa-solid ${user.role === 'admin' ? 'fa-arrow-down' : 'fa-arrow-up'}"></i>
+                            </button>
+                            <button class="action-btn ${user.isSuspended ? 'view' : 'edit'}" onclick="toggleSuspend(${user.id}, ${user.isSuspended})" title="${user.isSuspended ? 'Unsuspend User' : 'Suspend User'}" ${user.role === 'admin' ? 'disabled' : ''}>
+                                <i class="fa-solid ${user.isSuspended ? 'fa-lock-open' : 'fa-ban'}"></i>
                             </button>
                             <button class="action-btn delete" onclick="deleteUser(${user.id})" title="Delete User" ${user.role === 'admin' ? 'disabled' : ''}>
                                 <i class="fa-solid fa-trash"></i>
@@ -1054,6 +1057,9 @@
                             </button>
                             <button class="action-btn promote" onclick="updateStock(${book.id}, ${book.quantity})" title="Update Stock">
                                 <i class="fa-solid fa-boxes-stacked"></i>
+                            </button>
+                            <button class="action-btn view" onclick="viewBookReviews(${book.id}, '${book.title.replace(/'/g, "\\'")}')" title="View Reviews">
+                                <i class="fa-solid fa-star"></i>
                             </button>
                             <button class="action-btn delete" onclick="deleteBook(${book.id})" title="Delete Book">
                                 <i class="fa-solid fa-trash"></i>
@@ -1133,8 +1139,34 @@
             }
         }
 
-        async function toggleRole(userId, currentRole) {
-            const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        async function toggleSuspend(userId, isSuspended) {
+            if (isSuspended) {
+                if (!confirm('Unsuspend this user? They will be able to log in again.')) return;
+                try {
+                    const res = await fetch(`${API_BASE}/api/admin/users/${userId}/suspend`, {
+                        method: 'PATCH', headers: getAuthHeaders(),
+                        body: JSON.stringify({ suspend: false })
+                    });
+                    if (!res.ok) throw new Error((await res.json()).error);
+                    showNotification('User unsuspended successfully', 'success');
+                    loadUsers();
+                } catch (err) { showNotification(err.message, 'error'); }
+            } else {
+                const reason = prompt('Reason for suspension (shown to user on login):');
+                if (reason === null) return; // cancelled
+                try {
+                    const res = await fetch(`${API_BASE}/api/admin/users/${userId}/suspend`, {
+                        method: 'PATCH', headers: getAuthHeaders(),
+                        body: JSON.stringify({ suspend: true, reason: reason.trim() })
+                    });
+                    if (!res.ok) throw new Error((await res.json()).error);
+                    showNotification('User suspended successfully', 'success');
+                    loadUsers();
+                } catch (err) { showNotification(err.message, 'error'); }
+            }
+        }
+
+        async function toggleRole(userId, currentRole) {            const newRole = currentRole === 'admin' ? 'user' : 'admin';
 
             if (!confirm(`Are you sure you want to ${newRole === 'admin' ? 'promote' : 'demote'} this user?`)) return;
 
@@ -1222,6 +1254,59 @@
             } catch (err) {
                 showNotification('Failed to delete book', 'error');
             }
+        }
+
+        // View and manage reviews for a book
+        async function viewBookReviews(bookId, bookTitle) {
+            try {
+                const res = await fetch(`${API_BASE}/api/books/${bookId}/reviews`);
+                const data = await res.json();
+                const reviews = data.reviews || [];
+
+                const reviewsHTML = reviews.length === 0
+                    ? '<p style="color:#64748b;text-align:center;padding:20px;">No reviews yet</p>'
+                    : reviews.map(r => `
+                        <div style="border:1px solid #e2e8f0;border-radius:8px;padding:12px 16px;margin-bottom:10px;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                                <strong style="color:#1e293b;font-size:14px;">${r.reviewerName}</strong>
+                                <span style="color:#f97316;font-size:13px;">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+                                <span style="color:#94a3b8;font-size:12px;margin-left:auto;">${new Date(r.createdAt).toLocaleDateString('en-IN')}</span>
+                                <button onclick="adminDeleteReview(${r.id})" style="background:#fee2e2;color:#dc2626;border:none;border-radius:6px;padding:3px 8px;cursor:pointer;font-size:12px;">Delete</button>
+                            </div>
+                            ${r.reviewText ? `<p style="color:#475569;font-size:13px;margin:0;">${r.reviewText}</p>` : ''}
+                        </div>`).join('');
+
+                const avgText = data.avgRating > 0 ? `Avg: ${data.avgRating} ★ (${data.reviewCount} reviews)` : 'No reviews';
+
+                const modalHTML = `
+                    <div id="reviewsModal" class="modal-overlay" onclick="if(event.target===this)this.remove()">
+                        <div class="modal-content" style="max-width:560px">
+                            <div class="modal-header">
+                                <h2><i class="fa-solid fa-star" style="color:#f97316"></i> Reviews — ${bookTitle}</h2>
+                                <button class="modal-close" onclick="document.getElementById('reviewsModal').remove()">&times;</button>
+                            </div>
+                            <div style="padding:20px;">
+                                <p style="color:#64748b;font-size:14px;margin:0 0 16px;">${avgText}</p>
+                                <div id="reviewsModalList">${reviewsHTML}</div>
+                            </div>
+                        </div>
+                    </div>`;
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            } catch(err) {
+                showNotification('Failed to load reviews', 'error');
+            }
+        }
+
+        async function adminDeleteReview(reviewId) {
+            if (!confirm('Delete this review?')) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/reviews/${reviewId}`, {
+                    method: 'DELETE', headers: getAuthHeaders()
+                });
+                if (!res.ok) throw new Error('Failed to delete review');
+                showNotification('Review deleted', 'success');
+                document.getElementById('reviewsModal')?.remove();
+            } catch(err) { showNotification(err.message, 'error'); }
         }
 
         // Update order status

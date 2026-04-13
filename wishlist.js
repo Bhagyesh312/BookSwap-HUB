@@ -83,7 +83,11 @@
         return getWishlistBooksLocal();
     };
 
-    const isInWishlist = (bookId) => getWishlist().includes(Number(bookId));
+    const isInWishlist = (bookId) => {
+        if (!bookId) return false;
+        const id = Number(bookId);
+        return getWishlist().some(wid => Number(wid) === id);
+    };
 
     const addToWishlist = async (bookId, bookData = null) => {
         const id = Number(bookId);
@@ -341,7 +345,7 @@
         const container = document.getElementById('wishlistItems');
         if (!container) return;
 
-        const wishlistIds = getWishlist();
+        const wishlistIds = getWishlist().map(Number).filter(id => !isNaN(id));
         const books = getWishlistBooks();
 
         if (wishlistIds.length === 0) {
@@ -355,10 +359,11 @@
             return;
         }
 
-        container.innerHTML = wishlistIds.map(id => {
+        container.innerHTML = wishlistIds.map(idStr => {
+            const id = Number(idStr);
             const book = books[id] || { id, title: `Book #${id}`, author: 'Unknown', price: 0, image: '' };
-            const hasPriceDrop = book.priceWhenAdded && book.price < book.priceWhenAdded;
-            const savings = hasPriceDrop ? (book.priceWhenAdded - book.price) : 0;
+            const hasPriceDrop = book.priceWhenAdded && Number(book.price) < Number(book.priceWhenAdded);
+            const savings = hasPriceDrop ? (Number(book.priceWhenAdded) - Number(book.price)) : 0;
             
             return `
                 <div class="wishlist-row${hasPriceDrop ? ' price-dropped' : ''}" data-id="${id}">
