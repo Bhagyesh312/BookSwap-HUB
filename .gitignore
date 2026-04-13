@@ -1,7 +1,13 @@
+# OS files
 .DS_Store
 Thumbs.db
-node_modules/
+
+# IDE
 .vscode/
+*.code-workspace
+
+# Node
+node_modules/
 
 # Python cache
 __pycache__/
@@ -13,8 +19,20 @@ __pycache__/
 backend/.env
 .env
 
-# Temporary and scratch files
+# Uploads (user-generated content)
+backend/uploads/images/*
+backend/uploads/videos/*
+!backend/uploads/images/.gitkeep
+!backend/uploads/videos/.gitkeep
+
+# Temporary / scratch files
 scratch/
 .deps_installed
+
+# One-off patch scripts (not part of the app)
 backend/patch_*.py
 backend/rewrite_js*.py
+
+# Database files
+*.db
+*.sqlite3
