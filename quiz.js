@@ -1,236 +1,227 @@
-// quiz.js - Logic for Book Matchmaker
-
-// --- Book Database ---
-// Synced with buy.html - Includes 'year' for era-based recommendation logic
-const allBooks = [
-    { id: 1, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', category: 'Fiction', type: 'new', pages: 218, price: 569, year: 1925, image: 'https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg', desc: "A tragic tale of Jay Gatsby's obsession with Daisy Buchanan, exploring wealth, illusion, and the American Dream." },
-    { id: 2, title: 'To Kill a Mockingbird', author: 'Harper Lee', category: 'Fiction', type: 'new', pages: 281, price: 599, year: 1960, image: 'https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg', desc: "Scout Finch recounts her childhood in the racially divided American South as her father defends a Black man falsely accused of a crime." },
-    { id: 3, title: 'Pride and Prejudice', author: 'Jane Austen', category: 'Romance', type: 'new', pages: 432, price: 479, year: 1813, image: 'https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg', desc: "Elizabeth Bennet navigates love, class, and societal expectations while clashing with the proud Mr. Darcy." },
-    { id: 4, title: 'The Catcher in the Rye', author: 'J.D. Salinger', category: 'Fiction', type: 'new', pages: 214, price: 559, year: 1951, image: 'https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg', desc: "Holden Caulfield wanders New York City after expulsion, questioning adulthood and authenticity." },
-    { id: 5, title: 'Educated', author: 'Tara Westover', category: 'Non-Fiction', type: 'new', pages: 334, price: 479, year: 2018, image: 'https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg', desc: "A woman raised in a survivalist family pursues education and self-discovery." },
-    { id: 6, title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', category: 'Non-Fiction', type: 'new', pages: 499, price: 809, year: 2011, image: 'https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg', desc: "Two systems of thinking that drive decisions." },
-    { id: 7, title: 'The Midnight Library', author: 'Matt Haig', category: 'Romance', type: 'new', pages: 304, price: 519, year: 2020, image: 'https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg', desc: "A magical library lets Nora explore alternate versions of her life." },
-    { id: 8, title: 'Sapiens', author: 'Yuval Noah Harari', category: 'Non-Fiction', type: 'new', pages: 443, price: 879, year: 2011, image: 'https://covers.openlibrary.org/b/isbn/9780062316110-L.jpg', desc: "History of humankind from evolution to modern society." },
-    { id: 9, title: '1984', author: 'George Orwell', category: 'Fiction', type: 'new', pages: 328, price: 479, year: 1949, image: 'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg', desc: "Big Brother, surveillance, and totalitarian control." },
-    { id: 10, title: 'The Alchemist', author: 'Paulo Coelho', category: 'Other', type: 'new', pages: 208, price: 449, year: 1988, image: 'https://covers.openlibrary.org/b/isbn/9780062315007-L.jpg', desc: "A shepherd follows his dreams in a spiritual journey." },
-    { id: 11, title: 'Atomic Habits', author: 'James Clear', category: 'Non-Fiction', type: 'new', pages: 320, price: 809, year: 2018, image: 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg', desc: "Tiny habits lead to massive life improvements." },
-    { id: 12, title: 'Six of Crows', author: 'Leigh Bardugo', category: 'Romance', type: 'new', pages: 465, price: 599, year: 2015, image: 'https://covers.openlibrary.org/b/isbn/9781627792127-L.jpg', desc: "Six criminals attempt an impossible magical heist." },
-    { id: 13, title: 'The Silent Patient', author: 'Alex Michaelides', category: 'Fiction', type: 'new', pages: 336, price: 479, year: 2019, image: 'media/silent_patient.jpg', desc: "A therapist uncovers the truth behind a woman who shot her husband and never speaks again." },
-    { id: 14, title: 'It Ends with Us', author: 'Colleen Hoover', category: 'Romance', type: 'new', pages: 376, price: 439, year: 2016, image: 'https://covers.openlibrary.org/b/isbn/9781476753188-L.jpg', desc: "A romance confronting domestic abuse and difficult life choices." },
-    { id: 15, title: 'Verity', author: 'Colleen Hoover', category: 'Fiction', type: 'new', pages: 336, price: 479, year: 2018, image: 'media/verity.jpg', desc: "A writer discovers disturbing secrets while finishing another author's manuscript." },
-    { id: 16, title: 'Dune', author: 'Frank Herbert', category: 'Fiction', type: 'new', pages: 412, price: 509, year: 1965, image: 'https://covers.openlibrary.org/b/isbn/9780441172719-L.jpg', desc: "Epic desert-planet politics, prophecy, and survival." },
-    { id: 17, title: 'Project Hail Mary', author: 'Andy Weir', category: 'Fiction', type: 'new', pages: 496, price: 509, year: 2021, image: 'https://covers.openlibrary.org/b/isbn/9780593135204-L.jpg', desc: "A lone astronaut must save humanity through science and ingenuity." },
-    { id: 18, title: 'Klara and the Sun', author: 'Kazuo Ishiguro', category: 'Fiction', type: 'new', pages: 320, price: 439, year: 2021, image: 'media/klara_and_the_sun.jpg', desc: "An Artificial Friend observes human love and loneliness." },
-    { id: 19, title: 'Braiding Sweetgrass', author: 'Robin Wall Kimmerer', category: 'Non-Fiction', type: 'new', pages: 390, price: 519, year: 2013, image: 'media/braiding.jpg', desc: "Indigenous wisdom and ecological science combined." },
-    { id: 20, title: 'The Body Keeps the Score', author: 'Bessel van der Kolk', category: 'Non-Fiction', type: 'new', pages: 464, price: 559, year: 2014, image: 'media/body_keeps_score.jpg', desc: "How trauma affects the brain and body, with healing approaches." },
-    // OLD BOOKS (Prices lower)
-    { id: 21, title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', category: 'Fiction', type: 'old', pages: 218, price: 299, year: 1925, image: 'https://covers.openlibrary.org/b/isbn/9780743273565-L.jpg', desc: "Classic tragedy of the American Dream." },
-    { id: 22, title: 'To Kill a Mockingbird', author: 'Harper Lee', category: 'Fiction', type: 'old', pages: 281, price: 349, year: 1960, image: 'https://covers.openlibrary.org/b/isbn/9780061120084-L.jpg', desc: "A timeless story of justice and childhood." },
-    { id: 23, title: 'Pride and Prejudice', author: 'Jane Austen', category: 'Romance', type: 'old', pages: 432, price: 279, year: 1813, image: 'https://covers.openlibrary.org/b/isbn/9780141199078-L.jpg', desc: "The ultimate classic romance." },
-    { id: 24, title: 'The Catcher in the Rye', author: 'J.D. Salinger', category: 'Fiction', type: 'old', pages: 214, price: 319, year: 1951, image: 'https://covers.openlibrary.org/b/isbn/9780316769488-L.jpg', desc: "The defining novel of teenage rebellion." },
-    { id: 25, title: '1984', author: 'George Orwell', category: 'Fiction', type: 'old', pages: 328, price: 289, year: 1949, image: 'https://covers.openlibrary.org/b/isbn/9780451524935-L.jpg', desc: "A chilling dystopian classic." },
-    { id: 26, title: 'The Alchemist', author: 'Paulo Coelho', category: 'Other', type: 'old', pages: 208, price: 249, year: 1988, image: 'https://covers.openlibrary.org/b/isbn/9780062315007-L.jpg', desc: "A modern classic about destiny." },
-    { id: 27, title: 'The Midnight Library', author: 'Matt Haig', category: 'Romance', type: 'old', pages: 304, price: 299, year: 2020, image: 'https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg', desc: "Explore infinite lives in this magical library." },
-    { id: 28, title: 'Educated', author: 'Tara Westover', category: 'Non-Fiction', type: 'old', pages: 334, price: 399, year: 2018, image: 'https://covers.openlibrary.org/b/isbn/9780399590504-L.jpg', desc: "A powerful memoir of self-invention." },
-    { id: 29, title: 'Thinking, Fast and Slow', author: 'Daniel Kahneman', category: 'Non-Fiction', type: 'old', pages: 499, price: 449, year: 2011, image: 'https://covers.openlibrary.org/b/isbn/9780374533557-L.jpg', desc: "Understand how your mind really works." },
-    { id: 30, title: 'Sapiens', author: 'Yuval Noah Harari', category: 'Non-Fiction', type: 'old', pages: 443, price: 499, year: 2011, image: 'https://covers.openlibrary.org/b/isbn/9780062316110-L.jpg', desc: "A brief history of humankind." },
-    { id: 31, title: 'Atomic Habits', author: 'James Clear', category: 'Non-Fiction', type: 'old', pages: 320, price: 449, year: 2018, image: 'https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg', desc: "Build good habits, break bad ones." },
-    { id: 32, title: 'Six of Crows', author: 'Leigh Bardugo', category: 'Romance', type: 'old', pages: 465, price: 349, year: 2015, image: 'https://covers.openlibrary.org/b/isbn/9781627792127-L.jpg', desc: "A dangerous heist in a magical world." },
-    { id: 33, title: 'Rich Dad Poor Dad', author: 'Robert Kiyosaki', category: 'Non-Fiction', type: 'old', pages: 355, price: 279, year: 1997, image: 'media/RCPD.jpg', desc: "Financial wisdom about building wealth." },
-    { id: 34, title: 'The Lean Startup', author: 'Eric Ries', category: 'Non-Fiction', type: 'old', pages: 336, price: 319, year: 2011, image: 'https://covers.openlibrary.org/b/isbn/9780307887894-L.jpg', desc: "How constant innovation creates radically successful businesses." },
-    { id: 35, title: 'Zero to One', author: 'Peter Thiel', category: 'Non-Fiction', type: 'old', pages: 368, price: 289, year: 2014, image: 'https://covers.openlibrary.org/b/isbn/9780804139298-L.jpg', desc: "Notes on startups, or how to build the future." }
-];
-
 /**
- * Quiz Questions Configuration
- * Defines options and the preference keys they map to in userPreferences
+ * quiz.js — Book Matchmaker
+ * Fetches live book catalog from API and matches based on quiz answers.
  */
+
+const API_BASE = '';
+let apiBooks = []; // populated from /api/books/
+
+// ── Fetch all books from API ──────────────────────────────
+async function loadBooksFromAPI() {
+    try {
+        let all = [];
+        let page = 1;
+        while (true) {
+            const res = await fetch(`${API_BASE}/api/books/?page=${page}&per_page=100`);
+            if (!res.ok) break;
+            const data = await res.json();
+            all = all.concat(data.items || []);
+            if (!data.pagination || !data.pagination.has_next) break;
+            page++;
+        }
+        apiBooks = all.map(b => ({
+            id:       Number(b.id),
+            title:    b.title || 'Untitled',
+            author:   b.author || 'Unknown',
+            category: (b.category || 'Fiction').toLowerCase(),
+            type:     b.type || 'new',
+            price:    Number(b.price || 0),
+            pages:    Number(b.pages || 300),
+            year:     Number(b.year || 2000),
+            image:    b.image || '',
+            synopsis: b.synopsis || b.description || '',
+        }));
+    } catch (_) {
+        apiBooks = [];
+    }
+}
+
+// ── Category normaliser — maps raw DB category to quiz bucket ──
+function getQuizCategory(raw) {
+    const c = (raw || '').toLowerCase();
+    if (['romance'].includes(c)) return 'romance';
+    if (['non-fiction', 'self-help', 'business'].includes(c)) return 'nonfiction';
+    if (['fiction', 'classics', 'thriller', 'fantasy', 'science-fiction', 'sci-fi', 'other'].includes(c)) return 'fiction';
+    // keyword fallback
+    if (c.includes('romance')) return 'romance';
+    if (c.includes('fiction')) return 'fiction';
+    return 'nonfiction';
+}
+
+// ── Questions ─────────────────────────────────────────────
 const questions = [
     {
-        id: 1,
-        text: "1. What vibe are you looking for?",
+        text: "What kind of read are you in the mood for?",
         options: [
-            { text: "Escape Reality (Fiction)", category: "Fiction" },
-            { text: "Learn & Grow (Non-Fiction)", category: "Non-Fiction" },
-            { text: "Love & Emotions (Romance)", category: "Romance" },
-            { text: "Something Different (Other)", category: "Other" }
+            { label: "📖 Stories & Adventures (Fiction)",    pref: { genre: 'fiction'   } },
+            { label: "💡 Learn Something New (Non-Fiction)", pref: { genre: 'nonfiction' } },
+            { label: "💕 Love & Emotions (Romance)",         pref: { genre: 'romance'   } },
+            { label: "🎲 Surprise Me!",                      pref: { genre: 'any'       } },
         ]
     },
     {
-        id: 2,
-        text: "2. Do you prefer brand new or pre-loved books?",
+        text: "New book or a pre-loved copy?",
         options: [
-            { text: "Fresh & New", type: "new" },
-            { text: "Vintage / Affordable", type: "old" }
+            { label: "✨ Brand New",          pref: { bookType: 'new' } },
+            { label: "📦 Used / Affordable",  pref: { bookType: 'old' } },
+            { label: "🤷 Doesn't matter",     pref: { bookType: 'any' } },
         ]
     },
     {
-        id: 3,
-        text: "3. What is your budget?",
+        text: "What's your budget?",
         options: [
-            { text: "Under ₹450", budget: "low" },
-            { text: "₹450 - ₹700", budget: "medium" },
-            { text: "No limit / Premium", budget: "high" }
+            { label: "💸 Under ₹350",          pref: { budget: 'low'    } },
+            { label: "💰 ₹350 – ₹650",         pref: { budget: 'medium' } },
+            { label: "👑 Above ₹650",           pref: { budget: 'high'   } },
+            { label: "🙅 No limit",             pref: { budget: 'any'    } },
         ]
     },
     {
-        id: 4,
-        text: "4. Do you prefer Classics or Modern hits?",
+        text: "Classic or modern?",
         options: [
-            { text: "Time-tested Classics (Pre-2000)", era: "classic" },
-            { text: "Modern Hits (Post-2000)", era: "modern" },
-            { text: "Doesn't matter", era: "any" }
+            { label: "🏛️ Timeless Classics (before 2000)", pref: { era: 'classic' } },
+            { label: "🚀 Modern Hits (2000 onwards)",       pref: { era: 'modern'  } },
+            { label: "⚡ Either works",                     pref: { era: 'any'     } },
         ]
     },
     {
-        id: 5,
-        text: "5. How much time do you have to read?",
+        text: "How long do you want to read?",
         options: [
-            { text: "Quick Read (< 300 pages)", length: "short" },
-            { text: "Standard Read (300-500 pages)", length: "medium" },
-            { text: "Epic Journey (500+ pages)", length: "long" }
+            { label: "⚡ Quick read (under 250 pages)",      pref: { length: 'short'  } },
+            { label: "📚 Standard (250 – 450 pages)",        pref: { length: 'medium' } },
+            { label: "🌊 Epic journey (450+ pages)",         pref: { length: 'long'   } },
+            { label: "🎯 Doesn't matter",                    pref: { length: 'any'    } },
         ]
-    }
+    },
 ];
 
-// --- Quiz State ---
-let currentStep = 0; // Current question index
-let userPreferences = { category: '', type: '', budget: '', era: '', length: '' }; // Collected user choices
+// ── State ─────────────────────────────────────────────────
+let step = 0;
+let prefs = { genre: 'any', bookType: 'any', budget: 'any', era: 'any', length: 'any' };
 
-// --- DOM Elements ---
-const questionEl = document.getElementById('questionText');
-const optionsEl = document.getElementById('optionsContainer');
-const progressBar = document.getElementById('progressBar');
+// ── DOM refs ──────────────────────────────────────────────
+const questionEl        = document.getElementById('questionText');
+const optionsEl         = document.getElementById('optionsContainer');
+const progressBar       = document.getElementById('progressBar');
 const questionContainer = document.getElementById('questionContainer');
-const resultContainer = document.getElementById('resultContainer');
+const resultContainer   = document.getElementById('resultContainer');
 
-/**
- * Loads and renders the current question and its options
- */
+// ── Render question ───────────────────────────────────────
 function loadQuestion() {
-    const q = questions[currentStep];
-    questionEl.textContent = q.text;
+    const q = questions[step];
+    questionEl.textContent = `${step + 1}. ${q.text}`;
     optionsEl.innerHTML = '';
-
-    // Update progress
-    const progress = ((currentStep) / questions.length) * 100;
-    progressBar.style.width = `${progress}%`;
+    progressBar.style.width = `${(step / questions.length) * 100}%`;
 
     q.options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.textContent = opt.text;
-        btn.onclick = () => handleAnswer(opt);
+        btn.textContent = opt.label;
+        btn.onclick = () => handleAnswer(opt.pref);
         optionsEl.appendChild(btn);
     });
 }
 
-function handleAnswer(choice) {
-    // Store preference
-    if (choice.category) userPreferences.category = choice.category;
-    if (choice.type) userPreferences.type = choice.type;
-    if (choice.budget) userPreferences.budget = choice.budget;
-    if (choice.era) userPreferences.era = choice.era;
-    if (choice.length) userPreferences.length = choice.length;
-
-    currentStep++;
-
-    if (currentStep < questions.length) {
+function handleAnswer(pref) {
+    Object.assign(prefs, pref);
+    step++;
+    if (step < questions.length) {
         loadQuestion();
     } else {
+        progressBar.style.width = '100%';
         showResult();
     }
 }
 
-/**
- * Core Algorithm: Matching Logic (Progressive Filtering)
- * Filters the book database based on user preferences.
- * Uses a fallback mechanism to ensure a result is always found.
- */
+// ── Matching algorithm ────────────────────────────────────
+function scoreBook(book) {
+    let score = 0;
+
+    // Genre
+    if (prefs.genre !== 'any') {
+        if (getQuizCategory(book.category) === prefs.genre) score += 40;
+        else return -1; // hard filter
+    }
+
+    // Type
+    if (prefs.bookType !== 'any') {
+        if (book.type === prefs.bookType) score += 20;
+        else score -= 10;
+    }
+
+    // Budget
+    if (prefs.budget === 'low'    && book.price < 350)                    score += 15;
+    if (prefs.budget === 'medium' && book.price >= 350 && book.price <= 650) score += 15;
+    if (prefs.budget === 'high'   && book.price > 650)                    score += 15;
+    if (prefs.budget === 'any')                                            score += 5;
+
+    // Era
+    if (prefs.era === 'classic' && book.year < 2000)  score += 10;
+    if (prefs.era === 'modern'  && book.year >= 2000) score += 10;
+    if (prefs.era === 'any')                          score += 5;
+
+    // Length
+    if (prefs.length === 'short'  && book.pages < 250)                      score += 10;
+    if (prefs.length === 'medium' && book.pages >= 250 && book.pages <= 450) score += 10;
+    if (prefs.length === 'long'   && book.pages > 450)                       score += 10;
+    if (prefs.length === 'any')                                              score += 5;
+
+    return score;
+}
+
 function showResult() {
+    // Score every book
+    let scored = apiBooks
+        .map(b => ({ book: b, score: scoreBook(b) }))
+        .filter(x => x.score > 0)
+        .sort((a, b) => b.score - a.score);
 
-    // 1. Category (Strict)
-    let matches = allBooks.filter(b => b.category === userPreferences.category);
-
-    // 2. Type (Strict - New vs Old)
-    if (matches.length > 0) {
-        const typeMatches = matches.filter(b => b.type === userPreferences.type);
-        if (typeMatches.length > 0) matches = typeMatches;
+    // Fallback: relax genre filter
+    if (!scored.length) {
+        scored = apiBooks
+            .map(b => ({ book: b, score: Math.random() * 10 }))
+            .sort((a, b) => b.score - a.score);
     }
 
-    // 3. Budget (Flexible)
-    // Low: < 450, Medium: 450-700, High: > 700
-    let budgetMatches = matches.filter(b => {
-        if (userPreferences.budget === 'low') return b.price < 450;
-        if (userPreferences.budget === 'medium') return b.price >= 450 && b.price <= 700;
-        if (userPreferences.budget === 'high') return b.price > 700;
-        return true;
-    });
-    if (budgetMatches.length > 0) matches = budgetMatches; // Update pool only if we found specific matches
+    // Pick from top 5 randomly so repeat quizzes feel fresh
+    const pool = scored.slice(0, 5);
+    const pick = pool[Math.floor(Math.random() * pool.length)].book;
 
-    // 4. Era (Flexible)
-    // Classic: < 2000, Modern: >= 2000
-    if (userPreferences.era !== 'any') {
-        let eraMatches = matches.filter(b => {
-            if (userPreferences.era === 'classic') return b.year < 2000;
-            if (userPreferences.era === 'modern') return b.year >= 2000;
-            return true;
-        });
-        if (eraMatches.length > 0) matches = eraMatches;
-    }
-
-    // 5. Length (Flexible)
-    let lengthMatches = matches.filter(b => {
-        if (userPreferences.length === 'short') return b.pages < 300;
-        if (userPreferences.length === 'medium') return b.pages >= 300 && b.pages <= 500;
-        if (userPreferences.length === 'long') return b.pages > 500;
-        return true;
-    });
-    if (lengthMatches.length > 0) matches = lengthMatches;
-
-
-    // Fallback: If 0 matches, reset to Category + Type
-    if (matches.length === 0) {
-        matches = allBooks.filter(b => b.category === userPreferences.category && b.type === userPreferences.type);
-    }
-    // Fallback 2: Just Category
-    if (matches.length === 0) {
-        matches = allBooks.filter(b => b.category === userPreferences.category);
-    }
-
-    // Pick Random
-    const finalBook = matches[Math.floor(Math.random() * matches.length)];
-
-    if (!finalBook) {
-        if (typeof showToast === 'function') {
-            showToast({ type: 'warning', title: 'No Match', message: 'No book found! Try adjusting your preferences.' });
-        }
-        return;
-    }
-
-    // Show Result Container
+    // Render result
     questionContainer.classList.add('hidden');
     resultContainer.classList.remove('hidden');
 
-    // Populate UI
-    document.getElementById('resultTitle').textContent = finalBook.title;
-    document.getElementById('resultAuthor').textContent = finalBook.author;
-    document.getElementById('resultDesc').textContent = finalBook.desc || finalBook.synopsis;
-    document.getElementById('resultImage').src = finalBook.image || 'https://via.placeholder.com/200x300';
+    document.getElementById('resultTitle').textContent  = pick.title;
+    document.getElementById('resultAuthor').textContent = `by ${pick.author}`;
+    document.getElementById('resultDesc').textContent   = pick.synopsis || 'A great read waiting for you!';
+    document.getElementById('resultImage').src          = pick.image || 'https://via.placeholder.com/200x300?text=No+Cover';
+    document.getElementById('resultImage').onerror      = function() { this.src = 'https://via.placeholder.com/200x300?text=No+Cover'; };
 
-    // Create 'Tags' text for context
-    // document.getElementById('resultDesc').innerHTML += `<br><small style="color:#primary">Matched: ${userPreferences.category} • ${userPreferences.type} • ${userPreferences.era}</small>`;
+    // Price tag
+    const priceEl = document.getElementById('resultPrice');
+    if (priceEl) priceEl.textContent = `₹${pick.price}`;
 
-    // Store for "Buy Now" link
-    window.matchedBookId = finalBook.id;
+    window.matchedBookId = pick.id;
 }
 
 function goToBook() {
     if (window.matchedBookId) {
-        localStorage.setItem('viewBookId', window.matchedBookId);
-        window.location.href = 'buy.html';
+        window.location.href = `book.html?id=${window.matchedBookId}`;
     }
 }
 
-// Init
-loadQuestion();
+// ── Init ──────────────────────────────────────────────────
+(async () => {
+    // Show loading state
+    questionEl.textContent = 'Loading books...';
+    optionsEl.innerHTML = '<p style="color:#94a3b8;font-size:14px;">Fetching catalog from server...</p>';
+
+    await loadBooksFromAPI();
+
+    if (!apiBooks.length) {
+        optionsEl.innerHTML = '<p style="color:#ef4444;">Could not load books. Make sure the server is running.</p>';
+        return;
+    }
+
+    loadQuestion();
+})();

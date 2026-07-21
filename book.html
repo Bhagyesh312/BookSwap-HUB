@@ -150,14 +150,6 @@
                 </button>
             </div>
             
-            <!-- Propose Trade -->
-            <div style="margin-top: 15px;">
-                <button id="proposeTradeBtn" class="propose-trade-btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #ffffff; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; padding: 12px; font-family: 'Poppins', sans-serif; font-size: 16px; transition: transform 0.2s, box-shadow 0.2s;">
-                    🤝 Propose Trade
-                </button>
-            </div>
-
-
             <!-- Book Meta -->
             <div class="book-meta-grid">
                 <div class="meta-item"><span class="meta-label">Publisher</span><span id="metaPublisher" class="meta-val">—</span></div>
@@ -235,26 +227,6 @@
 
 
 
-    <!-- TRADE PROPOSAL MODAL -->
-    <div id="tradeModal" class="details-modal hidden" role="dialog" aria-modal="true" aria-label="Propose Trade">
-        <div class="details-panel" style="max-width: 600px; max-height: 90vh; overflow-y: auto;">
-            <button id="closeTradeModalBtn" class="close-details-btn" aria-label="Close trade modal">✕</button>
-            <div class="details-content" style="flex-direction: column;">
-                <h2 style="font-size: 22px; color: #1e293b; margin-bottom: 5px;">Propose a Trade</h2>
-                <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Select one of your listed books to offer in exchange for <strong id="tradeTargetBookName">this book</strong>.</p>
-                
-                <div id="userListingsContainer" style="display:flex; flex-direction:column; gap:10px; max-height: 300px; overflow-y: auto; padding-right: 10px;">
-                    <!-- user listings will be injected here -->
-                </div>
-                
-                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button id="cancelTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; font-family:'Poppins', sans-serif;">Cancel</button>
-                    <button id="submitTradeBtn" style="padding: 10px 20px; border-radius: 8px; border: none; background: linear-gradient(135deg, #8b5cf6, #6366f1); color: #fff; font-weight: bold; cursor: pointer; font-family:'Poppins', sans-serif;" disabled>Send Proposal</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 <!-- FOOTER -->
 <footer class="footer"><p class="footer-bottom">© 2026 BookSwap Hub</p></footer>
 
@@ -265,7 +237,6 @@
 <script src="wishlist.js"></script>
 <script src="notifications.js"></script>
 <script src="chat-support.js"></script>
-<script src="trade.js"></script>
 <script>
 const API_BASE = '';
 let currentBook = null;

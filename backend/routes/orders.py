@@ -113,7 +113,7 @@ def create_order():
             from utils.email import send_order_confirmation_email
             items_for_email = [{'title': i.title, 'quantity': i.quantity, 'price': float(i.price)} for i in order_items]
             address_str = ', '.join(filter(None, [address, city, state, zip_code, country]))
-            send_order_confirmation_email(
+            result = send_order_confirmation_email(
                 to_email=email,
                 customer_name=full_name,
                 order_id=order.id,
@@ -122,8 +122,14 @@ def create_order():
                 address=address_str,
                 payment_method=payment_method
             )
-        except Exception:
-            pass  # never block order creation due to email failure
+            if result:
+                print(f'✅ Order confirmation email sent to {email}')
+            else:
+                print(f'❌ Order confirmation email FAILED for order #{order.id} to {email}')
+        except Exception as mail_err:
+            print(f'❌ Email exception for order #{order.id}: {mail_err}')
+            import traceback
+            traceback.print_exc()
 
         return jsonify({
             'orderId': order.id,

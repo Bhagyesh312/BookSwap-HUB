@@ -23,9 +23,6 @@
 
 <body>
 
-    <!-- NOTIFICATION -->
-    <div id="notification" class="notification"></div>
-
     <!-- ================= NAVBAR ================= -->
     <nav class="navbar">
         <div class="nav-container">
@@ -750,12 +747,15 @@
             startStatsAutoRefresh();
         });
 
-        // Notification helper
+        // Notification helper — uses the same toast system as the buy page
         function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = `notification ${type} show`;
-            setTimeout(() => notification.classList.remove('show'), 3000);
+            if (typeof showToast === 'function') {
+                const typeMap = { success: 'success', error: 'error', info: 'info', warning: 'warning' };
+                showToast({ type: typeMap[type] || 'info', message });
+            } else {
+                // fallback if enhancements.js not loaded yet
+                alert(message);
+            }
         }
 
         // Get auth header

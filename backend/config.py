@@ -56,12 +56,11 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    """Development configuration — allows missing secrets with fallback warnings."""
+    """Development configuration — reads all secrets from .env, no hardcoded fallbacks."""
     DEBUG = True
 
-    # Safe fallbacks for local dev only
-    SECRET_KEY = os.getenv('SECRET_KEY', 'dev-only-secret-not-for-production')
-    JWT_SECRET = os.getenv('JWT_SECRET', 'dev-only-jwt-not-for-production')
+    SECRET_KEY = os.getenv('SECRET_KEY')
+    JWT_SECRET = os.getenv('JWT_SECRET')
 
 
 class ProductionConfig(Config):
