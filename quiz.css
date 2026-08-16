@@ -149,15 +149,8 @@ body {
 }
 
 .book-info .desc {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     line-height: 1.4;
-}
-
-.result-price {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 14px;
 }
 
 .retake-link {

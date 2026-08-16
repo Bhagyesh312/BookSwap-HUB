@@ -172,10 +172,9 @@
         
         try {
             // Fetch current prices from API
-            const res = await fetch('/api/books/?per_page=100');
+            const res = await fetch('/api/books');
             if (!res.ok) return drops;
-            const data = await res.json();
-            const allBooks = data.items || [];
+            const allBooks = await res.json();
             
             ids.forEach(id => {
                 const stored = books[id];
@@ -201,7 +200,7 @@
                 }
             });
             
-            saveWishlistBooksLocal(books);
+            saveWishlistBooks(books);
         } catch (e) {
             console.log('Price check skipped:', e);
         }

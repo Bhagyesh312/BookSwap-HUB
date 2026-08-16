@@ -319,22 +319,26 @@
         if (minusBtn || plusBtn) {
           const selector = e.target.closest('.qty-selector');
           if (!selector) return;
-
+          
           const itemId = selector.dataset.itemId;
           const valueEl = selector.querySelector('.qty-value');
           let qty = parseInt(valueEl.textContent, 10);
-
+          
           if (minusBtn && qty > 1) {
             qty--;
+            // Animate
+            valueEl.classList.add('qty-change');
           } else if (plusBtn) {
             qty++;
-          } else {
-            return;
+            valueEl.classList.add('qty-change');
           }
-
-          // Disable buttons to prevent double-click while updating
-          selector.querySelectorAll('.qty-btn').forEach(b => b.disabled = true);
-
+          
+          valueEl.textContent = qty;
+          selector.querySelector('.qty-minus').disabled = qty <= 1;
+          
+          // Remove animation class
+          setTimeout(() => valueEl.classList.remove('qty-change'), 150);
+          
           await updateQuantity(itemId, qty);
         }
       });

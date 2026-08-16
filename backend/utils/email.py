@@ -14,39 +14,20 @@ def send_email(to_email, subject, text_body, html_body):
     Returns True on success, False on failure.
     """
     try:
-        username = current_app.config.get('MAIL_USERNAME')
-        password = current_app.config.get('MAIL_PASSWORD')
-        server_host = current_app.config.get('MAIL_SERVER', 'smtp.gmail.com')
-        server_port = current_app.config.get('MAIL_PORT', 587)
-
-        if not username or not password:
-            current_app.logger.error('Email not configured: MAIL_USERNAME or MAIL_PASSWORD missing in .env')
-            return False
-
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subject
-        msg['From']    = username
+        msg['From']    = current_app.config['MAIL_DEFAULT_SENDER'][1]
         msg['To']      = to_email
 
         msg.attach(MIMEText(text_body, 'plain'))
         msg.attach(MIMEText(html_body, 'html'))
 
-        with smtplib.SMTP(server_host, server_port, timeout=15) as server:
-            server.ehlo()
-            server.starttls()
-            server.ehlo()
-            server.login(username, password)
-            server.sendmail(username, to_email, msg.as_string())
-
-        current_app.logger.info(f'Email sent to {to_email}: {subject}')
+        server = smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT'])
+        server.starttls()
+        server.login(current_app.config['MAIL_USERNAME'], current_app.config['MAIL_PASSWORD'])
+        server.sendmail(msg['From'], to_email, msg.as_string())
+        server.quit()
         return True
-
-    except smtplib.SMTPAuthenticationError as e:
-        current_app.logger.error(f'SMTP Auth failed — check Gmail app password in .env: {e}')
-        return False
-    except smtplib.SMTPException as e:
-        current_app.logger.error(f'SMTP error sending to {to_email}: {e}')
-        return False
     except Exception as e:
         current_app.logger.error(f'Email send failed to {to_email}: {e}')
         return False

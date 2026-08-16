@@ -63,7 +63,7 @@ def get_my_listings():
 
 @books_bp.route('/<int:book_id>', methods=['DELETE'])
 def delete_my_book(book_id):
-    """Allow a seller to delete their own listing, or admin to delete any."""
+    """Allow a seller to delete their own listing."""
     token = request.headers.get('Authorization', '').replace('Bearer ', '')
     if not token:
         return jsonify({'error': 'Authentication required'}), 401
@@ -71,16 +71,13 @@ def delete_my_book(book_id):
         from middleware import decode_token
         payload = decode_token(token)
         user_id = payload.get('id') or payload.get('user_id')
-        role = payload.get('role', 'user')
     except Exception:
         return jsonify({'error': 'Invalid token'}), 401
 
     book = Book.query.get(book_id)
     if not book:
         return jsonify({'error': 'Book not found'}), 404
-
-    # Admin can delete any book; seller can only delete their own
-    if role != 'admin' and book.listed_by != user_id:
+    if book.listed_by != user_id:
         return jsonify({'error': 'Not authorized'}), 403
 
     db.session.delete(book)
@@ -161,17 +158,6 @@ def sell_book():
 
     original = clean_float(data.get('original'))
 
-    # Extract seller user_id from token if present
-    listed_by = None
-    token = request.headers.get('Authorization', '').replace('Bearer ', '')
-    if token:
-        try:
-            from middleware import decode_token
-            payload = decode_token(token)
-            listed_by = payload.get('id')
-        except Exception:
-            pass
-
     # Handle image uploads (save up to 5 images, store first as main image)
     allowed_img = current_app.config.get('ALLOWED_IMAGE_EXTENSIONS', {'jpg', 'jpeg', 'png', 'webp'})
     allowed_vid = current_app.config.get('ALLOWED_VIDEO_EXTENSIONS', {'mp4', 'mov', 'avi', 'webm'})
@@ -201,7 +187,6 @@ def sell_book():
         payment_mode=clean(data.get('paymentMode'), max_length=50),
         description=clean(data.get('description'), max_length=2000),
         image=image_urls[0] if image_urls else None,
-        listed_by=listed_by,
         is_approved=False,  # requires admin approval before going live
     )
 
@@ -221,3 +206,20 @@ def sell_book():
     db.session.commit()
 
     return jsonify({'message': 'Book submitted for review! It will go live once approved by admin.', 'book': book.to_dict()}), 201
+
+
+@books_bp.route('/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    """
+    Delete a book listing by ID.
+    Returns 404 if book not found.
+    """
+    book = db.session.get(Book, book_id)
+
+    if not book:
+        return jsonify({'error': 'Book not found'}), 404
+
+    db.session.delete(book)
+    db.session.commit()
+
+    return jsonify({'message': f'Book (id={book_id}) deleted successfully'}), 200

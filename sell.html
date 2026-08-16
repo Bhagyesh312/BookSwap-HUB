@@ -286,16 +286,6 @@
     document.getElementById('sellForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      // Check login before submitting
-      const token = localStorage.getItem('authToken') || localStorage.getItem('token');
-      if (!token) {
-        if (typeof showToast === 'function') {
-          showToast({ type: 'warning', title: 'Login Required', message: 'Please log in to list a book.' });
-        }
-        setTimeout(() => window.location.href = 'login.html', 1200);
-        return;
-      }
-
       const btn = document.getElementById('sellSubmitBtn');
       const originalText = btn.textContent;
       btn.disabled = true;
@@ -317,10 +307,9 @@
       }
 
       try {
-        // Send as multipart/form-data with auth token
+        // Send as multipart/form-data (no Content-Type header — browser sets boundary automatically)
         const res = await fetch('/api/books/', {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` },
           body: fd
         });
 
