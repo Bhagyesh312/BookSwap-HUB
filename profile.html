@@ -34,14 +34,15 @@
 
     <!-- PROFILE HEADER -->
     <div class="profile-header">
-        <h1>My Account</h1>
+        <div class="profile-header-bg-books" aria-hidden="true"></div>
+        <h1><i class="fa-solid fa-circle-user" style="color:#f97316;margin-right:12px;filter:drop-shadow(0 0 14px rgba(249,115,22,0.5))"></i>My Account</h1>
         <p id="userGreeting">Welcome to your profile</p>
     </div>
 
     <!-- PROFILE CONTAINER -->
     <div class="profile-container">
         <!-- PROFILE SIDEBAR -->
-        <aside class="profile-sidebar">
+        <aside class="profile-sidebar" style="position:relative;">
             <div class="profile-avatar">
                 <div class="avatar-circle" id="avatarPreview">
                     <!-- Image preview will be shown here -->
@@ -70,15 +71,27 @@
             <div class="profile-email" id="profileEmail">Email</div>
             <div class="account-meta">
                 <div class="meta-item">
-                    <span class="meta-label">Member Since</span>
+                    <span class="meta-label"><i class="fa-solid fa-calendar-days" style="margin-right:4px"></i> Member Since</span>
                     <span class="meta-value" id="memberSince">—</span>
                 </div>
                 <div class="meta-item">
-                    <span class="meta-label">Last Login</span>
+                    <span class="meta-label"><i class="fa-solid fa-clock-rotate-left" style="margin-right:4px"></i> Last Login</span>
                     <span class="meta-value" id="lastLogin">—</span>
                 </div>
             </div>
-            <button class="btn btn-danger" id="logoutSidebarBtn">Sign Out</button>
+            <!-- Quick Links -->
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+                <a href="orders.html" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:12px;text-decoration:none;color:#374151;font-size:13px;font-weight:700;border:1px solid #e2e8f0;transition:all 0.2s;" onmouseover="this.style.borderColor='#f97316';this.style.color='#f97316'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
+                    <i class="fa-solid fa-box" style="color:#f97316"></i> My Orders
+                </a>
+                <a href="seller-dashboard.html" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:12px;text-decoration:none;color:#374151;font-size:13px;font-weight:700;border:1px solid #e2e8f0;transition:all 0.2s;" onmouseover="this.style.borderColor='#f97316';this.style.color='#f97316'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
+                    <i class="fa-solid fa-store" style="color:#f97316"></i> My Listings
+                </a>
+                <a href="buy.html" style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:12px;text-decoration:none;color:#374151;font-size:13px;font-weight:700;border:1px solid #e2e8f0;transition:all 0.2s;" onmouseover="this.style.borderColor='#f97316';this.style.color='#f97316'" onmouseout="this.style.borderColor='#e2e8f0';this.style.color='#374151'">
+                    <i class="fa-solid fa-book-open" style="color:#f97316"></i> Browse Books
+                </a>
+            </div>
+            <button class="btn btn-danger" id="logoutSidebarBtn"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
         </aside>
 
         <!-- PROFILE MAIN CONTENT -->
